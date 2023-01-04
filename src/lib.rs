@@ -3,6 +3,8 @@
 use std::ffi::{CStr, CString};
 use std::net::IpAddr;
 
+use crate::binding::{ipset_cmd, ipset_cmd_IPSET_CMD_DEL};
+
 #[allow(non_camel_case_types)]
 #[allow(unused)]
 #[allow(non_upper_case_globals)]
@@ -99,6 +101,16 @@ pub enum Error {
     TypeGet(String),
 }
 
+impl Error {
+    fn cmd_contains(&self, m: &str) -> bool {
+        if let Error::Cmd(message) = self {
+            message.contains(m)
+        } else {
+            false
+        }
+    }
+}
+
 impl<'a> Session<'a> {
     fn set_data(
         &self,
@@ -127,6 +139,7 @@ impl<'a> Session<'a> {
     fn run_cmd(&mut self, cmd: binding::ipset_cmd) -> Result<(), Error> {
         unsafe {
             self.set.output.clear();
+            binding::ipset_session_report_reset(self.session);
             if binding::ipset_cmd(self.session, cmd, 0) < 0 {
                 Err(Error::Cmd(self.error()))
             } else {
@@ -156,41 +169,77 @@ impl<'a> Session<'a> {
     }
 
     pub fn test(&mut self, name: &str, ip: IpAddr) -> Result<bool, Error> {
-        match self.ip_cmd(name, ip, binding::ipset_cmd_IPSET_CMD_TEST) {
-            Ok(_) => Ok(true),
-            Err(err) => unsafe {
-                if binding::ipset_session_report_type(self.session)
-                    != binding::ipset_err_type_IPSET_ERROR
-                {
+        self.ip_cmd(name, ip, binding::ipset_cmd_IPSET_CMD_TEST)
+            .map(|_| true)
+            .or_else(|err| {
+                if err.cmd_contains(" is NOT in set test") {
                     Ok(false)
                 } else {
                     Err(err)
                 }
-            },
-        }
+            })
     }
 
     pub fn add(&mut self, name: &str, ip: IpAddr) -> Result<bool, Error> {
-        match self.ip_cmd(name, ip, binding::ipset_cmd_IPSET_CMD_ADD) {
-            Ok(_) => Ok(true),
-            Err(Error::Cmd(message)) => {
-                if message.contains("Element cannot be added to the set: it's already added") {
+        self.ip_cmd(name, ip, binding::ipset_cmd_IPSET_CMD_ADD)
+            .map(|_| true)
+            .or_else(|err| {
+                if err.cmd_contains("Element cannot be added to the set: it's already added") {
                     Ok(false)
                 } else {
-                    Err(Error::Cmd(message))
+                    Err(err)
                 }
-            }
-            Err(err) => Err(err),
-        }
+            })
+    }
+
+    pub fn del(&mut self, name: &str, ip: IpAddr) -> Result<bool, Error> {
+        self.ip_cmd(name, ip, ipset_cmd_IPSET_CMD_DEL)
+            .map(|_| true)
+            .or_else(|err| {
+                if err.cmd_contains("Element cannot be deleted from the set: it's not added") {
+                    Ok(false)
+                } else {
+                    Err(err)
+                }
+            })
     }
 
     pub fn list(&mut self, name: &str) -> Result<Vec<IpAddr>, Error> {
         let name = CString::new(name).unwrap();
         self.set_data(binding::ipset_opt_IPSET_SETNAME, name.as_ptr() as _)?;
 
-        self.run_cmd(binding::ipset_cmd_IPSET_CMD_LIST).unwrap();
-        println!("{}", self.set.output[0]);
-        Ok(vec![])
+        self.run_cmd(binding::ipset_cmd_IPSET_CMD_LIST)?;
+        if let Some(line) = self.set.output.get(0) {
+            let ips: Vec<_> = line
+                .split("\n")
+                .skip(8)
+                .filter_map(|line| -> Option<IpAddr> { line.parse().ok() })
+                .collect();
+            Ok(ips)
+        } else {
+            Ok(vec![])
+        }
+    }
+
+    fn name_cmd(&mut self, name: &str, cmd: ipset_cmd) -> Result<bool, Error> {
+        let name = CString::new(name).unwrap();
+        self.set_data(binding::ipset_opt_IPSET_SETNAME, name.as_ptr() as _)?;
+
+        self.run_cmd(cmd).map(|_| true).or_else(|err| {
+            if err.cmd_contains("The set with the given name does not exist") {
+                Ok(false)
+            } else {
+                Err(err)
+            }
+        })
+    }
+
+    pub fn flush(&mut self, name: &str) -> Result<bool, Error> {
+        self.name_cmd(name, binding::ipset_cmd_IPSET_CMD_FLUSH)
+    }
+
+    pub fn destroy(&mut self, name: &str) -> Result<bool, Error> {
+        self.name_cmd(name, binding::ipset_cmd_IPSET_CMD_DESTROY)
     }
 }
 
