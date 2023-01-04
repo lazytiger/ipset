@@ -3,8 +3,6 @@
 use std::ffi::{CStr, CString};
 use std::net::IpAddr;
 
-use crate::binding::{ipset_cmd, ipset_opt};
-
 #[allow(non_camel_case_types)]
 #[allow(unused)]
 #[allow(non_upper_case_globals)]
@@ -13,44 +11,32 @@ mod binding;
 
 pub struct IPSet {
     set: *mut binding::ipset,
+    output: Vec<String>,
 }
 
-pub struct Session {
+pub struct Session<'a> {
     session: *mut binding::ipset_session,
     data: *mut binding::ipset_data,
-}
-
-#[no_mangle]
-pub unsafe extern "C" fn custom_error(
-    ipset: *mut binding::ipset,
-    p: *mut ::std::os::raw::c_void,
-    status: ::std::os::raw::c_int,
-    msg: *const ::std::os::raw::c_char,
-    mut args: ...
-) -> std::ffi::c_int {
-    let content = args.arg::<*const std::ffi::c_char>();
-    let content = CStr::from_ptr(content);
-    println!("{:?}", content);
-    let mut buffer = vec![0u8; 1024];
-    let n = libc::sprintf(buffer.as_mut_ptr() as _, msg, args);
-    let msg = CStr::from_ptr(msg);
-    println!("{:?}", msg);
-    buffer[n as usize] = 0;
-    buffer.resize(n as usize, 0);
-    println!("{}, error:{}", n, String::from_utf8(buffer).unwrap());
-    n
+    set: &'a mut IPSet,
 }
 
 #[no_mangle]
 pub unsafe extern "C" fn outfn(
-    session: *mut binding::ipset_session,
+    _session: *mut binding::ipset_session,
     p: *mut ::std::os::raw::c_void,
     fmt: *const ::std::os::raw::c_char,
-    args: ...
+    mut args: ...
 ) -> ::std::os::raw::c_int {
-    let mut buffer = vec![0u8; 1024];
-    let n = libc::sprintf(buffer.as_mut_ptr() as _, fmt, args);
-    println!("output:{}", String::from_utf8(buffer).unwrap());
+    let raw = args.arg::<*const std::ffi::c_char>();
+    let data = CStr::from_ptr(raw);
+    let len = data.to_bytes().len();
+    if len == 0 {
+        return 0;
+    }
+    let buffer = vec![0u8; len];
+    libc::sprintf(buffer.as_ptr() as _, fmt, raw);
+    let set = (p as *mut IPSet).as_mut().unwrap();
+    set.output.push(String::from_utf8_unchecked(buffer));
     0
 }
 
@@ -59,22 +45,23 @@ impl IPSet {
         unsafe {
             binding::ipset_load_types();
             let set = binding::ipset_init();
-            binding::ipset_custom_printf(
+            IPSet {
                 set,
-                Some(custom_error),
-                None,
-                Some(outfn),
-                std::ptr::null_mut(),
-            );
-            IPSet { set }
+                output: Default::default(),
+            }
         }
     }
 
-    pub fn session(&self) -> Session {
+    pub fn session(&mut self) -> Session {
         unsafe {
+            binding::ipset_custom_printf(self.set, None, None, Some(outfn), self as *mut _ as _);
             let session = binding::ipset_session(self.set);
             let data = binding::ipset_session_data(session);
-            Session { session, data }
+            Session {
+                session,
+                data,
+                set: self,
+            }
         }
     }
 }
@@ -112,7 +99,7 @@ pub enum Error {
     TypeGet(String),
 }
 
-impl Session {
+impl<'a> Session<'a> {
     fn set_data(
         &self,
         opt: binding::ipset_opt,
@@ -137,8 +124,9 @@ impl Session {
         }
     }
 
-    fn run_cmd(&self, cmd: binding::ipset_cmd) -> Result<(), Error> {
+    fn run_cmd(&mut self, cmd: binding::ipset_cmd) -> Result<(), Error> {
         unsafe {
+            self.set.output.clear();
             if binding::ipset_cmd(self.session, cmd, 0) < 0 {
                 Err(Error::Cmd(self.error()))
             } else {
@@ -147,27 +135,27 @@ impl Session {
         }
     }
 
-    fn ip_cmd(&self, name: &str, ip: IpAddr, cmd: binding::ipset_cmd) -> Result<(), Error> {
+    fn ip_cmd(&mut self, name: &str, ip: IpAddr, cmd: binding::ipset_cmd) -> Result<(), Error> {
+        let name = CString::new(name).unwrap();
+        self.set_data(binding::ipset_opt_IPSET_SETNAME, name.as_ptr() as _)?;
+
+        let addr = get_caddr(ip);
+        let (ip, family) = addr.as_ptr();
+        self.set_data(binding::ipset_opt_IPSET_OPT_FAMILY, family)?;
+
         unsafe {
-            let name = CString::new(name).unwrap();
-            self.set_data(binding::ipset_opt_IPSET_SETNAME, name.as_ptr() as _)?;
-
-            let addr = get_caddr(ip);
-            let (ip, family) = addr.as_ptr();
-            self.set_data(binding::ipset_opt_IPSET_OPT_FAMILY, family)?;
-
             let typ = binding::ipset_type_get(self.session, binding::ipset_cmd_IPSET_CMD_TEST);
             if typ.is_null() {
                 return Err(Error::TypeGet(self.error()));
             }
-
-            self.set_data(binding::ipset_opt_IPSET_OPT_IP, ip)?;
-
-            self.run_cmd(cmd)
         }
+
+        self.set_data(binding::ipset_opt_IPSET_OPT_IP, ip)?;
+
+        self.run_cmd(cmd)
     }
 
-    pub fn test(&self, name: &str, ip: IpAddr) -> Result<bool, Error> {
+    pub fn test(&mut self, name: &str, ip: IpAddr) -> Result<bool, Error> {
         match self.ip_cmd(name, ip, binding::ipset_cmd_IPSET_CMD_TEST) {
             Ok(_) => Ok(true),
             Err(err) => unsafe {
@@ -182,9 +170,27 @@ impl Session {
         }
     }
 
-    pub fn add(&self, name: &str, ip: IpAddr) -> Result<bool, Error> {
-        self.ip_cmd(name, ip, binding::ipset_cmd_IPSET_CMD_ADD)
-            .map(|_| true)
+    pub fn add(&mut self, name: &str, ip: IpAddr) -> Result<bool, Error> {
+        match self.ip_cmd(name, ip, binding::ipset_cmd_IPSET_CMD_ADD) {
+            Ok(_) => Ok(true),
+            Err(Error::Cmd(message)) => {
+                if message.contains("Element cannot be added to the set: it's already added") {
+                    Ok(false)
+                } else {
+                    Err(Error::Cmd(message))
+                }
+            }
+            Err(err) => Err(err),
+        }
+    }
+
+    pub fn list(&mut self, name: &str) -> Result<Vec<IpAddr>, Error> {
+        let name = CString::new(name).unwrap();
+        self.set_data(binding::ipset_opt_IPSET_SETNAME, name.as_ptr() as _)?;
+
+        self.run_cmd(binding::ipset_cmd_IPSET_CMD_LIST).unwrap();
+        println!("{}", self.set.output[0]);
+        Ok(vec![])
     }
 }
 
