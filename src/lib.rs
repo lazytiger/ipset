@@ -3,7 +3,12 @@
 use std::ffi::{CStr, CString};
 use std::net::IpAddr;
 
-use crate::binding::{ipset_cmd, ipset_cmd_IPSET_CMD_DEL};
+use crate::binding::{
+    ipset_cmd, ipset_cmd_IPSET_CMD_CREATE, ipset_cmd_IPSET_CMD_DEL, ipset_opt_IPSET_OPT_BYTES,
+    ipset_opt_IPSET_OPT_COUNTERS, ipset_opt_IPSET_OPT_FAMILY, ipset_opt_IPSET_OPT_HASHSIZE,
+    ipset_opt_IPSET_OPT_MAXELEM, ipset_opt_IPSET_OPT_PACKETS, ipset_opt_IPSET_OPT_TIMEOUT,
+    ipset_opt_IPSET_OPT_TYPENAME,
+};
 
 #[allow(non_camel_case_types)]
 #[allow(unused)]
@@ -26,7 +31,7 @@ pub struct Session<'a> {
 pub unsafe extern "C" fn outfn(
     _session: *mut binding::ipset_session,
     p: *mut ::std::os::raw::c_void,
-    fmt: *const ::std::os::raw::c_char,
+    _fmt: *const ::std::os::raw::c_char,
     mut args: ...
 ) -> ::std::os::raw::c_int {
     let raw = args.arg::<*const std::ffi::c_char>();
@@ -35,10 +40,8 @@ pub unsafe extern "C" fn outfn(
     if len == 0 {
         return 0;
     }
-    let buffer = vec![0u8; len];
-    libc::sprintf(buffer.as_ptr() as _, fmt, raw);
     let set = (p as *mut IPSet).as_mut().unwrap();
-    set.output.push(String::from_utf8_unchecked(buffer));
+    set.output.push(data.to_string_lossy().to_string());
     0
 }
 
@@ -96,14 +99,14 @@ fn get_caddr(ip: IpAddr) -> CIpAddr {
 
 #[derive(Debug)]
 pub enum Error {
-    DataSet(String),
-    Cmd(String),
-    TypeGet(String),
+    DataSet(String, bool),
+    Cmd(String, bool),
+    TypeGet(String, bool),
 }
 
 impl Error {
     fn cmd_contains(&self, m: &str) -> bool {
-        if let Error::Cmd(message) = self {
+        if let Error::Cmd(message, _) = self {
             message.contains(m)
         } else {
             false
@@ -119,29 +122,43 @@ impl<'a> Session<'a> {
     ) -> Result<(), Error> {
         unsafe {
             if binding::ipset_data_set(self.data, opt, value) < 0 {
-                let err = binding::ipset_session_report_msg(self.session);
-                let err = CStr::from_ptr(err).to_string_lossy().to_string();
-                Err(Error::DataSet(err))
+                let (message, error) = self.error();
+                Err(Error::DataSet(message, error))
             } else {
                 Ok(())
             }
         }
     }
 
-    fn error(&self) -> String {
+    fn error(&self) -> (String, bool) {
         unsafe {
             let err = binding::ipset_session_report_msg(self.session);
             let err = CStr::from_ptr(err).to_string_lossy().to_string();
-            err
+            let typ = binding::ipset_session_report_type(self.session);
+            binding::ipset_session_report_reset(self.session);
+            (err, typ == binding::ipset_err_type_IPSET_ERROR)
         }
     }
 
     fn run_cmd(&mut self, cmd: binding::ipset_cmd) -> Result<(), Error> {
         unsafe {
             self.set.output.clear();
-            binding::ipset_session_report_reset(self.session);
             if binding::ipset_cmd(self.session, cmd, 0) < 0 {
-                Err(Error::Cmd(self.error()))
+                let (message, error) = self.error();
+                Err(Error::Cmd(message, error))
+            } else {
+                Ok(())
+            }
+        }
+    }
+
+    /// Wrapper for ipset_type_get, set OPT_TYPE for the cmd
+    fn get_type(&self, cmd: binding::ipset_cmd) -> Result<(), Error> {
+        unsafe {
+            let typ = binding::ipset_type_get(self.session, cmd);
+            if typ.is_null() {
+                let (message, error) = self.error();
+                Err(Error::TypeGet(message, error))
             } else {
                 Ok(())
             }
@@ -155,14 +172,7 @@ impl<'a> Session<'a> {
         let addr = get_caddr(ip);
         let (ip, family) = addr.as_ptr();
         self.set_data(binding::ipset_opt_IPSET_OPT_FAMILY, family)?;
-
-        unsafe {
-            let typ = binding::ipset_type_get(self.session, binding::ipset_cmd_IPSET_CMD_TEST);
-            if typ.is_null() {
-                return Err(Error::TypeGet(self.error()));
-            }
-        }
-
+        self.get_type(cmd)?;
         self.set_data(binding::ipset_opt_IPSET_OPT_IP, ip)?;
 
         self.run_cmd(cmd)
@@ -204,11 +214,21 @@ impl<'a> Session<'a> {
             })
     }
 
-    pub fn list(&mut self, name: &str) -> Result<Vec<IpAddr>, Error> {
+    fn name_cmd(&mut self, name: &str, cmd: ipset_cmd) -> Result<bool, Error> {
         let name = CString::new(name).unwrap();
         self.set_data(binding::ipset_opt_IPSET_SETNAME, name.as_ptr() as _)?;
 
-        self.run_cmd(binding::ipset_cmd_IPSET_CMD_LIST)?;
+        self.run_cmd(cmd).map(|_| true).or_else(|err| {
+            if let Error::Cmd(_, false) = err {
+                Ok(false)
+            } else {
+                Err(err)
+            }
+        })
+    }
+
+    pub fn list(&mut self, name: &str) -> Result<Vec<IpAddr>, Error> {
+        self.name_cmd(name, binding::ipset_cmd_IPSET_CMD_LIST)?;
         if let Some(line) = self.set.output.get(0) {
             let ips: Vec<_> = line
                 .split("\n")
@@ -221,25 +241,80 @@ impl<'a> Session<'a> {
         }
     }
 
-    fn name_cmd(&mut self, name: &str, cmd: ipset_cmd) -> Result<bool, Error> {
-        let name = CString::new(name).unwrap();
-        self.set_data(binding::ipset_opt_IPSET_SETNAME, name.as_ptr() as _)?;
-
-        self.run_cmd(cmd).map(|_| true).or_else(|err| {
-            if err.cmd_contains("The set with the given name does not exist") {
-                Ok(false)
-            } else {
-                Err(err)
-            }
-        })
-    }
-
     pub fn flush(&mut self, name: &str) -> Result<bool, Error> {
         self.name_cmd(name, binding::ipset_cmd_IPSET_CMD_FLUSH)
     }
 
     pub fn destroy(&mut self, name: &str) -> Result<bool, Error> {
         self.name_cmd(name, binding::ipset_cmd_IPSET_CMD_DESTROY)
+    }
+
+    pub fn create<F>(&mut self, name: &str, typename: SetType, f: F) -> Result<bool, Error>
+    where
+        F: Fn(CreateBuilder) -> Result<(), Error>,
+    {
+        unsafe {
+            binding::ipset_data_reset(self.data);
+            let typename = typename.to_cstring();
+            self.set_data(ipset_opt_IPSET_OPT_TYPENAME, typename.as_ptr() as _)?;
+            self.get_type(ipset_cmd_IPSET_CMD_CREATE)?;
+        }
+        let builder = CreateBuilder { session: self };
+        f(builder)?;
+        self.name_cmd(name, binding::ipset_cmd_IPSET_CMD_CREATE)
+    }
+}
+
+pub struct CreateBuilder<'a, 'b> {
+    session: &'b Session<'a>,
+}
+
+impl<'a, 'b> CreateBuilder<'a, 'b> {
+    pub fn with_timeout(self, timeout: u32) -> Result<Self, Error> {
+        self.session
+            .set_data(ipset_opt_IPSET_OPT_TIMEOUT, &timeout as *const _ as _)?;
+        Ok(self)
+    }
+
+    pub fn with_counters(self, packets: Option<u64>, bytes: Option<u64>) -> Result<Self, Error> {
+        self.session
+            .set_data(ipset_opt_IPSET_OPT_COUNTERS, &1 as *const _ as _)?;
+        if let Some(packets) = packets {
+            self.session
+                .set_data(ipset_opt_IPSET_OPT_PACKETS, &packets as *const _ as _)?;
+        }
+        if let Some(bytes) = bytes {
+            self.session
+                .set_data(ipset_opt_IPSET_OPT_BYTES, &bytes as *const _ as _)?;
+        }
+        Ok(self)
+    }
+
+    pub fn with_hash_size(self, size: u32) -> Result<Self, Error> {
+        self.session
+            .set_data(ipset_opt_IPSET_OPT_HASHSIZE, &size as *const _ as _)?;
+        Ok(self)
+    }
+
+    pub fn with_max_elem(self, max: u32) -> Result<Self, Error> {
+        self.session
+            .set_data(ipset_opt_IPSET_OPT_MAXELEM, &max as *const _ as _)?;
+        Ok(self)
+    }
+
+    pub fn with_ipv6(self, ipv6: bool) -> Result<Self, Error> {
+        let value = if ipv6 {
+            binding::NFPROTO_IPV6
+        } else {
+            binding::NFPROTO_IPV4
+        };
+        self.session
+            .set_data(ipset_opt_IPSET_OPT_FAMILY, &value as *const _ as _)?;
+        Ok(self)
+    }
+
+    pub fn build(self) -> Result<(), Error> {
+        Ok(())
     }
 }
 
@@ -249,6 +324,20 @@ impl Drop for IPSet {
             if !self.set.is_null() {
                 binding::ipset_fini(self.set);
             }
+        }
+    }
+}
+
+pub enum SetType {
+    HashIp,
+    HashNet,
+}
+
+impl SetType {
+    fn to_cstring(&self) -> CString {
+        match self {
+            SetType::HashIp => CString::new("hash:ip").unwrap(),
+            SetType::HashNet => CString::new("hash:net").unwrap(),
         }
     }
 }

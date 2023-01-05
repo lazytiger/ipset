@@ -1,7 +1,14 @@
+use ipset::SetType;
+
 fn main() {
     let mut ipset = ipset::IPSet::new();
     let mut session = ipset.session();
-    session.flush("test").unwrap();
+    let ret = session
+        .create("test", SetType::HashIp, |builder| {
+            builder.with_ipv6(false)?.with_hash_size(1024)?.build()
+        })
+        .unwrap();
+    println!("create {}", ret);
     let ip = "192.168.3.2".parse().unwrap();
     let ret = session.add("test", ip).unwrap();
     println!("add {} return {}", ip, ret);
@@ -26,5 +33,7 @@ fn main() {
     for ip in ips {
         println!("after flush:{}", ip);
     }
-    session.flush("abc").unwrap();
+
+    let ret = session.destroy("test").unwrap();
+    println!("destroy {}", ret);
 }
