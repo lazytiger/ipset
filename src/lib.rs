@@ -51,7 +51,7 @@
 //! ```
 #![feature(c_variadic)]
 
-pub use session::Session;
+pub use session::{CreateBuilder, Session};
 pub use types::{Error, SetType};
 
 #[allow(non_camel_case_types)]
