@@ -18,7 +18,7 @@ jobs:
       - uses: actions/checkout@v3
       - name: Install Dependencies
         run: |
-          apt-get install libipset-dev
+          sudo apt-get install libipset-dev
       - name: Build
         run: cargo build --verbose
       - name: Run tests
