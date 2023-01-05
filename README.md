@@ -1,5 +1,10 @@
 ## IPSet
 
+[![Build Status](https://github.com/lazytiger/ipset/actions/workflows/rust.yml/badge.svg)](https://github.com/lazytiger/ipset/actions)
+[![GitHub issues](https://img.shields.io/github/issues/lazytiger/ipset)](https://github.com/lazytiger/ipset/issues)
+[![GitHub license](https://img.shields.io/github/license/lazytiger/ipset)](https://github.com/lazytiger/ipset/blob/master/LICENSE)
+[![Releases](https://img.shields.io/github/v/release/lazytiger/ipset.svg?include_prereleases)](https://github.com/lazytiger/ipset/releases)
+
 A library wrapper for `libipset`.  
 Support the following commands:
 
