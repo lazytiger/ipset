@@ -1,5 +1,5 @@
 //! A library wrapper for `libipset`.  
-//! Support following commands:
+//! Support the following commands:
 //! * add
 //! * del
 //! * test
@@ -7,6 +7,10 @@
 //! * list
 //! * destroy
 //! * flush
+//!
+//! Support the following type:
+//! * hash:ip
+//! * hash:net not fully supported
 //!
 //! # Example
 //! ```rust
