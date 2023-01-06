@@ -301,3 +301,7 @@ impl Drop for Session {
         }
     }
 }
+
+unsafe impl Sync for Session {}
+
+unsafe impl Send for Session {}
