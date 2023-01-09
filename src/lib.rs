@@ -54,6 +54,11 @@
 pub use session::{CreateBuilder, Session};
 pub use types::{Error, SetType};
 
+use crate::types::{HashIp, HashNet};
+
+pub type SessionHashIp = Session<HashIp>;
+pub type SessionHashNet = Session<HashNet>;
+
 #[allow(non_camel_case_types)]
 #[allow(unused)]
 #[allow(non_upper_case_globals)]

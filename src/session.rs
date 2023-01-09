@@ -1,8 +1,9 @@
 use std::ffi::{CStr, CString};
+use std::marker::PhantomData;
 use std::net::IpAddr;
 
 use crate::binding;
-use crate::types::{self, Error, SetType};
+use crate::types::{Error, IpDataType, NetDataType, SetData, SetType, ToCString, TypeName};
 
 /// output function required by libipset to get list output.
 #[no_mangle]
@@ -18,24 +19,26 @@ pub unsafe extern "C" fn outfn(
     if len == 0 {
         return 0;
     }
-    let session = (p as *mut Session).as_mut().unwrap();
-    session.output.push(data.to_string_lossy().to_string());
+    let output = (p as *mut Vec<String>).as_mut().unwrap();
+    output.push(data.to_string_lossy().to_string());
     0
 }
 
 /// This is the main entry for all the operation. I just ignore the ipset struct
 /// because all the operation are performed by session. The `output` field is used
 /// for collecting data for commands like `list`. It is a field for safety.
-pub struct Session {
+pub struct Session<T: SetType> {
+    name: String,
     session: *mut binding::ipset_session,
     data: *mut binding::ipset_data,
     set: *mut binding::ipset,
     output: Vec<String>,
+    _phantom: PhantomData<T>,
 }
 
-impl Session {
+impl<T: SetType> Session<T> {
     /// load ipset types, initialize ipset, prepare session and data.
-    pub fn new() -> Session {
+    pub fn new(name: String) -> Session<T> {
         unsafe {
             binding::ipset_load_types();
             let set = binding::ipset_init();
@@ -45,12 +48,14 @@ impl Session {
                 session,
                 data,
                 set,
+                name,
                 output: Default::default(),
+                _phantom: Default::default(),
             }
         }
     }
 
-    fn set_data(
+    pub(crate) fn set_data(
         &self,
         opt: binding::ipset_opt,
         value: *const std::ffi::c_void,
@@ -102,22 +107,19 @@ impl Session {
     }
 
     /// Run all the ip related commands, like add/del/test
-    fn ip_cmd(&mut self, name: &str, ip: IpAddr, cmd: binding::ipset_cmd) -> Result<(), Error> {
-        let name = CString::new(name).unwrap();
+    fn data_cmd(&mut self, data: T::DataType, cmd: binding::ipset_cmd) -> Result<(), Error> {
+        let name = CString::new(self.name.as_str()).unwrap();
         self.set_data(binding::ipset_opt_IPSET_SETNAME, name.as_ptr() as _)?;
 
-        let addr = types::get_caddr(ip);
-        let (ip, family) = addr.as_ptr();
-        self.set_data(binding::ipset_opt_IPSET_OPT_FAMILY, family)?;
+        data.set_data(self)?;
         self.get_type(cmd)?;
-        self.set_data(binding::ipset_opt_IPSET_OPT_IP, ip)?;
 
         self.run_cmd(cmd)
     }
 
     /// Test if `ip` is in ipset `name`
-    pub fn test(&mut self, name: &str, ip: IpAddr) -> Result<bool, Error> {
-        self.ip_cmd(name, ip, binding::ipset_cmd_IPSET_CMD_TEST)
+    pub fn test(&mut self, data: impl Into<T::DataType>) -> Result<bool, Error> {
+        self.data_cmd(data.into(), binding::ipset_cmd_IPSET_CMD_TEST)
             .map(|_| true)
             .or_else(|err| {
                 if err.cmd_contains(" is NOT in set test") {
@@ -129,8 +131,8 @@ impl Session {
     }
 
     /// Add `ip` into ipset `name`
-    pub fn add(&mut self, name: &str, ip: IpAddr) -> Result<bool, Error> {
-        self.ip_cmd(name, ip, binding::ipset_cmd_IPSET_CMD_ADD)
+    pub fn add(&mut self, data: impl Into<T::DataType>) -> Result<bool, Error> {
+        self.data_cmd(data.into(), binding::ipset_cmd_IPSET_CMD_ADD)
             .map(|_| true)
             .or_else(|err| {
                 if err.cmd_contains("Element cannot be added to the set: it's already added") {
@@ -142,8 +144,8 @@ impl Session {
     }
 
     /// Delete `ip` from ipset `name`
-    pub fn del(&mut self, name: &str, ip: IpAddr) -> Result<bool, Error> {
-        self.ip_cmd(name, ip, binding::ipset_cmd_IPSET_CMD_DEL)
+    pub fn del(&mut self, ip: impl Into<T::DataType>) -> Result<bool, Error> {
+        self.data_cmd(ip.into(), binding::ipset_cmd_IPSET_CMD_DEL)
             .map(|_| true)
             .or_else(|err| {
                 if err.cmd_contains("Element cannot be deleted from the set: it's not added") {
@@ -155,8 +157,8 @@ impl Session {
     }
 
     /// Run all the name only related command like flush/list/destroy
-    fn name_cmd(&mut self, name: &str, cmd: binding::ipset_cmd) -> Result<bool, Error> {
-        let name = CString::new(name).unwrap();
+    fn name_cmd(&mut self, cmd: binding::ipset_cmd) -> Result<bool, Error> {
+        let name = CString::new(self.name.as_str()).unwrap();
         self.set_data(binding::ipset_opt_IPSET_SETNAME, name.as_ptr() as _)?;
 
         self.run_cmd(cmd).map(|_| true).or_else(|err| {
@@ -169,11 +171,17 @@ impl Session {
     }
 
     /// List all the ips in ipset `name`
-    pub fn list(&mut self, name: &str) -> Result<Vec<IpAddr>, Error> {
+    pub fn list(&mut self) -> Result<Vec<IpAddr>, Error> {
         unsafe {
-            binding::ipset_custom_printf(self.set, None, None, Some(outfn), self as *mut _ as _);
+            binding::ipset_custom_printf(
+                self.set,
+                None,
+                None,
+                Some(outfn),
+                &mut self.output as *mut _ as _,
+            );
         }
-        self.name_cmd(name, binding::ipset_cmd_IPSET_CMD_LIST)?;
+        self.name_cmd(binding::ipset_cmd_IPSET_CMD_LIST)?;
         if let Some(line) = self.output.get(0) {
             let ips: Vec<_> = line
                 .split("\n")
@@ -187,23 +195,26 @@ impl Session {
     }
 
     /// Clear all the content in ipset `name`
-    pub fn flush(&mut self, name: &str) -> Result<bool, Error> {
-        self.name_cmd(name, binding::ipset_cmd_IPSET_CMD_FLUSH)
+    pub fn flush(&mut self) -> Result<bool, Error> {
+        self.name_cmd(binding::ipset_cmd_IPSET_CMD_FLUSH)
     }
 
     /// Destroy the ipset `name`
-    pub fn destroy(&mut self, name: &str) -> Result<bool, Error> {
-        self.name_cmd(name, binding::ipset_cmd_IPSET_CMD_DESTROY)
+    pub fn destroy(&mut self) -> Result<bool, Error> {
+        self.name_cmd(binding::ipset_cmd_IPSET_CMD_DESTROY)
     }
 
     /// Create a ipset `name` with type `typename` and more configuration using `f`
-    pub fn create<F>(&mut self, name: &str, typename: SetType, f: F) -> Result<bool, Error>
+    pub fn create<F>(&mut self, f: F) -> Result<bool, Error>
     where
-        F: Fn(CreateBuilder) -> Result<(), Error>,
+        F: Fn(CreateBuilder<T>) -> Result<(), Error>,
+        T: SetType,
+        T::Method: TypeName,
+        T::DataType: TypeName,
     {
         unsafe {
             binding::ipset_data_reset(self.data);
-            let typename = typename.to_cstring();
+            let typename = T::to_cstring();
             self.set_data(
                 binding::ipset_opt_IPSET_OPT_TYPENAME,
                 typename.as_ptr() as _,
@@ -212,16 +223,20 @@ impl Session {
         }
         let builder = CreateBuilder { session: self };
         f(builder)?;
-        self.name_cmd(name, binding::ipset_cmd_IPSET_CMD_CREATE)
+        self.name_cmd(binding::ipset_cmd_IPSET_CMD_CREATE)
     }
 }
 
+impl<T: SetType<DataType = IpDataType>> Session<T> {}
+
+impl<T: SetType<DataType = NetDataType>> Session<T> {}
+
 /// Helper for creating a ipset
-pub struct CreateBuilder<'a> {
-    session: &'a Session,
+pub struct CreateBuilder<'a, T: SetType> {
+    session: &'a Session<T>,
 }
 
-impl<'a> CreateBuilder<'a> {
+impl<'a, T: SetType> CreateBuilder<'a, T> {
     /// All  set types supports the optional timeout parameter when creating a set and adding entries.
     /// The value of the timeout parameter for the create command means the default timeout value (in seconds) for new entries.
     /// If a set is created with timeout support, then the same timeout option can  be  used  to  specify  non-default
@@ -292,7 +307,7 @@ impl<'a> CreateBuilder<'a> {
     }
 }
 
-impl Drop for Session {
+impl<T: SetType> Drop for Session<T> {
     fn drop(&mut self) {
         unsafe {
             if !self.set.is_null() {
@@ -302,6 +317,6 @@ impl Drop for Session {
     }
 }
 
-unsafe impl Sync for Session {}
+unsafe impl<T: SetType> Sync for Session<T> {}
 
-unsafe impl Send for Session {}
+unsafe impl<T: SetType> Send for Session<T> {}

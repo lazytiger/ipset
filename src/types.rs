@@ -1,60 +1,281 @@
 use std::ffi::CString;
-use std::net::IpAddr;
+use std::fmt::{Display, Formatter};
+use std::net::{AddrParseError, IpAddr};
+use std::num::ParseIntError;
 
-use crate::binding;
+use derive_more::From;
 
-/// All the supported ipset types.
-/// TODO hash:net is not fully supported now.
-pub enum SetType {
-    HashIp,
-    HashNet,
-}
+use crate::{binding, Session};
 
-impl SetType {
-    /// get string name
-    pub(crate) fn to_cstring(&self) -> CString {
-        match self {
-            SetType::HashIp => CString::new("hash:ip").unwrap(),
-            SetType::HashNet => CString::new("hash:net").unwrap(),
-        }
-    }
-}
+/// list method
+pub struct ListMethod;
 
+/// bitmap method
+pub struct BitmapMethod;
+
+/// hash method
+pub struct HashMethod;
+
+/// ip data type
 /// Ip wrapper including ipv4 and ipv6
-pub enum CIpAddr {
+pub enum IpType {
     IPv4(libc::in_addr),
     IPv6(libc::in6_addr),
 }
 
-impl CIpAddr {
+pub struct IpDataType {
+    ip1: IpAddr,
+    ip2: IpType,
+}
+
+impl<T: SetType> SetData<T> for IpDataType {
     /// get ip address pointer and ip family pointer.
-    pub fn as_ptr(&self) -> (*const std::ffi::c_void, *const std::ffi::c_void) {
-        match self {
-            CIpAddr::IPv4(ip) => (ip as *const _ as _, &binding::NFPROTO_IPV4 as *const _ as _),
-            CIpAddr::IPv6(ip) => (ip as *const _ as _, &binding::NFPROTO_IPV6 as *const _ as _),
+    fn set_data(&self, session: &Session<T>) -> Result<(), Error> {
+        let (ip, family) = match &self.ip2 {
+            IpType::IPv4(ip) => (ip as *const _ as _, &binding::NFPROTO_IPV4 as *const _ as _),
+            IpType::IPv6(ip) => (ip as *const _ as _, &binding::NFPROTO_IPV6 as *const _ as _),
+        };
+        session.set_data(binding::ipset_opt_IPSET_OPT_IP, ip)?;
+        session.set_data(binding::ipset_opt_IPSET_OPT_FAMILY, family)
+    }
+}
+
+impl IpDataType {
+    pub fn family(&self) -> *const std::ffi::c_void {
+        match self.ip2 {
+            IpType::IPv4(_) => &binding::NFPROTO_IPV4 as *const _ as _,
+            IpType::IPv6(_) => &binding::NFPROTO_IPV6 as *const _ as _,
         }
     }
 }
 
-/// create a `CIpAddr` from `IpAddr`
-pub(crate) fn get_caddr(ip: IpAddr) -> CIpAddr {
-    match ip {
-        IpAddr::V4(v4) => {
-            let ip: u32 = v4.into();
-            CIpAddr::IPv4(libc::in_addr { s_addr: ip.to_be() })
+impl Parse for IpDataType {
+    fn parse(&mut self, s: &str) -> Result<(), Error> {
+        let ip: IpAddr = s.parse()?;
+        *self = ip.into();
+        Ok(())
+    }
+}
+
+impl From<IpAddr> for IpDataType {
+    fn from(ip: IpAddr) -> Self {
+        let ip2 = match ip {
+            IpAddr::V4(v4) => {
+                let ip: u32 = v4.into();
+                IpType::IPv4(libc::in_addr { s_addr: ip.to_be() })
+            }
+            IpAddr::V6(v6) => IpType::IPv6(libc::in6_addr {
+                s6_addr: v6.octets(),
+            }),
+        };
+        IpDataType { ip1: ip, ip2 }
+    }
+}
+
+impl From<IpDataType> for IpAddr {
+    fn from(value: IpDataType) -> Self {
+        value.ip1
+    }
+}
+
+/// net data type
+pub struct NetDataType {
+    ip: IpDataType,
+    cidr: u8,
+}
+
+impl<T: SetType> SetData<T> for NetDataType {
+    fn set_data(&self, session: &Session<T>) -> Result<(), Error> {
+        self.ip.set_data(session)?;
+        session.set_data(
+            binding::ipset_opt_IPSET_OPT_CIDR,
+            &self.cidr as *const _ as _,
+        )
+    }
+}
+
+impl Parse for NetDataType {
+    fn parse(&mut self, s: &str) -> Result<(), Error> {
+        let mut ss = s.split("/");
+        let ip = ss.next();
+        let cidr = ss.next();
+        if ip.is_none() || cidr.is_none() {
+            return Err(Error::InvalidOutput(s.into()));
         }
-        IpAddr::V6(v6) => CIpAddr::IPv6(libc::in6_addr {
-            s6_addr: v6.octets(),
-        }),
+
+        let ip = ip.unwrap();
+        let cidr = cidr.unwrap();
+
+        let ip: IpAddr = ip.parse()?;
+        let cidr: u8 = cidr.parse()?;
+
+        self.ip = ip.into();
+        self.cidr = cidr;
+        Ok(())
+    }
+}
+
+impl Display for NetDataType {
+    fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
+        write!(f, "{}/{}", self.ip.ip1, self.cidr)
+    }
+}
+
+/// mac data type
+pub struct MacDataType {
+    mac: [u8; 6],
+}
+
+impl<T: SetType> SetData<T> for MacDataType {
+    fn set_data(&self, session: &Session<T>) -> Result<(), Error> {
+        session.set_data(binding::ipset_opt_IPSET_OPT_ETHER, self.mac.as_ptr() as _)
+    }
+}
+
+/// port data type
+pub struct PortDataType {
+    port: u16,
+}
+
+impl<T: SetType> SetData<T> for PortDataType {
+    fn set_data(&self, session: &Session<T>) -> Result<(), Error> {
+        session.set_data(
+            binding::ipset_opt_IPSET_OPT_PORT,
+            &self.port as *const _ as _,
+        )
+    }
+}
+
+/// iface data type
+pub struct IfaceDataType {
+    name: CString,
+}
+
+impl<T: SetType> SetData<T> for IfaceDataType {
+    fn set_data(&self, session: &Session<T>) -> Result<(), Error> {
+        session.set_data(binding::ipset_opt_IPSET_OPT_IFACE, self.name.as_ptr() as _)
+    }
+}
+
+macro_rules! impl_name {
+    ($($types:ident),+) => {
+        impl<$($types,)+> TypeName for ($($types),+)
+            where $($types:TypeName),+ {
+            fn name() -> String {
+                [$($types::name(),)+].join(",")
+            }
+        }
+    };
+
+    ($ty:ty, $name:expr) => {
+        impl TypeName for $ty {
+            fn name() -> String {
+                $name.into()
+            }
+        }
+    }
+}
+
+impl_name!(ListMethod, "list");
+impl_name!(BitmapMethod, "bitmap");
+impl_name!(HashMethod, "hash");
+impl_name!(IpDataType, "ip");
+impl_name!(NetDataType, "net");
+impl_name!(MacDataType, "mac");
+impl_name!(PortDataType, "port");
+impl_name!(IfaceDataType, "iface");
+impl_name!(A, B);
+impl_name!(A, B, C);
+
+macro_rules! impl_set_data {
+    ($($types:ident),+) => {
+        #[allow(non_snake_case)]
+        impl<T, $($types),+> SetData<T> for ($($types),+)
+            where T:SetType,
+                $($types:SetData<T>),+ {
+            fn set_data(&self, session:&Session<T>) -> Result<(), Error> {
+                let ($($types),+) = self;
+                $($types.set_data(session)?;)+
+                Ok(())
+            }
+        }
+    };
+}
+
+impl_set_data!(A, B);
+impl_set_data!(A, B, C);
+
+macro_rules! impl_parse {
+   ($($types:ident),+) => {
+       #[allow(non_snake_case)]
+       impl<$($types),+> Parse for ($($types),+)
+            where  $($types:Parse),+ {
+            fn parse(&mut self, s:&str) -> Result<(), Error> {
+                let ($($types),+) = self;
+                let mut ss = s.split(",");
+                $(
+                    if let Some(item) = ss.next() {
+                        $types.parse(item)?;
+                    } else {
+                        return Err(Error::InvalidOutput(s.into()));
+                    };
+                )+
+                Ok(())
+            }
+        }
+    };
+}
+
+impl_parse!(A, B);
+impl_parse!(A, B, C);
+
+/// All the supported ipset types.
+/// TODO hash:net is not fully supported now.
+pub trait SetType: Sized {
+    type Method;
+    type DataType: SetData<Self> + Parse;
+}
+
+pub trait TypeName {
+    fn name() -> String;
+}
+
+pub trait SetData<T: SetType> {
+    fn set_data(&self, session: &Session<T>) -> Result<(), Error>;
+}
+
+pub trait Parse {
+    fn parse(&mut self, s: &str) -> Result<(), Error>;
+}
+
+pub trait ToCString {
+    fn to_cstring() -> CString;
+}
+
+impl<T> ToCString for T
+where
+    T: SetType,
+    T::Method: TypeName,
+    T::DataType: TypeName,
+{
+    fn to_cstring() -> CString {
+        CString::new([T::Method::name(), T::DataType::name()].join(":")).unwrap()
     }
 }
 
 /// Errors defined in this crate.
-#[derive(Debug)]
+#[derive(Debug, From)]
 pub enum Error {
+    #[from(ignore)]
     DataSet(String, bool),
+    #[from(ignore)]
     Cmd(String, bool),
+    #[from(ignore)]
     TypeGet(String, bool),
+    #[from(ignore)]
+    InvalidOutput(String),
+    AddrParse(AddrParseError),
+    ParseInt(ParseIntError),
 }
 
 impl Error {
@@ -71,6 +292,21 @@ impl Error {
             Error::DataSet(_, error) => *error,
             Error::Cmd(_, error) => *error,
             Error::TypeGet(_, error) => *error,
+            _ => false,
         }
     }
+}
+
+pub struct HashIp;
+
+impl SetType for HashIp {
+    type Method = HashMethod;
+    type DataType = IpDataType;
+}
+
+pub struct HashNet;
+
+impl SetType for HashNet {
+    type Method = HashMethod;
+    type DataType = NetDataType;
 }

@@ -10,3 +10,4 @@ repository = "https://github.com/lazytiger/ipset"
 
 [dependencies]
 libc = "0.2"
+derive_more = "0.99"
