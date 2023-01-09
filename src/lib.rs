@@ -50,6 +50,7 @@
 //! }
 //! ```
 #![feature(c_variadic)]
+#![feature(concat_idents)]
 
 pub use session::{CreateBuilder, Session};
 pub use types::{Error, SetType};

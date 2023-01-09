@@ -126,6 +126,12 @@ pub struct MacDataType {
     mac: [u8; 6],
 }
 
+impl Parse for MacDataType {
+    fn parse(&mut self, s: &str) -> Result<(), Error> {
+        todo!()
+    }
+}
+
 impl<T: SetType> SetData<T> for MacDataType {
     fn set_data(&self, session: &Session<T>) -> Result<(), Error> {
         session.set_data(binding::ipset_opt_IPSET_OPT_ETHER, self.mac.as_ptr() as _)
@@ -146,14 +152,58 @@ impl<T: SetType> SetData<T> for PortDataType {
     }
 }
 
+impl Parse for PortDataType {
+    fn parse(&mut self, s: &str) -> Result<(), Error> {
+        todo!()
+    }
+}
+
 /// iface data type
 pub struct IfaceDataType {
     name: CString,
 }
 
+impl Parse for IfaceDataType {
+    fn parse(&mut self, s: &str) -> Result<(), Error> {
+        todo!()
+    }
+}
+
 impl<T: SetType> SetData<T> for IfaceDataType {
     fn set_data(&self, session: &Session<T>) -> Result<(), Error> {
         session.set_data(binding::ipset_opt_IPSET_OPT_IFACE, self.name.as_ptr() as _)
+    }
+}
+
+pub struct MarkDataType {
+    mark: u32,
+}
+
+impl Parse for MarkDataType {
+    fn parse(&mut self, s: &str) -> Result<(), Error> {
+        todo!()
+    }
+}
+
+impl<T: SetType> SetData<T> for MarkDataType {
+    fn set_data(&self, session: &Session<T>) -> Result<(), Error> {
+        todo!()
+    }
+}
+
+pub struct SetDataType {
+    name: CString,
+}
+
+impl Parse for SetDataType {
+    fn parse(&mut self, s: &str) -> Result<(), Error> {
+        todo!()
+    }
+}
+
+impl<T: SetType> SetData<T> for SetDataType {
+    fn set_data(&self, session: &Session<T>) -> Result<(), Error> {
+        todo!()
     }
 }
 
@@ -297,16 +347,29 @@ impl Error {
     }
 }
 
-pub struct HashIp;
-
-impl SetType for HashIp {
-    type Method = HashMethod;
-    type DataType = IpDataType;
+macro_rules! impl_set_type {
+    ($name:ident, $method:ident, $($types:ident),+) => {
+        pub struct $name;
+        impl SetType for concat_idents!($method, $($types),+) {
+            type Method = concat_idents!($method, Method);
+            type DataType = ($(concat_idents!($types, DataType)),+);
+        }
+    }
 }
 
-pub struct HashNet;
-
-impl SetType for HashNet {
-    type Method = HashMethod;
-    type DataType = NetDataType;
-}
+impl_set_type!(BitmapIp, Bitmap, Ip);
+impl_set_type!(BitmapIpMac, Bitmap, Ip, Mac);
+impl_set_type!(BitmapPort, Bitmap, Port);
+impl_set_type!(HashIp, Hash, Ip);
+impl_set_type!(HashMac, Hash, Mac);
+impl_set_type!(HashIpMac, Hash, Ip, Mac);
+impl_set_type!(HashNet, Hash, Net);
+impl_set_type!(HashNetNet, Hash, Net, Net);
+impl_set_type!(HashIpPort, Hash, Ip, Port);
+impl_set_type!(HashNetPort, Hash, Net, Port);
+impl_set_type!(HashIpPortIp, Hash, Ip, Port, Ip);
+impl_set_type!(HashIpPortNet, Hash, Ip, Port, Net);
+impl_set_type!(HashIpMark, Hash, Ip, Mark);
+impl_set_type!(HashNetPortNet, Hash, Net, Port, Net);
+impl_set_type!(HashNetIface, Hash, Net, Iface);
+impl_set_type!(ListSet, List, Set);
