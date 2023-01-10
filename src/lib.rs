@@ -53,12 +53,13 @@
 #![feature(concat_idents)]
 
 pub use session::{CreateBuilder, Session};
-pub use types::{Error, SetType};
+pub use types::Error;
 
-use crate::types::{HashIp, HashNet};
-
-pub type SessionHashIp = Session<HashIp>;
-pub type SessionHashNet = Session<HashNet>;
+pub use crate::types::{
+    BitmapIp, BitmapIpMac, BitmapPort, HashIp, HashIpMac, HashIpMark, HashIpPort, HashIpPortIp,
+    HashIpPortNet, HashMac, HashNet, HashNetIface, HashNetNet, HashNetPort, HashNetPortNet,
+    ListSet,
+};
 
 #[allow(non_camel_case_types)]
 #[allow(unused)]

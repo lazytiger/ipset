@@ -1,4 +1,4 @@
-use std::ffi::CString;
+use std::ffi::{CString, NulError};
 use std::fmt::{Display, Formatter};
 use std::net::{AddrParseError, IpAddr};
 use std::num::ParseIntError;
@@ -18,34 +18,20 @@ pub struct HashMethod;
 
 /// ip data type
 /// Ip wrapper including ipv4 and ipv6
-pub enum IpType {
+pub enum IpDataType {
     IPv4(libc::in_addr),
     IPv6(libc::in6_addr),
-}
-
-pub struct IpDataType {
-    ip1: IpAddr,
-    ip2: IpType,
 }
 
 impl<T: SetType> SetData<T> for IpDataType {
     /// get ip address pointer and ip family pointer.
     fn set_data(&self, session: &Session<T>) -> Result<(), Error> {
-        let (ip, family) = match &self.ip2 {
-            IpType::IPv4(ip) => (ip as *const _ as _, &binding::NFPROTO_IPV4 as *const _ as _),
-            IpType::IPv6(ip) => (ip as *const _ as _, &binding::NFPROTO_IPV6 as *const _ as _),
+        let (ip, family) = match self {
+            IpDataType::IPv4(ip) => (ip as *const _ as _, &binding::NFPROTO_IPV4 as *const _ as _),
+            IpDataType::IPv6(ip) => (ip as *const _ as _, &binding::NFPROTO_IPV6 as *const _ as _),
         };
         session.set_data(binding::ipset_opt_IPSET_OPT_IP, ip)?;
         session.set_data(binding::ipset_opt_IPSET_OPT_FAMILY, family)
-    }
-}
-
-impl IpDataType {
-    pub fn family(&self) -> *const std::ffi::c_void {
-        match self.ip2 {
-            IpType::IPv4(_) => &binding::NFPROTO_IPV4 as *const _ as _,
-            IpType::IPv6(_) => &binding::NFPROTO_IPV6 as *const _ as _,
-        }
     }
 }
 
@@ -59,22 +45,31 @@ impl Parse for IpDataType {
 
 impl From<IpAddr> for IpDataType {
     fn from(ip: IpAddr) -> Self {
-        let ip2 = match ip {
+        match ip {
             IpAddr::V4(v4) => {
                 let ip: u32 = v4.into();
-                IpType::IPv4(libc::in_addr { s_addr: ip.to_be() })
+                IpDataType::IPv4(libc::in_addr { s_addr: ip.to_be() })
             }
-            IpAddr::V6(v6) => IpType::IPv6(libc::in6_addr {
+            IpAddr::V6(v6) => IpDataType::IPv6(libc::in6_addr {
                 s6_addr: v6.octets(),
             }),
-        };
-        IpDataType { ip1: ip, ip2 }
+        }
     }
 }
 
-impl From<IpDataType> for IpAddr {
-    fn from(value: IpDataType) -> Self {
-        value.ip1
+impl From<&IpDataType> for IpAddr {
+    fn from(value: &IpDataType) -> Self {
+        match value {
+            IpDataType::IPv4(ip) => IpAddr::from(ip.s_addr.to_be_bytes()),
+            IpDataType::IPv6(ip) => IpAddr::from(ip.s6_addr),
+        }
+    }
+}
+
+impl Display for IpDataType {
+    fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
+        let ip: IpAddr = self.into();
+        write!(f, "{}", ip)
     }
 }
 
@@ -117,7 +112,7 @@ impl Parse for NetDataType {
 
 impl Display for NetDataType {
     fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
-        write!(f, "{}/{}", self.ip.ip1, self.cidr)
+        write!(f, "{}/{}", self.ip, self.cidr)
     }
 }
 
@@ -128,13 +123,26 @@ pub struct MacDataType {
 
 impl Parse for MacDataType {
     fn parse(&mut self, s: &str) -> Result<(), Error> {
-        todo!()
+        let mac: Vec<u8> = s.split(":").filter_map(|s| s.parse::<u8>().ok()).collect();
+        if mac.len() != 6 {
+            Err(Error::InvalidOutput(s.into()))
+        } else {
+            self.mac.copy_from_slice(mac.as_slice());
+            Ok(())
+        }
     }
 }
 
 impl<T: SetType> SetData<T> for MacDataType {
     fn set_data(&self, session: &Session<T>) -> Result<(), Error> {
         session.set_data(binding::ipset_opt_IPSET_OPT_ETHER, self.mac.as_ptr() as _)
+    }
+}
+
+impl Display for MacDataType {
+    fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
+        let data = self.mac.map(|d| format!("{:02x}", d)).join(":");
+        write!(f, "{}", data)
     }
 }
 
@@ -154,7 +162,14 @@ impl<T: SetType> SetData<T> for PortDataType {
 
 impl Parse for PortDataType {
     fn parse(&mut self, s: &str) -> Result<(), Error> {
-        todo!()
+        self.port = s.parse()?;
+        Ok(())
+    }
+}
+
+impl Display for PortDataType {
+    fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
+        write!(f, "{}", self.port)
     }
 }
 
@@ -165,7 +180,8 @@ pub struct IfaceDataType {
 
 impl Parse for IfaceDataType {
     fn parse(&mut self, s: &str) -> Result<(), Error> {
-        todo!()
+        self.name = CString::new(s)?;
+        Ok(())
     }
 }
 
@@ -175,19 +191,35 @@ impl<T: SetType> SetData<T> for IfaceDataType {
     }
 }
 
+impl Display for IfaceDataType {
+    fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
+        write!(f, "{}", self.name.to_string_lossy())
+    }
+}
+
 pub struct MarkDataType {
     mark: u32,
 }
 
 impl Parse for MarkDataType {
     fn parse(&mut self, s: &str) -> Result<(), Error> {
-        todo!()
+        self.mark = s.parse()?;
+        Ok(())
     }
 }
 
 impl<T: SetType> SetData<T> for MarkDataType {
     fn set_data(&self, session: &Session<T>) -> Result<(), Error> {
-        todo!()
+        session.set_data(
+            binding::ipset_opt_IPSET_OPT_MARK,
+            &self.mark as *const _ as _,
+        )
+    }
+}
+
+impl Display for MarkDataType {
+    fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
+        write!(f, "{}", self.mark)
     }
 }
 
@@ -197,13 +229,20 @@ pub struct SetDataType {
 
 impl Parse for SetDataType {
     fn parse(&mut self, s: &str) -> Result<(), Error> {
-        todo!()
+        self.name = CString::new(s)?;
+        Ok(())
     }
 }
 
 impl<T: SetType> SetData<T> for SetDataType {
     fn set_data(&self, session: &Session<T>) -> Result<(), Error> {
-        todo!()
+        session.set_data(binding::ipset_opt_IPSET_OPT_NAME, self.name.as_ptr() as _)
+    }
+}
+
+impl Display for SetDataType {
+    fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
+        write!(f, "{}", self.name.to_string_lossy())
     }
 }
 
@@ -326,6 +365,7 @@ pub enum Error {
     InvalidOutput(String),
     AddrParse(AddrParseError),
     ParseInt(ParseIntError),
+    Nul(NulError),
 }
 
 impl Error {
@@ -350,7 +390,8 @@ impl Error {
 macro_rules! impl_set_type {
     ($name:ident, $method:ident, $($types:ident),+) => {
         pub struct $name;
-        impl SetType for concat_idents!($method, $($types),+) {
+        #[allow(unused_parens)]
+        impl SetType for $name {
             type Method = concat_idents!($method, Method);
             type DataType = ($(concat_idents!($types, DataType)),+);
         }

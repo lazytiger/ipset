@@ -3,7 +3,7 @@ use std::marker::PhantomData;
 use std::net::IpAddr;
 
 use crate::binding;
-use crate::types::{Error, IpDataType, NetDataType, SetData, SetType, ToCString, TypeName};
+use crate::types::{Error, SetData, SetType, ToCString, TypeName};
 
 /// output function required by libipset to get list output.
 #[no_mangle]
@@ -28,7 +28,7 @@ pub unsafe extern "C" fn outfn(
 /// because all the operation are performed by session. The `output` field is used
 /// for collecting data for commands like `list`. It is a field for safety.
 pub struct Session<T: SetType> {
-    name: String,
+    name: CString,
     session: *mut binding::ipset_session,
     data: *mut binding::ipset_data,
     set: *mut binding::ipset,
@@ -48,7 +48,7 @@ impl<T: SetType> Session<T> {
                 session,
                 data,
                 set,
-                name,
+                name: CString::new(name).unwrap(),
                 output: Default::default(),
                 _phantom: Default::default(),
             }
@@ -108,12 +108,9 @@ impl<T: SetType> Session<T> {
 
     /// Run all the ip related commands, like add/del/test
     fn data_cmd(&mut self, data: T::DataType, cmd: binding::ipset_cmd) -> Result<(), Error> {
-        let name = CString::new(self.name.as_str()).unwrap();
-        self.set_data(binding::ipset_opt_IPSET_SETNAME, name.as_ptr() as _)?;
-
+        self.set_data(binding::ipset_opt_IPSET_SETNAME, self.name.as_ptr() as _)?;
         data.set_data(self)?;
         self.get_type(cmd)?;
-
         self.run_cmd(cmd)
     }
 
@@ -158,8 +155,7 @@ impl<T: SetType> Session<T> {
 
     /// Run all the name only related command like flush/list/destroy
     fn name_cmd(&mut self, cmd: binding::ipset_cmd) -> Result<bool, Error> {
-        let name = CString::new(self.name.as_str()).unwrap();
-        self.set_data(binding::ipset_opt_IPSET_SETNAME, name.as_ptr() as _)?;
+        self.set_data(binding::ipset_opt_IPSET_SETNAME, self.name.as_ptr() as _)?;
 
         self.run_cmd(cmd).map(|_| true).or_else(|err| {
             if let Error::Cmd(_, false) = err {
@@ -226,10 +222,6 @@ impl<T: SetType> Session<T> {
         self.name_cmd(binding::ipset_cmd_IPSET_CMD_CREATE)
     }
 }
-
-impl<T: SetType<DataType = IpDataType>> Session<T> {}
-
-impl<T: SetType<DataType = NetDataType>> Session<T> {}
 
 /// Helper for creating a ipset
 pub struct CreateBuilder<'a, T: SetType> {
