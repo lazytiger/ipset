@@ -1,9 +1,8 @@
 use std::ffi::{CStr, CString};
 use std::marker::PhantomData;
-use std::net::IpAddr;
 
 use crate::binding;
-use crate::types::{Error, SetData, SetType, ToCString, TypeName};
+use crate::types::{Error, Parse, SetData, SetType, ToCString, TypeName};
 
 /// output function required by libipset to get list output.
 #[no_mangle]
@@ -167,7 +166,7 @@ impl<T: SetType> Session<T> {
     }
 
     /// List all the ips in ipset `name`
-    pub fn list(&mut self) -> Result<Vec<IpAddr>, Error> {
+    pub fn list(&mut self) -> Result<Vec<T::DataType>, Error> {
         unsafe {
             binding::ipset_custom_printf(
                 self.set,
@@ -182,7 +181,14 @@ impl<T: SetType> Session<T> {
             let ips: Vec<_> = line
                 .split("\n")
                 .skip(8)
-                .filter_map(|line| -> Option<IpAddr> { line.parse().ok() })
+                .filter_map(|line| {
+                    let mut data = T::DataType::default();
+                    if data.parse(line).is_err() {
+                        None
+                    } else {
+                        Some(data)
+                    }
+                })
                 .collect();
             Ok(ips)
         } else {

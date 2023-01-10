@@ -30,8 +30,8 @@ impl<T: SetType> SetData<T> for IpDataType {
             IpDataType::IPv4(ip) => (ip as *const _ as _, &binding::NFPROTO_IPV4 as *const _ as _),
             IpDataType::IPv6(ip) => (ip as *const _ as _, &binding::NFPROTO_IPV6 as *const _ as _),
         };
-        session.set_data(binding::ipset_opt_IPSET_OPT_IP, ip)?;
-        session.set_data(binding::ipset_opt_IPSET_OPT_FAMILY, family)
+        session.set_data(binding::ipset_opt_IPSET_OPT_FAMILY, family)?;
+        session.set_data(binding::ipset_opt_IPSET_OPT_IP, ip)
     }
 }
 
@@ -40,6 +40,12 @@ impl Parse for IpDataType {
         let ip: IpAddr = s.parse()?;
         *self = ip.into();
         Ok(())
+    }
+}
+
+impl Default for IpDataType {
+    fn default() -> Self {
+        IpDataType::IPv4(libc::in_addr { s_addr: 0 })
     }
 }
 
@@ -60,7 +66,7 @@ impl From<IpAddr> for IpDataType {
 impl From<&IpDataType> for IpAddr {
     fn from(value: &IpDataType) -> Self {
         match value {
-            IpDataType::IPv4(ip) => IpAddr::from(ip.s_addr.to_be_bytes()),
+            IpDataType::IPv4(ip) => IpAddr::from(ip.s_addr.to_ne_bytes()),
             IpDataType::IPv6(ip) => IpAddr::from(ip.s6_addr),
         }
     }
@@ -74,6 +80,7 @@ impl Display for IpDataType {
 }
 
 /// net data type
+#[derive(Default)]
 pub struct NetDataType {
     ip: IpDataType,
     cidr: u8,
@@ -117,6 +124,7 @@ impl Display for NetDataType {
 }
 
 /// mac data type
+#[derive(Default)]
 pub struct MacDataType {
     mac: [u8; 6],
 }
@@ -147,6 +155,7 @@ impl Display for MacDataType {
 }
 
 /// port data type
+#[derive(Default)]
 pub struct PortDataType {
     port: u16,
 }
@@ -174,6 +183,7 @@ impl Display for PortDataType {
 }
 
 /// iface data type
+#[derive(Default)]
 pub struct IfaceDataType {
     name: CString,
 }
@@ -197,6 +207,7 @@ impl Display for IfaceDataType {
     }
 }
 
+#[derive(Default)]
 pub struct MarkDataType {
     mark: u32,
 }
@@ -223,6 +234,7 @@ impl Display for MarkDataType {
     }
 }
 
+#[derive(Default)]
 pub struct SetDataType {
     name: CString,
 }
@@ -322,7 +334,7 @@ impl_parse!(A, B, C);
 /// TODO hash:net is not fully supported now.
 pub trait SetType: Sized {
     type Method;
-    type DataType: SetData<Self> + Parse;
+    type DataType: SetData<Self> + Parse + Default;
 }
 
 pub trait TypeName {
