@@ -2,7 +2,7 @@ use std::net::IpAddr;
 
 use ipset::{Error, HashIp, Session};
 
-fn main() -> Result<(), Error> {
+fn test() -> Result<(), Error> {
     let mut session: Session<HashIp> = Session::<HashIp>::new("test".to_string());
     let ip: IpAddr = "192.168.3.1".parse().unwrap();
     session.create(|builder| builder.with_ipv6(false)?.build())?;
@@ -28,4 +28,10 @@ fn main() -> Result<(), Error> {
     println!("destroy {}", ret);
 
     Ok(())
+}
+
+fn main() {
+    if let Err(err) = test() {
+        println!("test failed:{:?}", err);
+    }
 }

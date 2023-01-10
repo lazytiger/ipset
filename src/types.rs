@@ -400,29 +400,91 @@ impl Error {
 }
 
 macro_rules! impl_set_type {
-    ($name:ident, $method:ident, $($types:ident),+) => {
-        pub struct $name;
+    ($method:ident, $($types:ident),+) => {
         #[allow(unused_parens)]
-        impl SetType for $name {
+        impl SetType for concat_idents!($method, $($types),+) {
             type Method = concat_idents!($method, Method);
             type DataType = ($(concat_idents!($types, DataType)),+);
         }
     }
 }
 
-impl_set_type!(BitmapIp, Bitmap, Ip);
-impl_set_type!(BitmapIpMac, Bitmap, Ip, Mac);
-impl_set_type!(BitmapPort, Bitmap, Port);
-impl_set_type!(HashIp, Hash, Ip);
-impl_set_type!(HashMac, Hash, Mac);
-impl_set_type!(HashIpMac, Hash, Ip, Mac);
-impl_set_type!(HashNet, Hash, Net);
-impl_set_type!(HashNetNet, Hash, Net, Net);
-impl_set_type!(HashIpPort, Hash, Ip, Port);
-impl_set_type!(HashNetPort, Hash, Net, Port);
-impl_set_type!(HashIpPortIp, Hash, Ip, Port, Ip);
-impl_set_type!(HashIpPortNet, Hash, Ip, Port, Net);
-impl_set_type!(HashIpMark, Hash, Ip, Mark);
-impl_set_type!(HashNetPortNet, Hash, Net, Port, Net);
-impl_set_type!(HashNetIface, Hash, Net, Iface);
-impl_set_type!(ListSet, List, Set);
+/// The bitmap:ip set type uses a memory range to store either IPv4 host (default) or IPv4 network addresses.
+/// A bitmap:ip type of set can store up to 65536 entries.
+pub struct BitmapIp;
+impl_set_type!(Bitmap, Ip);
+
+/// The bitmap:ip,mac set type uses a memory range to store IPv4 and a MAC address pairs.
+/// A bitmap:ip,mac type of set can store up to 65536 entries.
+pub struct BitmapIpMac;
+impl_set_type!(Bitmap, Ip, Mac);
+
+/// The bitmap:port set type uses a memory range to store port numbers and such a set can store up to 65536 ports.
+pub struct BitmapPort;
+impl_set_type!(Bitmap, Port);
+
+/// The hash:ip set type uses a hash to store IP host addresses (default) or network addresses.
+/// Zero valued IP address cannot be stored in a hash:ip type of set.
+pub struct HashIp;
+impl_set_type!(Hash, Ip);
+
+/// The hash:mac set type uses a hash to store MAC addresses.
+/// Zero valued MAC addresses cannot be stored in a hash:mac type of set.
+pub struct HashMac;
+impl_set_type!(Hash, Mac);
+
+/// The hash:ip,mac set type uses a hash to store IP and a MAC address pairs.
+/// Zero valued MAC addresses cannot be stored in a hash:ip,mac type of set.
+pub struct HashIpMac;
+impl_set_type!(Hash, Ip, Mac);
+
+/// The hash:net set type uses a hash to store different sized IP network addresses.  
+/// Network address with zero prefix size cannot be stored in this type of sets.
+pub struct HashNet;
+impl_set_type!(Hash, Net);
+
+/// The hash:net,net set type uses a hash to store pairs of different sized IP network addresses.  
+/// Bear  in  mind  that  the  first parameter has precedence over  the second,  
+/// so a nomatch entry could be potentially be ineffective if a more specific first parameter existed with a suitable second parameter.  
+/// Network address with zero prefix size cannot be stored in this type of set.
+pub struct HashNetNet;
+impl_set_type!(Hash, Net, Net);
+
+/// The hash:ip,port set type uses a hash to store IP address and port number pairs.  
+/// The port number is interpreted together with a protocol (default TCP)  and  zero protocol number cannot be used.
+pub struct HashIpPort;
+impl_set_type!(Hash, Ip, Port);
+
+/// The  hash:net,port  set  type uses a hash to store different sized IP network address and port pairs.
+/// The port number is interpreted together with a protocol (de‐fault TCP) and zero protocol number cannot be used.
+/// Network address with zero prefix size is not accepted either.
+pub struct HashNetPort;
+impl_set_type!(Hash, Net, Port);
+
+/// The hash:ip,port,ip set type uses a hash to store IP address, port number and a second IP address triples.
+/// The port number is interpreted together with a protocol (default TCP) and zero protocol number cannot be used.
+pub struct HashIpPortIp;
+impl_set_type!(Hash, Ip, Port, Ip);
+
+/// The hash:ip,port,net set type uses a hash to store IP address, port number and IP network address triples.
+/// The port number is interpreted together with a protocol (default TCP) and zero protocol number cannot be used.
+/// Network address with zero prefix size cannot be stored either.
+pub struct HashIpPortNet;
+impl_set_type!(Hash, Ip, Port, Net);
+
+/// The hash:ip,mark set type uses a hash to store IP address and packet mark pairs.
+pub struct HashIpMark;
+impl_set_type!(Hash, Ip, Mark);
+
+/// The hash:net,port,net set type behaves similarly to hash:ip,port,net but accepts a cidr value for both the first and last parameter.
+/// Either subnet is permitted to be a /0 should you wish to match port between all destinations.
+pub struct HashNetPortNet;
+impl_set_type!(Hash, Net, Port, Net);
+
+/// The hash:net,iface set type uses a hash to store different sized IP network address and interface name pairs.
+pub struct HashNetIface;
+impl_set_type!(Hash, Net, Iface);
+
+/// The list:set type uses a simple list in which you can store set names.
+pub struct ListSet;
+impl_set_type!(List, Set);

@@ -9,8 +9,22 @@
 //! * flush
 //!
 //! Support the following type:
-//! * hash:ip
-//! * hash:net not fully supported
+//! * BitmapIp
+//! * BitmapIpMac
+//! * BitmapPort
+//! * HashIp
+//! * HashIpMac
+//! * HashIpMark
+//! * HashIpPort
+//! * HashIpPortIp
+//! * HashIpPortNet
+//! * HashMac
+//! * HashNet
+//! * HashNetIface
+//! * HashNetNet
+//! * HashNetPort
+//! * HashNetPortNet
+//! * ListSet
 //!
 //! # Example
 //! ```rust
