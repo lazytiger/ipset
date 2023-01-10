@@ -18,44 +18,55 @@ Support the following commands:
 
 Support the following type:
 
-* hash:ip
-* hash:net not fully supported
+* BitmapIp
+* BitmapIpMac
+* BitmapPort
+* HashIp
+* HashIpMac
+* HashIpMark
+* HashIpPort
+* HashIpPortIp
+* HashIpPortNet
+* HashMac
+* HashNet
+* HashNetIface
+* HashNetNet
+* HashNetPort
+* HashNetPortNet
+* ListSet,
 
 ### Example
 
   ```rust
-  use ipset::{Session, SetType};
+use std::net::IpAddr;
 
-fn main() {
-    let mut session = Session::new();
-    if let Err(err) = session.create("test", SetType::HashIp, |builder| {
-        builder.with_ipv6(false)?.build()
-    }) {
-        println!("create ipset failed:{:?}", err);
-        return;
+use ipset::{Error, HashIp, Session};
+
+fn main() -> Result<(), Error> {
+    let mut session: Session<HashIp> = Session::<HashIp>::new("test".to_string());
+    let ip: IpAddr = "192.168.3.1".parse().unwrap();
+    session.create(|builder| builder.with_ipv6(false)?.build())?;
+
+    let ret = session.add(ip)?;
+    println!("add {}", ret);
+
+    let exists = session.test(ip)?;
+    println!("test {}", exists);
+
+    let ips = session.list()?;
+    for ip in ips {
+        println!("list {}", ip);
     }
 
-    if let Err(err) = session.add("test", "127.0.0.1".parse().unwrap()) {
-        println!("add ip to ipset failed:{:?}", err);
-        return;
-    }
+    let ret = session.del(ip)?;
+    println!("del {}", ret);
 
-    if let Err(err) = session.list("test") {
-        println!("list ip from ipset failed:{:?}", err);
-        return;
-    }
+    let ret = session.flush()?;
+    println!("flush {}", ret);
 
-    if let Err(err) = session.del("test", "127.0.0.1".parse().unwrap()) {
-        println!("delete ip from ipset failed:{:?}", err);
-        return;
-    }
+    let ret = session.destroy()?;
+    println!("destroy {}", ret);
 
-    if let Err(err) = session.flush("test") {
-        println!("flush ipset failed:{:?}", err);
-    }
-
-    if let Err(err) = session.destroy("test") {
-        println!("destroy ipset failed:{:?}", err);
-    }
+    Ok(())
 }
 ```
