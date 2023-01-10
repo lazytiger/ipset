@@ -3,7 +3,7 @@ use std::fmt::{Display, Formatter};
 use std::net::{AddrParseError, IpAddr};
 use std::num::ParseIntError;
 
-use derive_more::From;
+use derive_more::{From, Into};
 
 use crate::{binding, Session};
 
@@ -80,10 +80,30 @@ impl Display for IpDataType {
 }
 
 /// net data type
-#[derive(Default)]
+#[derive(Default, From, Into)]
 pub struct NetDataType {
     ip: IpDataType,
     cidr: u8,
+}
+
+impl NetDataType {
+    /// create net using ip and cidr
+    pub fn new(ip: impl Into<IpDataType>, cidr: u8) -> Self {
+        Self {
+            ip: ip.into(),
+            cidr,
+        }
+    }
+
+    /// return ip of the net
+    pub fn ip(&self) -> IpAddr {
+        (&self.ip).into()
+    }
+
+    /// return cidr of the net
+    pub fn cidr(&self) -> u8 {
+        self.cidr
+    }
 }
 
 impl<T: SetType> SetData<T> for NetDataType {
@@ -123,15 +143,18 @@ impl Display for NetDataType {
     }
 }
 
-/// mac data type
-#[derive(Default)]
+/// mac data type, [u8; 6]
+#[derive(Default, From, Into)]
 pub struct MacDataType {
     mac: [u8; 6],
 }
 
 impl Parse for MacDataType {
     fn parse(&mut self, s: &str) -> Result<(), Error> {
-        let mac: Vec<u8> = s.split(":").filter_map(|s| s.parse::<u8>().ok()).collect();
+        let mac: Vec<u8> = s
+            .split(":")
+            .filter_map(|s| u8::from_str_radix(s, 16).ok())
+            .collect();
         if mac.len() != 6 {
             Err(Error::InvalidOutput(s.into()))
         } else {
@@ -154,8 +177,8 @@ impl Display for MacDataType {
     }
 }
 
-/// port data type
-#[derive(Default)]
+/// port data type, u16
+#[derive(Default, From, Into)]
 pub struct PortDataType {
     port: u16,
 }
@@ -182,10 +205,24 @@ impl Display for PortDataType {
     }
 }
 
-/// iface data type
+/// iface data type, CString
 #[derive(Default)]
 pub struct IfaceDataType {
     name: CString,
+}
+
+impl From<String> for IfaceDataType {
+    fn from(value: String) -> Self {
+        Self {
+            name: CString::new(value).unwrap(),
+        }
+    }
+}
+
+impl From<IfaceDataType> for String {
+    fn from(value: IfaceDataType) -> Self {
+        value.name.to_string_lossy().to_string()
+    }
 }
 
 impl Parse for IfaceDataType {
@@ -207,7 +244,8 @@ impl Display for IfaceDataType {
     }
 }
 
-#[derive(Default)]
+/// mark data type, u32
+#[derive(Default, From, Into)]
 pub struct MarkDataType {
     mark: u32,
 }
@@ -234,9 +272,24 @@ impl Display for MarkDataType {
     }
 }
 
+/// set name, CString
 #[derive(Default)]
 pub struct SetDataType {
     name: CString,
+}
+
+impl From<String> for SetDataType {
+    fn from(value: String) -> Self {
+        Self {
+            name: CString::new(value).unwrap(),
+        }
+    }
+}
+
+impl From<SetDataType> for String {
+    fn from(value: SetDataType) -> Self {
+        value.name.to_string_lossy().to_string()
+    }
 }
 
 impl Parse for SetDataType {
@@ -285,6 +338,8 @@ impl_name!(NetDataType, "net");
 impl_name!(MacDataType, "mac");
 impl_name!(PortDataType, "port");
 impl_name!(IfaceDataType, "iface");
+impl_name!(MarkDataType, "mark");
+impl_name!(SetDataType, "set");
 impl_name!(A, B);
 impl_name!(A, B, C);
 
@@ -488,3 +543,123 @@ impl_set_type!(Hash, Net, Iface);
 /// The list:set type uses a simple list in which you can store set names.
 pub struct ListSet;
 impl_set_type!(List, Set);
+
+#[allow(unused_imports)]
+mod tests {
+    use std::net::IpAddr;
+
+    use crate::types::{
+        IfaceDataType, IpDataType, MacDataType, MarkDataType, NetDataType, Parse, PortDataType,
+        SetDataType, ToCString,
+    };
+    use crate::{
+        BitmapIp, BitmapIpMac, BitmapPort, HashIp, HashIpMac, HashIpMark, HashIpPort, HashIpPortIp,
+        HashIpPortNet, HashMac, HashNet, HashNetIface, HashNetNet, HashNetPort, HashNetPortNet,
+        ListSet,
+    };
+
+    #[test]
+    fn test_ip() {
+        let ip: IpAddr = "127.0.0.1".parse().unwrap();
+        let mut data: IpDataType = ip.into();
+        let ip1: IpAddr = (&data).into();
+        assert_eq!(ip, ip1);
+        assert_eq!("127.0.0.1", format!("{}", data));
+        data.parse("192.168.3.1").unwrap();
+        assert_eq!("192.168.3.1", format!("{}", data));
+    }
+
+    #[test]
+    fn test_net() {
+        let ip: IpAddr = "127.0.0.1".parse().unwrap();
+        let mut net = NetDataType::new(ip, 8);
+        assert_eq!("127.0.0.1/8", format!("{}", net));
+        net.parse("192.168.3.1/24").unwrap();
+        assert_eq!("192.168.3.1/24", format!("{}", net));
+    }
+
+    #[test]
+    fn test_mac() {
+        let mut mac: MacDataType = [124u8, 24u8, 32u8, 129u8, 84u8, 223u8].into();
+        assert_eq!("7c:18:20:81:54:df", format!("{}", mac));
+        mac.parse("00:15:5d:37:d9:2f").unwrap();
+        assert_eq!("00:15:5d:37:d9:2f", format!("{}", mac));
+    }
+
+    #[test]
+    fn test_mark() {
+        let mut mark: MarkDataType = 32u32.into();
+        assert_eq!("32", format!("{}", mark));
+        mark.parse("123").unwrap();
+        assert_eq!("123", format!("{}", 123));
+    }
+
+    #[test]
+    fn test_port() {
+        let mut port: PortDataType = 1235u16.into();
+        assert_eq!("1235", format!("{}", port));
+        port.parse("1234").unwrap();
+        assert_eq!("1234", format!("{}", port));
+    }
+
+    #[test]
+    fn test_iface() {
+        let mut iface: IfaceDataType = String::from("abc").into();
+        assert_eq!("abc", format!("{}", iface));
+        iface.parse("test").unwrap();
+        assert_eq!("test", format!("{}", iface));
+    }
+
+    #[test]
+    fn test_set() {
+        let mut set: SetDataType = String::from("abc").into();
+        assert_eq!("abc", format!("{}", set));
+        set.parse("test").unwrap();
+        assert_eq!("test", format!("{}", set));
+    }
+
+    #[test]
+    fn test_ip_port_ip() {
+        let mut data = (
+            IpDataType::default(),
+            PortDataType::default(),
+            IpDataType::default(),
+        );
+        data.parse("192.168.3.1,8080,192.168.3.2").unwrap();
+        assert_eq!("192.168.3.1", format!("{}", data.0));
+        assert_eq!("8080", format!("{}", data.1));
+        assert_eq!("192.168.3.2", format!("{}", data.2));
+    }
+
+    #[test]
+    fn test_type_name() {
+        assert_eq!(HashIp::to_cstring().to_str().unwrap(), "hash:ip");
+        assert_eq!(
+            HashNetIface::to_cstring().to_str().unwrap(),
+            "hash:net,iface"
+        );
+        assert_eq!(HashNetNet::to_cstring().to_str().unwrap(), "hash:net,net");
+        assert_eq!(HashNetPort::to_cstring().to_str().unwrap(), "hash:net,port");
+        assert_eq!(HashNet::to_cstring().to_str().unwrap(), "hash:net");
+        assert_eq!(HashIpPort::to_cstring().to_str().unwrap(), "hash:ip,port");
+        assert_eq!(HashIpMark::to_cstring().to_str().unwrap(), "hash:ip,mark");
+        assert_eq!(
+            HashIpPortNet::to_cstring().to_str().unwrap(),
+            "hash:ip,port,net"
+        );
+        assert_eq!(HashIpMac::to_cstring().to_str().unwrap(), "hash:ip,mac");
+        assert_eq!(
+            HashIpPortIp::to_cstring().to_str().unwrap(),
+            "hash:ip,port,ip"
+        );
+        assert_eq!(
+            HashNetPortNet::to_cstring().to_str().unwrap(),
+            "hash:net,port,net"
+        );
+        assert_eq!(HashMac::to_cstring().to_str().unwrap(), "hash:mac");
+        assert_eq!(ListSet::to_cstring().to_str().unwrap(), "list:set");
+        assert_eq!(BitmapPort::to_cstring().to_str().unwrap(), "bitmap:port");
+        assert_eq!(BitmapIp::to_cstring().to_str().unwrap(), "bitmap:ip");
+        assert_eq!(BitmapIpMac::to_cstring().to_str().unwrap(), "bitmap:ip,mac");
+    }
+}

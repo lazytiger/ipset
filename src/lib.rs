@@ -32,7 +32,7 @@
 //!
 //!use ipset::{Error, HashIp, Session};
 //!
-//!fn main() -> Result<(), Error> {
+//!fn test() -> Result<(), Error> {
 //!    let mut session: Session<HashIp> = Session::<HashIp>::new("test".to_string());
 //!    let ip: IpAddr = "192.168.3.1".parse().unwrap();
 //!    session.create(|builder| builder.with_ipv6(false)?.build())?;
@@ -59,6 +59,12 @@
 //!
 //!    Ok(())
 //!}
+//!
+//! fn main() {
+//!     if let Err(err) = test() {
+//!         println!("{:?}", err);
+//!     }
+//! }
 //! ```
 #![feature(c_variadic)]
 #![feature(concat_idents)]
@@ -69,7 +75,8 @@ pub use types::Error;
 pub use crate::types::{
     BitmapIp, BitmapIpMac, BitmapPort, HashIp, HashIpMac, HashIpMark, HashIpPort, HashIpPortIp,
     HashIpPortNet, HashMac, HashNet, HashNetIface, HashNetNet, HashNetPort, HashNetPortNet,
-    ListSet,
+    IfaceDataType, IpDataType, ListSet, MacDataType, MarkDataType, NetDataType, PortDataType,
+    SetDataType,
 };
 
 #[allow(non_camel_case_types)]
