@@ -2,7 +2,7 @@ use std::ffi::{CStr, CString};
 use std::marker::PhantomData;
 
 use crate::binding;
-use crate::types::{Error, Parse, SetData, SetType, ToCString, TypeName};
+use crate::types::{BitmapMethod, Error, Parse, SetData, SetType, ToCString, TypeName};
 
 /// output function required by libipset to get list output.
 #[no_mangle]
@@ -108,7 +108,7 @@ impl<T: SetType> Session<T> {
     /// Run all the ip related commands, like add/del/test
     fn data_cmd(&mut self, data: T::DataType, cmd: binding::ipset_cmd) -> Result<(), Error> {
         self.set_data(binding::ipset_opt_IPSET_SETNAME, self.name.as_ptr() as _)?;
-        data.set_data(self)?;
+        data.set_data(self, None)?;
         self.get_type(cmd)?;
         self.run_cmd(cmd)
     }
@@ -318,3 +318,13 @@ impl<T: SetType> Drop for Session<T> {
 unsafe impl<T: SetType> Sync for Session<T> {}
 
 unsafe impl<T: SetType> Send for Session<T> {}
+
+impl<'a, T: SetType<Method = BitmapMethod>> CreateBuilder<'a, T> {
+    /// set range option for bitmap method.
+    /// from and to must be reference, or the memory maybe destroyed when actually run the command.
+    pub fn range(self, from: &T::DataType, to: &T::DataType) -> Result<Self, Error> {
+        from.set_data(self.session, Some(true))?;
+        to.set_data(self.session, Some(false))?;
+        Ok(self)
+    }
+}

@@ -1,9 +1,9 @@
 use std::net::IpAddr;
 
-use ipset::{Error, HashIp, Session};
+use ipset::{BitmapIp, Error, HashIp, IpDataType, Session};
 
-fn test() -> Result<(), Error> {
-    let mut session: Session<HashIp> = Session::<HashIp>::new("test".to_string());
+fn test_hash_ip() -> Result<(), Error> {
+    let mut session: Session<HashIp> = Session::new("test".to_string());
     let ip: IpAddr = "192.168.3.1".parse().unwrap();
     session.create(|builder| builder.with_ipv6(false)?.build())?;
 
@@ -30,8 +30,21 @@ fn test() -> Result<(), Error> {
     Ok(())
 }
 
+fn test_bitmap_ip() -> Result<(), Error> {
+    let mut session: Session<BitmapIp> = Session::new("test".into());
+    let from: IpAddr = "192.168.3.1".parse().unwrap();
+    let to: IpAddr = "192.168.3.255".parse().unwrap();
+    let from: IpDataType = from.into();
+    let to: IpDataType = to.into();
+    session.create(|builder| builder.range(&from, &to)?.build())?;
+    Ok(())
+}
+
 fn main() {
-    if let Err(err) = test() {
+    if let Err(err) = test_hash_ip() {
+        println!("test failed:{:?}", err);
+    }
+    if let Err(err) = test_bitmap_ip() {
         println!("test failed:{:?}", err);
     }
 }

@@ -25,13 +25,18 @@ pub enum IpDataType {
 
 impl<T: SetType> SetData<T> for IpDataType {
     /// get ip address pointer and ip family pointer.
-    fn set_data(&self, session: &Session<T>) -> Result<(), Error> {
+    fn set_data(&self, session: &Session<T>, from: Option<bool>) -> Result<(), Error> {
         let (ip, family) = match self {
             IpDataType::IPv4(ip) => (ip as *const _ as _, &binding::NFPROTO_IPV4 as *const _ as _),
             IpDataType::IPv6(ip) => (ip as *const _ as _, &binding::NFPROTO_IPV6 as *const _ as _),
         };
         session.set_data(binding::ipset_opt_IPSET_OPT_FAMILY, family)?;
-        session.set_data(binding::ipset_opt_IPSET_OPT_IP, ip)
+        let opt = match from {
+            Some(true) => binding::ipset_opt_IPSET_OPT_IP_FROM,
+            Some(false) => binding::ipset_opt_IPSET_OPT_IP_TO,
+            None => binding::ipset_opt_IPSET_OPT_IP,
+        };
+        session.set_data(opt, ip)
     }
 }
 
@@ -107,8 +112,8 @@ impl NetDataType {
 }
 
 impl<T: SetType> SetData<T> for NetDataType {
-    fn set_data(&self, session: &Session<T>) -> Result<(), Error> {
-        self.ip.set_data(session)?;
+    fn set_data(&self, session: &Session<T>, from: Option<bool>) -> Result<(), Error> {
+        self.ip.set_data(session, from)?;
         session.set_data(
             binding::ipset_opt_IPSET_OPT_CIDR,
             &self.cidr as *const _ as _,
@@ -160,7 +165,7 @@ impl Parse for MacDataType {
 }
 
 impl<T: SetType> SetData<T> for MacDataType {
-    fn set_data(&self, session: &Session<T>) -> Result<(), Error> {
+    fn set_data(&self, session: &Session<T>, _from: Option<bool>) -> Result<(), Error> {
         session.set_data(binding::ipset_opt_IPSET_OPT_ETHER, self.mac.as_ptr() as _)
     }
 }
@@ -179,11 +184,13 @@ pub struct PortDataType {
 }
 
 impl<T: SetType> SetData<T> for PortDataType {
-    fn set_data(&self, session: &Session<T>) -> Result<(), Error> {
-        session.set_data(
-            binding::ipset_opt_IPSET_OPT_PORT,
-            &self.port as *const _ as _,
-        )
+    fn set_data(&self, session: &Session<T>, from: Option<bool>) -> Result<(), Error> {
+        let opt = match from {
+            Some(true) => binding::ipset_opt_IPSET_OPT_PORT_FROM,
+            Some(false) => binding::ipset_opt_IPSET_OPT_PORT_TO,
+            None => binding::ipset_opt_IPSET_OPT_PORT,
+        };
+        session.set_data(opt, &self.port as *const _ as _)
     }
 }
 
@@ -228,7 +235,7 @@ impl Parse for IfaceDataType {
 }
 
 impl<T: SetType> SetData<T> for IfaceDataType {
-    fn set_data(&self, session: &Session<T>) -> Result<(), Error> {
+    fn set_data(&self, session: &Session<T>, _from: Option<bool>) -> Result<(), Error> {
         session.set_data(binding::ipset_opt_IPSET_OPT_IFACE, self.name.as_ptr() as _)
     }
 }
@@ -253,7 +260,7 @@ impl Parse for MarkDataType {
 }
 
 impl<T: SetType> SetData<T> for MarkDataType {
-    fn set_data(&self, session: &Session<T>) -> Result<(), Error> {
+    fn set_data(&self, session: &Session<T>, _: Option<bool>) -> Result<(), Error> {
         session.set_data(
             binding::ipset_opt_IPSET_OPT_MARK,
             &self.mark as *const _ as _,
@@ -295,7 +302,7 @@ impl Parse for SetDataType {
 }
 
 impl<T: SetType> SetData<T> for SetDataType {
-    fn set_data(&self, session: &Session<T>) -> Result<(), Error> {
+    fn set_data(&self, session: &Session<T>, _: Option<bool>) -> Result<(), Error> {
         session.set_data(binding::ipset_opt_IPSET_OPT_NAME, self.name.as_ptr() as _)
     }
 }
@@ -344,9 +351,9 @@ macro_rules! impl_set_data {
         impl<T, $($types),+> SetData<T> for ($($types),+)
             where T:SetType,
                 $($types:SetData<T>),+ {
-            fn set_data(&self, session:&Session<T>) -> Result<(), Error> {
+            fn set_data(&self, session:&Session<T>, from:Option<bool>) -> Result<(), Error> {
                 let ($($types),+) = self;
-                $($types.set_data(session)?;)+
+                $($types.set_data(session, from)?;)+
                 Ok(())
             }
         }
@@ -395,7 +402,7 @@ pub trait TypeName {
 
 /// Set data in session for the data type.
 pub trait SetData<T: SetType> {
-    fn set_data(&self, session: &Session<T>) -> Result<(), Error>;
+    fn set_data(&self, session: &Session<T>, from: Option<bool>) -> Result<(), Error>;
 }
 
 /// parse data type from string.
