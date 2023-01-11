@@ -119,20 +119,15 @@ impl<T: SetType> SetData<T> for NetDataType {
 impl Parse for NetDataType {
     fn parse(&mut self, s: &str) -> Result<(), Error> {
         let mut ss = s.split("/");
-        let ip = ss.next();
-        let cidr = ss.next();
-        if ip.is_none() || cidr.is_none() {
-            return Err(Error::InvalidOutput(s.into()));
+        if let Some(ip) = ss.next() {
+            let ip: IpAddr = ip.parse()?;
+            self.ip = ip.into();
         }
-
-        let ip = ip.unwrap();
-        let cidr = cidr.unwrap();
-
-        let ip: IpAddr = ip.parse()?;
-        let cidr: u8 = cidr.parse()?;
-
-        self.ip = ip.into();
-        self.cidr = cidr;
+        if let Some(cidr) = ss.next() {
+            self.cidr = cidr.parse()?;
+        } else {
+            self.cidr = 32;
+        }
         Ok(())
     }
 }
