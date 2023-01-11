@@ -385,8 +385,10 @@ macro_rules! impl_parse {
 impl_parse!(A, B);
 impl_parse!(A, B, C);
 
-/// All the supported ipset types.
-/// TODO hash:net is not fully supported now.
+/// A set type comprises of the storage method by which the data is stored and the data type(s) which are stored in the set.
+/// Therefore the TYPENAME parameter  of  the create command follows the syntax
+/// TYPENAME := method:datatype[,datatype[,datatype]]
+/// where the current list of the methods are bitmap, hash, and list and the possible data types are ip, net, mac, port and iface.
 pub trait SetType: Sized {
     type Method;
     type DataType: SetData<Self> + Parse + Default;
@@ -396,10 +398,12 @@ pub trait TypeName {
     fn name() -> String;
 }
 
+/// Set data in session for the data type.
 pub trait SetData<T: SetType> {
     fn set_data(&self, session: &Session<T>) -> Result<(), Error>;
 }
 
+/// parse data type from string.
 pub trait Parse {
     fn parse(&mut self, s: &str) -> Result<(), Error>;
 }

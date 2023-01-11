@@ -75,8 +75,8 @@ pub use types::Error;
 pub use crate::types::{
     BitmapIp, BitmapIpMac, BitmapPort, HashIp, HashIpMac, HashIpMark, HashIpPort, HashIpPortIp,
     HashIpPortNet, HashMac, HashNet, HashNetIface, HashNetNet, HashNetPort, HashNetPortNet,
-    IfaceDataType, IpDataType, ListSet, MacDataType, MarkDataType, NetDataType, PortDataType,
-    SetDataType,
+    IfaceDataType, IpDataType, ListSet, MacDataType, MarkDataType, NetDataType, Parse,
+    PortDataType, SetData, SetDataType, SetType,
 };
 
 #[allow(non_camel_case_types)]
