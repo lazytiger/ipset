@@ -1,6 +1,7 @@
 use std::net::IpAddr;
 
-use ipset::{BitmapIp, Error, HashIp, IpDataType, Session};
+use ipset::types::{BitmapIp, Error, HashIp, IpDataType};
+use ipset::Session;
 
 fn test_hash_ip() -> Result<(), Error> {
     let mut session: Session<HashIp> = Session::new("test".to_string());

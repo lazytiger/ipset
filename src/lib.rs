@@ -30,7 +30,8 @@
 //! ```rust
 //!use std::net::IpAddr;
 //!
-//!use ipset::{Error, HashIp, Session};
+//!use ipset::types::{Error, HashIp};
+//!use ipset::Session;
 //!
 //!fn test() -> Result<(), Error> {
 //!    let mut session: Session<HashIp> = Session::<HashIp>::new("test".to_string());
@@ -70,14 +71,6 @@
 #![feature(concat_idents)]
 
 pub use session::{CreateBuilder, Session};
-pub use types::Error;
-
-pub use crate::types::{
-    BitmapIp, BitmapIpMac, BitmapPort, HashIp, HashIpMac, HashIpMark, HashIpPort, HashIpPortIp,
-    HashIpPortNet, HashMac, HashNet, HashNetIface, HashNetNet, HashNetPort, HashNetPortNet,
-    IfaceDataType, IpDataType, ListSet, MacDataType, MarkDataType, NetDataType, Parse,
-    PortDataType, SetData, SetDataType, SetType,
-};
 
 #[allow(non_camel_case_types)]
 #[allow(unused)]
@@ -85,4 +78,4 @@ pub use crate::types::{
 #[allow(non_snake_case)]
 mod binding;
 mod session;
-mod types;
+pub mod types;

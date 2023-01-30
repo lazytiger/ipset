@@ -1,3 +1,5 @@
+//! All the types used by libipset.
+//!
 use std::ffi::{CString, NulError};
 use std::fmt::{Display, Formatter};
 use std::net::{AddrParseError, IpAddr};
@@ -396,6 +398,7 @@ pub trait SetType: Sized {
     type DataType: SetData<Self> + Parse + Default;
 }
 
+/// A trait used for generate name for the ipset type and method, such as ip, net, etc.
 pub trait TypeName {
     fn name() -> String;
 }
@@ -410,6 +413,7 @@ pub trait Parse {
     fn parse(&mut self, s: &str) -> Result<(), Error>;
 }
 
+/// A trait to generate literal name for a ipset method:type composition.
 pub trait ToCString {
     fn to_cstring() -> CString;
 }
@@ -555,13 +559,13 @@ mod tests {
     use std::net::IpAddr;
 
     use crate::types::{
-        IfaceDataType, IpDataType, MacDataType, MarkDataType, NetDataType, Parse, PortDataType,
-        SetDataType, ToCString,
-    };
-    use crate::{
         BitmapIp, BitmapIpMac, BitmapPort, HashIp, HashIpMac, HashIpMark, HashIpPort, HashIpPortIp,
         HashIpPortNet, HashMac, HashNet, HashNetIface, HashNetNet, HashNetPort, HashNetPortNet,
         ListSet,
+    };
+    use crate::types::{
+        IfaceDataType, IpDataType, MacDataType, MarkDataType, NetDataType, Parse, PortDataType,
+        SetDataType, ToCString,
     };
 
     #[test]
