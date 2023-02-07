@@ -8,7 +8,7 @@ fn test_hash_ip() -> Result<(), Error> {
     let ip: IpAddr = "192.168.3.1".parse().unwrap();
     session.create(|builder| builder.with_ipv6(false)?.build())?;
 
-    let ret = session.add(ip)?;
+    let ret = session.add(ip, None)?;
     println!("add {}", ret);
 
     let exists = session.test(ip)?;
@@ -37,7 +37,7 @@ fn test_bitmap_ip() -> Result<(), Error> {
     let to: IpAddr = "192.168.3.255".parse().unwrap();
     let from: IpDataType = from.into();
     let to: IpDataType = to.into();
-    session.create(|builder| builder.range(&from, &to)?.build())?;
+    session.create(|builder| builder.with_range(&from, &to)?.build())?;
     Ok(())
 }
 

@@ -106,16 +106,27 @@ impl<T: SetType> Session<T> {
     }
 
     /// Run all the ip related commands, like add/del/test
-    fn data_cmd(&mut self, data: T::DataType, cmd: binding::ipset_cmd) -> Result<(), Error> {
+    fn data_cmd(
+        &mut self,
+        data: T::DataType,
+        cmd: binding::ipset_cmd,
+        timeout: Option<u32>,
+    ) -> Result<(), Error> {
         self.set_data(binding::ipset_opt_IPSET_SETNAME, self.name.as_ptr() as _)?;
         data.set_data(self, None)?;
         self.get_type(cmd)?;
+        if let Some(timeout) = timeout {
+            self.set_data(
+                binding::ipset_opt_IPSET_OPT_TIMEOUT,
+                &timeout as *const _ as _,
+            )?;
+        }
         self.run_cmd(cmd)
     }
 
     /// Test if `ip` is in ipset `name`
     pub fn test(&mut self, data: impl Into<T::DataType>) -> Result<bool, Error> {
-        self.data_cmd(data.into(), binding::ipset_cmd_IPSET_CMD_TEST)
+        self.data_cmd(data.into(), binding::ipset_cmd_IPSET_CMD_TEST, None)
             .map(|_| true)
             .or_else(|err| {
                 if err.cmd_contains(" is NOT in set test") {
@@ -127,8 +138,12 @@ impl<T: SetType> Session<T> {
     }
 
     /// Add `ip` into ipset `name`
-    pub fn add(&mut self, data: impl Into<T::DataType>) -> Result<bool, Error> {
-        self.data_cmd(data.into(), binding::ipset_cmd_IPSET_CMD_ADD)
+    pub fn add(
+        &mut self,
+        data: impl Into<T::DataType>,
+        timeout: Option<u32>,
+    ) -> Result<bool, Error> {
+        self.data_cmd(data.into(), binding::ipset_cmd_IPSET_CMD_ADD, timeout)
             .map(|_| true)
             .or_else(|err| {
                 if err.cmd_contains("Element cannot be added to the set: it's already added") {
@@ -141,7 +156,7 @@ impl<T: SetType> Session<T> {
 
     /// Delete `ip` from ipset `name`
     pub fn del(&mut self, ip: impl Into<T::DataType>) -> Result<bool, Error> {
-        self.data_cmd(ip.into(), binding::ipset_cmd_IPSET_CMD_DEL)
+        self.data_cmd(ip.into(), binding::ipset_cmd_IPSET_CMD_DEL, None)
             .map(|_| true)
             .or_else(|err| {
                 if err.cmd_contains("Element cannot be deleted from the set: it's not added") {
@@ -322,7 +337,7 @@ unsafe impl<T: SetType> Send for Session<T> {}
 impl<'a, T: SetType<Method = BitmapMethod>> CreateBuilder<'a, T> {
     /// set range option for bitmap method.
     /// from and to must be reference, or the memory maybe destroyed when actually run the command.
-    pub fn range(self, from: &T::DataType, to: &T::DataType) -> Result<Self, Error> {
+    pub fn with_range(self, from: &T::DataType, to: &T::DataType) -> Result<Self, Error> {
         from.set_data(self.session, Some(true))?;
         to.set_data(self.session, Some(false))?;
         Ok(self)
