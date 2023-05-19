@@ -70,16 +70,16 @@
 #![feature(c_variadic)]
 #![feature(concat_idents)]
 
-pub use ipset::IPSet;
 pub use session::{CreateBuilder, Session};
+pub use set::IPSet;
 
 #[allow(non_camel_case_types)]
 #[allow(unused)]
 #[allow(non_upper_case_globals)]
 #[allow(non_snake_case)]
 mod binding;
-mod ipset;
 mod session;
+mod set;
 pub mod types;
 
 unsafe fn _ipset_store(filename: String) -> std::ffi::c_int {
