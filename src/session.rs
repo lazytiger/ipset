@@ -1,8 +1,8 @@
 use std::ffi::{CStr, CString};
 use std::marker::PhantomData;
 
-use crate::binding;
 use crate::types::{BitmapMethod, Error, Parse, SetData, SetType, ToCString, TypeName};
+use crate::{binding, IPSet};
 
 /// output function required by libipset to get list output.
 #[no_mangle]
@@ -28,9 +28,8 @@ pub unsafe extern "C" fn outfn(
 /// for collecting data for commands like `list`. It is a field for safety.
 pub struct Session<T: SetType> {
     name: CString,
-    session: *mut binding::ipset_session,
     data: *mut binding::ipset_data,
-    set: *mut binding::ipset,
+    set: IPSet,
     output: Vec<String>,
     _phantom: PhantomData<T>,
 }
@@ -39,12 +38,9 @@ impl<T: SetType> Session<T> {
     /// load ipset types, initialize ipset, prepare session and data.
     pub fn new(name: String) -> Session<T> {
         unsafe {
-            binding::ipset_load_types();
-            let set = binding::ipset_init();
-            let session = binding::ipset_session(set);
-            let data = binding::ipset_session_data(session);
+            let set = IPSet::new();
+            let data = binding::ipset_session_data(set.session);
             Self {
-                session,
                 data,
                 set,
                 name: CString::new(name).unwrap(),
@@ -71,19 +67,14 @@ impl<T: SetType> Session<T> {
 
     /// Get report message and whether the message is error.
     fn error(&self) -> (String, bool) {
-        unsafe {
-            let err = binding::ipset_session_report_msg(self.session);
-            let err = CStr::from_ptr(err).to_string_lossy().to_string();
-            let typ = binding::ipset_session_report_type(self.session);
-            binding::ipset_session_report_reset(self.session);
-            (err, typ == binding::ipset_err_type_IPSET_ERROR)
-        }
+        let (err, typ) = self.set.error();
+        (err, typ == binding::ipset_err_type_IPSET_ERROR)
     }
 
     fn run_cmd(&mut self, cmd: binding::ipset_cmd) -> Result<(), Error> {
         unsafe {
             self.output.clear();
-            if binding::ipset_cmd(self.session, cmd, 0) < 0 {
+            if binding::ipset_cmd(self.set.session, cmd, 0) < 0 {
                 let (message, error) = self.error();
                 Err(Error::Cmd(message, error))
             } else {
@@ -95,7 +86,7 @@ impl<T: SetType> Session<T> {
     /// Wrapper for ipset_type_get, set OPT_TYPE for the cmd
     fn get_type(&self, cmd: binding::ipset_cmd) -> Result<(), Error> {
         unsafe {
-            let typ = binding::ipset_type_get(self.session, cmd);
+            let typ = binding::ipset_type_get(self.set.session, cmd);
             if typ.is_null() {
                 let (message, error) = self.error();
                 Err(Error::TypeGet(message, error))
@@ -184,7 +175,7 @@ impl<T: SetType> Session<T> {
     pub fn list(&mut self) -> Result<Vec<T::DataType>, Error> {
         unsafe {
             binding::ipset_custom_printf(
-                self.set,
+                self.set.set,
                 None,
                 None,
                 Some(outfn),
@@ -192,7 +183,7 @@ impl<T: SetType> Session<T> {
             );
         }
         self.name_cmd(binding::ipset_cmd_IPSET_CMD_LIST)?;
-        if let Some(line) = self.output.get(0) {
+        let ret = if let Some(line) = self.output.get(0) {
             let ips: Vec<_> = line
                 .split("\n")
                 .skip(8)
@@ -208,7 +199,12 @@ impl<T: SetType> Session<T> {
             Ok(ips)
         } else {
             Ok(vec![])
+        };
+        unsafe {
+            binding::ipset_custom_printf(self.set.set, None, None, None, std::ptr::null_mut());
+            self.output.clear();
         }
+        ret
     }
 
     /// Clear all the content in ipset `name`
@@ -219,6 +215,36 @@ impl<T: SetType> Session<T> {
     /// Destroy the ipset `name`
     pub fn destroy(&mut self) -> Result<bool, Error> {
         self.name_cmd(binding::ipset_cmd_IPSET_CMD_DESTROY)
+    }
+
+    /// Save the ipset `name` to filename
+    pub fn save(&mut self, filename: String) -> Result<bool, Error> {
+        unsafe {
+            let filename = CString::new(filename).unwrap();
+            let ret = binding::ipset_session_output(
+                self.set.session,
+                binding::ipset_output_mode_IPSET_LIST_SAVE,
+            );
+            if ret < 0 {
+                return Err(Error::SaveRestore(self.error().0));
+            }
+            let ret = binding::ipset_session_io_normal(
+                self.set.session,
+                filename.as_ptr(),
+                binding::ipset_io_type_IPSET_IO_OUTPUT,
+            );
+            if ret < 0 {
+                let (message, _) = self.error();
+                Err(Error::SaveRestore(message))
+            } else {
+                let ret = self.name_cmd(binding::ipset_cmd_IPSET_CMD_SAVE);
+                binding::ipset_session_io_close(
+                    self.set.session,
+                    binding::ipset_io_type_IPSET_IO_OUTPUT,
+                );
+                ret
+            }
+        }
     }
 
     /// Create a ipset `name` with type `typename` and more configuration using `f`
@@ -317,16 +343,6 @@ impl<'a, T: SetType> CreateBuilder<'a, T> {
     /// last call to end the invocation.
     pub fn build(self) -> Result<(), Error> {
         Ok(())
-    }
-}
-
-impl<T: SetType> Drop for Session<T> {
-    fn drop(&mut self) {
-        unsafe {
-            if !self.set.is_null() {
-                binding::ipset_fini(self.set);
-            }
-        }
     }
 }
 

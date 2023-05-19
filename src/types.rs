@@ -440,6 +440,8 @@ pub enum Error {
     TypeGet(String, bool),
     #[from(ignore)]
     InvalidOutput(String),
+    #[from(ignore)]
+    SaveRestore(String),
     AddrParse(AddrParseError),
     ParseInt(ParseIntError),
     Nul(NulError),

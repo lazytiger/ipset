@@ -1,7 +1,7 @@
 use std::net::IpAddr;
 
 use ipset::types::{BitmapIp, Error, HashIp, IpDataType};
-use ipset::Session;
+use ipset::{IPSet, Session};
 
 fn test_hash_ip() -> Result<(), Error> {
     let mut session: Session<HashIp> = Session::new("test".to_string());
@@ -18,6 +18,9 @@ fn test_hash_ip() -> Result<(), Error> {
     for ip in ips {
         println!("list {}", ip);
     }
+
+    let ret = session.save("test.ipset".to_string())?;
+    println!("save {}", ret);
 
     let ret = session.del(ip)?;
     println!("del {}", ret);
@@ -42,6 +45,10 @@ fn test_bitmap_ip() -> Result<(), Error> {
 }
 
 fn main() {
+    let set = IPSet::new();
+    //set.restore("test.ipset".to_string()).unwrap();
+    println!("restore");
+
     if let Err(err) = test_hash_ip() {
         println!("test failed:{:?}", err);
     }
