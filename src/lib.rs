@@ -68,12 +68,13 @@
 //!}
 //!
 //! fn main() {
-//!     let set = IPSet::new();
-//!     set.restore("test.ipset".to_string()).unwrap();
 //!
 //!     if let Err(err) = test() {
 //!         println!("{:?}", err);
 //!     }
+//!
+//!     let set = IPSet::new();
+//!     set.restore("test.ipset".to_string()).unwrap();
 //! }
 //! ```
 #![feature(c_variadic)]
