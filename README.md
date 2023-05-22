@@ -15,6 +15,8 @@ Support the following commands:
 * list
 * destroy
 * flush
+* save
+* restore
 
 Support the following type:
 
@@ -40,7 +42,7 @@ Support the following type:
   ```rust
 use std::net::IpAddr;
 
-use ipset::{Error, HashIp, Session};
+use ipset::{Error, HashIp, IPSet, Session};
 
 fn main() -> Result<(), Error> {
     let mut session: Session<HashIp> = Session::<HashIp>::new("test".to_string());
@@ -58,6 +60,9 @@ fn main() -> Result<(), Error> {
         println!("list {}", ip);
     }
 
+    let ret = session.save("test.ipset")?;
+    println!("save {}", ret);
+
     let ret = session.del(ip)?;
     println!("del {}", ret);
 
@@ -66,6 +71,9 @@ fn main() -> Result<(), Error> {
 
     let ret = session.destroy()?;
     println!("destroy {}", ret);
+
+    let set = IPSet::new();
+    set.restore("test.ipset")?;
 
     Ok(())
 }

@@ -52,7 +52,7 @@
 //!        println!("list {}", ip);
 //!    }
 //!
-//!    let ret = session.save("tesst.ipset".into()).unwrap();
+//!    let ret = session.save("test.ipset".into()).unwrap();
 //!    println!("save {}", ret);
 //!
 //!    let ret = session.del(ip)?;
