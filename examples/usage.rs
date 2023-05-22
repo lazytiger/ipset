@@ -41,6 +41,7 @@ fn test_bitmap_ip() -> Result<(), Error> {
     let from: IpDataType = from.into();
     let to: IpDataType = to.into();
     session.create(|builder| builder.with_range(&from, &to)?.build())?;
+    session.destroy()?;
     Ok(())
 }
 
@@ -49,11 +50,11 @@ fn main() {
         println!("test failed:{:?}", err);
     }
 
-    let set = IPSet::new();
-    set.restore("test.ipset".to_string()).unwrap();
-    println!("restore");
-
     if let Err(err) = test_bitmap_ip() {
         println!("test failed:{:?}", err);
     }
+
+    let set = IPSet::new();
+    set.restore("test.ipset".to_string()).unwrap();
+    println!("restore");
 }
