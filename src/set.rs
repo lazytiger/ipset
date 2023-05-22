@@ -20,6 +20,7 @@ impl IPSet {
         }
     }
 
+    /// get the error message and type.
     pub(crate) fn error(&self) -> (String, binding::ipset_err_type) {
         unsafe {
             let err = binding::ipset_session_report_msg(self.session);
