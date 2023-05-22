@@ -3,6 +3,7 @@ use std::ffi::CStr;
 use crate::binding;
 use crate::types::Error;
 
+/// Wrapper for ipset instance in c.
 pub struct IPSet {
     pub(crate) set: *mut binding::ipset,
     pub(crate) session: *mut binding::ipset_session,
