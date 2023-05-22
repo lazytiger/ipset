@@ -7,6 +7,8 @@
 //! * list
 //! * destroy
 //! * flush
+//! * save
+//! * restore
 //!
 //! Support the following type:
 //! * BitmapIp
@@ -32,6 +34,7 @@
 //!
 //!use ipset::types::{Error, HashIp};
 //!use ipset::Session;
+//!use ipset::IPSet;
 //!
 //!fn test() -> Result<(), Error> {
 //!    let mut session: Session<HashIp> = Session::<HashIp>::new("test".to_string());
@@ -49,6 +52,9 @@
 //!        println!("list {}", ip);
 //!    }
 //!
+//!    let ret = session.save("tesst.ipset".into()).unwrap();
+//!    println!("save {}", ret);
+//!
 //!    let ret = session.del(ip)?;
 //!    println!("del {}", ret);
 //!
@@ -62,6 +68,9 @@
 //!}
 //!
 //! fn main() {
+//!     let set = IPSet::new();
+//!     set.restore("test.ipset".to_string()).unwrap();
+//!
 //!     if let Err(err) = test() {
 //!         println!("{:?}", err);
 //!     }

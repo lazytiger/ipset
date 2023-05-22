@@ -46,7 +46,7 @@ fn test_bitmap_ip() -> Result<(), Error> {
 
 fn main() {
     let set = IPSet::new();
-    //set.restore("test.ipset".to_string()).unwrap();
+    set.restore("test.ipset".to_string()).unwrap();
     println!("restore");
 
     if let Err(err) = test_hash_ip() {

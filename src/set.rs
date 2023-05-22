@@ -9,6 +9,7 @@ pub struct IPSet {
 }
 
 impl IPSet {
+    /// Create a new IPSet instance.
     pub fn new() -> IPSet {
         unsafe {
             binding::ipset_load_types();
@@ -28,6 +29,7 @@ impl IPSet {
         }
     }
 
+    /// Restore a set from a file.
     pub fn restore(&self, filename: String) -> Result<(), Error> {
         unsafe {
             let filename = std::ffi::CString::new(filename).unwrap();
