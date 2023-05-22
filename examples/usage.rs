@@ -45,13 +45,14 @@ fn test_bitmap_ip() -> Result<(), Error> {
 }
 
 fn main() {
+    if let Err(err) = test_hash_ip() {
+        println!("test failed:{:?}", err);
+    }
+
     let set = IPSet::new();
     set.restore("test.ipset".to_string()).unwrap();
     println!("restore");
 
-    if let Err(err) = test_hash_ip() {
-        println!("test failed:{:?}", err);
-    }
     if let Err(err) = test_bitmap_ip() {
         println!("test failed:{:?}", err);
     }
