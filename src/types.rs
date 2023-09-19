@@ -390,8 +390,8 @@ impl_parse!(A, B);
 impl_parse!(A, B, C);
 
 /// A set type comprises of the storage method by which the data is stored and the data type(s) which are stored in the set.
-/// Therefore the TYPENAME parameter  of  the create command follows the syntax
-/// TYPENAME := method:datatype[,datatype[,datatype]]
+/// Therefore the TYPENAME parameter  of the create command follows the syntax
+/// `TYPENAME := method:datatype[,datatype[,datatype]]`
 /// where the current list of the methods are bitmap, hash, and list and the possible data types are ip, net, mac, port and iface.
 pub trait SetType: Sized {
     type Method;
