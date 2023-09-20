@@ -6,7 +6,7 @@ use std::fmt::{Display, Formatter};
 use std::net::{AddrParseError, IpAddr};
 use std::num::ParseIntError;
 
-use derive_more::{From, Into};
+use derive_more::{Display, From, Into};
 
 use crate::{binding, Session};
 
@@ -431,13 +431,16 @@ where
 }
 
 /// Errors defined in this crate.
-#[derive(Debug, From)]
+#[derive(Debug, From, Display)]
 pub enum Error {
     #[from(ignore)]
+    #[display(fmt = "DataSet:['{}', {}", _0, _1)]
     DataSet(String, bool),
     #[from(ignore)]
+    #[display(fmt = "Cmd:['{}', {}", _0, _1)]
     Cmd(String, bool),
     #[from(ignore)]
+    #[display(fmt = "TypeGet:['{}', {}", _0, _1)]
     TypeGet(String, bool),
     #[from(ignore)]
     InvalidOutput(String),
@@ -463,21 +466,6 @@ impl Error {
             Error::Cmd(_, error) => *error,
             Error::TypeGet(_, error) => *error,
             _ => false,
-        }
-    }
-}
-
-impl Display for Error {
-    fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
-        match self {
-            Error::DataSet(s, _)
-            | Error::Cmd(s, _)
-            | Error::TypeGet(s, _)
-            | Error::InvalidOutput(s)
-            | Error::SaveRestore(s) => f.write_str(s),
-            Error::AddrParse(err) => err.fmt(f),
-            Error::ParseInt(err) => err.fmt(f),
-            Error::Nul(err) => err.fmt(f),
         }
     }
 }
