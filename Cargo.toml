@@ -5,6 +5,7 @@ edition = "2021"
 license = "MIT"
 description = "A wrapper for libipset"
 repository = "https://github.com/lazytiger/ipset"
+links = "ipset"
 
 [lib]
 doctest = false
