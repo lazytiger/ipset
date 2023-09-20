@@ -120,7 +120,7 @@ impl<T: SetType> Session<T> {
         self.data_cmd(data.into(), binding::ipset_cmd_IPSET_CMD_TEST, None)
             .map(|_| true)
             .or_else(|err| {
-                if err.cmd_contains(" is NOT in set test") {
+                if err.cmd_contains(" is NOT in set ") {
                     Ok(false)
                 } else {
                     Err(err)
