@@ -1,5 +1,6 @@
 //! All the types used by libipset.
-//!
+
+use std::error::Error as StdError;
 use std::ffi::{CString, NulError};
 use std::fmt::{Display, Formatter};
 use std::net::{AddrParseError, IpAddr};
@@ -465,6 +466,23 @@ impl Error {
         }
     }
 }
+
+impl Display for Error {
+    fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
+        match self {
+            Error::DataSet(s, _)
+            | Error::Cmd(s, _)
+            | Error::TypeGet(s, _)
+            | Error::InvalidOutput(s)
+            | Error::SaveRestore(s) => f.write_str(s),
+            Error::AddrParse(err) => err.fmt(f),
+            Error::ParseInt(err) => err.fmt(f),
+            Error::Nul(err) => err.fmt(f),
+        }
+    }
+}
+
+impl StdError for Error {}
 
 macro_rules! impl_set_type {
     ($method:ident, $($types:ident),+) => {
