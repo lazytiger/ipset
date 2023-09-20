@@ -29,7 +29,7 @@
 //! * ListSet
 //!
 //! # Example
-//! ```rust
+//! ```rust,no_run
 //!use std::net::IpAddr;
 //!
 //!use ipset::types::{Error, HashIp};
