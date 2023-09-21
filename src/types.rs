@@ -3,7 +3,7 @@
 use std::error::Error as StdError;
 use std::ffi::{CString, NulError};
 use std::fmt::{Display, Formatter};
-use std::net::{AddrParseError, IpAddr};
+use std::net::{AddrParseError, IpAddr, Ipv4Addr, Ipv6Addr};
 use std::num::ParseIntError;
 
 use derive_more::{Display, From, Into};
@@ -57,16 +57,27 @@ impl Default for IpDataType {
     }
 }
 
+impl From<Ipv4Addr> for IpDataType {
+    fn from(ip: Ipv4Addr) -> Self {
+        IpDataType::IPv4(libc::in_addr {
+            s_addr: u32::from(ip).to_be(),
+        })
+    }
+}
+
+impl From<Ipv6Addr> for IpDataType {
+    fn from(ip: Ipv6Addr) -> Self {
+        IpDataType::IPv6(libc::in6_addr {
+            s6_addr: ip.octets(),
+        })
+    }
+}
+
 impl From<IpAddr> for IpDataType {
     fn from(ip: IpAddr) -> Self {
         match ip {
-            IpAddr::V4(v4) => {
-                let ip: u32 = v4.into();
-                IpDataType::IPv4(libc::in_addr { s_addr: ip.to_be() })
-            }
-            IpAddr::V6(v6) => IpDataType::IPv6(libc::in6_addr {
-                s6_addr: v6.octets(),
-            }),
+            IpAddr::V4(v4) => v4.into(),
+            IpAddr::V6(v6) => v6.into(),
         }
     }
 }
