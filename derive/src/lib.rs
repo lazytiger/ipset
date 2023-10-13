@@ -4,6 +4,7 @@ use quote::{format_ident, quote};
 use syn::parse_macro_input;
 use syn::ItemStruct;
 
+/// Derive SetType used ipset crate
 #[proc_macro_derive(SetType)]
 pub fn derive_set_type(input: TokenStream) -> TokenStream {
     let input = parse_macro_input!(input as ItemStruct);
