@@ -3,7 +3,6 @@
 #[repr(C)]
 #[derive(Default)]
 pub struct __IncompleteArrayField<T>(::std::marker::PhantomData<T>, [T; 0]);
-
 impl<T> __IncompleteArrayField<T> {
     #[inline]
     pub const fn new() -> Self {
@@ -26,13 +25,11 @@ impl<T> __IncompleteArrayField<T> {
         ::std::slice::from_raw_parts_mut(self.as_mut_ptr(), len)
     }
 }
-
 impl<T> ::std::fmt::Debug for __IncompleteArrayField<T> {
     fn fmt(&self, fmt: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
         fmt.write_str("__IncompleteArrayField")
     }
 }
-
 pub const true_: u32 = 1;
 pub const false_: u32 = 0;
 pub const __bool_true_false_are_defined: u32 = 1;
@@ -576,7 +573,6 @@ pub const IPSET_ESCAPE_END: &[u8; 2usize] = b"]\0";
 pub const IPSET_DIM_UMAX: u32 = 3;
 pub const IPSET_OPTARG_MAX: u32 = 24;
 pub const IPSET_CMD_ALIASES: u32 = 3;
-
 pub type __s8 = ::std::os::raw::c_schar;
 pub type __u8 = ::std::os::raw::c_uchar;
 pub type __s16 = ::std::os::raw::c_short;
@@ -585,13 +581,11 @@ pub type __s32 = ::std::os::raw::c_int;
 pub type __u32 = ::std::os::raw::c_uint;
 pub type __s64 = ::std::os::raw::c_longlong;
 pub type __u64 = ::std::os::raw::c_ulonglong;
-
 #[repr(C)]
 #[derive(Debug, Copy, Clone)]
 pub struct __kernel_fd_set {
     pub fds_bits: [::std::os::raw::c_ulong; 16usize],
 }
-
 #[test]
 fn bindgen_test_layout___kernel_fd_set() {
     const UNINIT: ::std::mem::MaybeUninit<__kernel_fd_set> = ::std::mem::MaybeUninit::uninit();
@@ -617,7 +611,6 @@ fn bindgen_test_layout___kernel_fd_set() {
         )
     );
 }
-
 pub type __kernel_sighandler_t =
     ::std::option::Option<unsafe extern "C" fn(arg1: ::std::os::raw::c_int)>;
 pub type __kernel_key_t = ::std::os::raw::c_int;
@@ -640,13 +633,11 @@ pub type __kernel_gid32_t = ::std::os::raw::c_uint;
 pub type __kernel_size_t = __kernel_ulong_t;
 pub type __kernel_ssize_t = __kernel_long_t;
 pub type __kernel_ptrdiff_t = __kernel_long_t;
-
 #[repr(C)]
 #[derive(Debug, Copy, Clone)]
 pub struct __kernel_fsid_t {
     pub val: [::std::os::raw::c_int; 2usize],
 }
-
 #[test]
 fn bindgen_test_layout___kernel_fsid_t() {
     const UNINIT: ::std::mem::MaybeUninit<__kernel_fsid_t> = ::std::mem::MaybeUninit::uninit();
@@ -672,7 +663,6 @@ fn bindgen_test_layout___kernel_fsid_t() {
         )
     );
 }
-
 pub type __kernel_off_t = __kernel_long_t;
 pub type __kernel_loff_t = ::std::os::raw::c_longlong;
 pub type __kernel_time_t = __kernel_long_t;
@@ -692,7 +682,6 @@ pub type __be64 = __u64;
 pub type __sum16 = __u16;
 pub type __wsum = __u32;
 pub type __poll_t = ::std::os::raw::c_uint;
-
 pub const ipset_cmd_IPSET_CMD_NONE: ipset_cmd = 0;
 pub const ipset_cmd_IPSET_CMD_PROTOCOL: ipset_cmd = 1;
 pub const ipset_cmd_IPSET_CMD_CREATE: ipset_cmd = 2;
@@ -716,9 +705,7 @@ pub const ipset_cmd_IPSET_CMD_VERSION: ipset_cmd = 18;
 pub const ipset_cmd_IPSET_CMD_QUIT: ipset_cmd = 19;
 pub const ipset_cmd_IPSET_CMD_MAX: ipset_cmd = 20;
 pub const ipset_cmd_IPSET_CMD_COMMIT: ipset_cmd = 20;
-
 pub type ipset_cmd = ::std::os::raw::c_uint;
-
 pub const IPSET_ATTR_UNSPEC: _bindgen_ty_1 = 0;
 pub const IPSET_ATTR_PROTOCOL: _bindgen_ty_1 = 1;
 pub const IPSET_ATTR_SETNAME: _bindgen_ty_1 = 2;
@@ -734,9 +721,7 @@ pub const IPSET_ATTR_PROTOCOL_MIN: _bindgen_ty_1 = 10;
 pub const IPSET_ATTR_REVISION_MIN: _bindgen_ty_1 = 10;
 pub const IPSET_ATTR_INDEX: _bindgen_ty_1 = 11;
 pub const __IPSET_ATTR_CMD_MAX: _bindgen_ty_1 = 12;
-
 pub type _bindgen_ty_1 = ::std::os::raw::c_uint;
-
 pub const IPSET_ATTR_IP: _bindgen_ty_2 = 1;
 pub const IPSET_ATTR_IP_FROM: _bindgen_ty_2 = 1;
 pub const IPSET_ATTR_IP_TO: _bindgen_ty_2 = 2;
@@ -762,9 +747,7 @@ pub const IPSET_ATTR_ELEMENTS: _bindgen_ty_2 = 24;
 pub const IPSET_ATTR_REFERENCES: _bindgen_ty_2 = 25;
 pub const IPSET_ATTR_MEMSIZE: _bindgen_ty_2 = 26;
 pub const __IPSET_ATTR_CREATE_MAX: _bindgen_ty_2 = 27;
-
 pub type _bindgen_ty_2 = ::std::os::raw::c_uint;
-
 pub const IPSET_ATTR_ETHER: _bindgen_ty_3 = 17;
 pub const IPSET_ATTR_NAME: _bindgen_ty_3 = 18;
 pub const IPSET_ATTR_NAMEREF: _bindgen_ty_3 = 19;
@@ -780,15 +763,11 @@ pub const IPSET_ATTR_SKBPRIO: _bindgen_ty_3 = 28;
 pub const IPSET_ATTR_SKBQUEUE: _bindgen_ty_3 = 29;
 pub const IPSET_ATTR_PAD: _bindgen_ty_3 = 30;
 pub const __IPSET_ATTR_ADT_MAX: _bindgen_ty_3 = 31;
-
 pub type _bindgen_ty_3 = ::std::os::raw::c_uint;
-
 pub const IPSET_ATTR_IPADDR_IPV4: _bindgen_ty_4 = 1;
 pub const IPSET_ATTR_IPADDR_IPV6: _bindgen_ty_4 = 2;
 pub const __IPSET_ATTR_IPADDR_MAX: _bindgen_ty_4 = 3;
-
 pub type _bindgen_ty_4 = ::std::os::raw::c_uint;
-
 pub const ipset_errno_IPSET_ERR_PRIVATE: ipset_errno = 4096;
 pub const ipset_errno_IPSET_ERR_PROTOCOL: ipset_errno = 4097;
 pub const ipset_errno_IPSET_ERR_FIND_TYPE: ipset_errno = 4098;
@@ -809,9 +788,7 @@ pub const ipset_errno_IPSET_ERR_COMMENT: ipset_errno = 4112;
 pub const ipset_errno_IPSET_ERR_INVALID_MARKMASK: ipset_errno = 4113;
 pub const ipset_errno_IPSET_ERR_SKBINFO: ipset_errno = 4114;
 pub const ipset_errno_IPSET_ERR_TYPE_SPECIFIC: ipset_errno = 4352;
-
 pub type ipset_errno = ::std::os::raw::c_uint;
-
 pub const ipset_cmd_flags_IPSET_FLAG_BIT_EXIST: ipset_cmd_flags = 0;
 pub const ipset_cmd_flags_IPSET_FLAG_EXIST: ipset_cmd_flags = 1;
 pub const ipset_cmd_flags_IPSET_FLAG_BIT_LIST_SETNAME: ipset_cmd_flags = 1;
@@ -833,9 +810,7 @@ pub const ipset_cmd_flags_IPSET_FLAG_MAP_SKBPRIO: ipset_cmd_flags = 512;
 pub const ipset_cmd_flags_IPSET_FLAG_BIT_MAP_SKBQUEUE: ipset_cmd_flags = 10;
 pub const ipset_cmd_flags_IPSET_FLAG_MAP_SKBQUEUE: ipset_cmd_flags = 1024;
 pub const ipset_cmd_flags_IPSET_FLAG_CMD_MAX: ipset_cmd_flags = 15;
-
 pub type ipset_cmd_flags = ::std::os::raw::c_uint;
-
 pub const ipset_cadt_flags_IPSET_FLAG_BIT_BEFORE: ipset_cadt_flags = 0;
 pub const ipset_cadt_flags_IPSET_FLAG_BEFORE: ipset_cadt_flags = 1;
 pub const ipset_cadt_flags_IPSET_FLAG_BIT_PHYSDEV: ipset_cadt_flags = 1;
@@ -853,57 +828,44 @@ pub const ipset_cadt_flags_IPSET_FLAG_WITH_SKBINFO: ipset_cadt_flags = 64;
 pub const ipset_cadt_flags_IPSET_FLAG_BIT_IFACE_WILDCARD: ipset_cadt_flags = 7;
 pub const ipset_cadt_flags_IPSET_FLAG_IFACE_WILDCARD: ipset_cadt_flags = 128;
 pub const ipset_cadt_flags_IPSET_FLAG_CADT_MAX: ipset_cadt_flags = 15;
-
 pub type ipset_cadt_flags = ::std::os::raw::c_uint;
-
 pub const ipset_create_flags_IPSET_CREATE_FLAG_BIT_FORCEADD: ipset_create_flags = 0;
 pub const ipset_create_flags_IPSET_CREATE_FLAG_FORCEADD: ipset_create_flags = 1;
 pub const ipset_create_flags_IPSET_CREATE_FLAG_BIT_MAX: ipset_create_flags = 7;
-
 pub type ipset_create_flags = ::std::os::raw::c_uint;
-
 pub const ipset_adt_IPSET_ADD: ipset_adt = 0;
 pub const ipset_adt_IPSET_DEL: ipset_adt = 1;
 pub const ipset_adt_IPSET_TEST: ipset_adt = 2;
 pub const ipset_adt_IPSET_ADT_MAX: ipset_adt = 3;
 pub const ipset_adt_IPSET_CREATE: ipset_adt = 3;
 pub const ipset_adt_IPSET_CADT_MAX: ipset_adt = 4;
-
 pub type ipset_adt = ::std::os::raw::c_uint;
 pub type ip_set_id_t = __u16;
-
 pub const ip_set_dim_IPSET_DIM_ZERO: ip_set_dim = 0;
 pub const ip_set_dim_IPSET_DIM_ONE: ip_set_dim = 1;
 pub const ip_set_dim_IPSET_DIM_TWO: ip_set_dim = 2;
 pub const ip_set_dim_IPSET_DIM_THREE: ip_set_dim = 3;
 pub const ip_set_dim_IPSET_DIM_MAX: ip_set_dim = 6;
 pub const ip_set_dim_IPSET_BIT_RETURN_NOMATCH: ip_set_dim = 7;
-
 pub type ip_set_dim = ::std::os::raw::c_uint;
-
 pub const ip_set_kopt_IPSET_INV_MATCH: ip_set_kopt = 1;
 pub const ip_set_kopt_IPSET_DIM_ONE_SRC: ip_set_kopt = 2;
 pub const ip_set_kopt_IPSET_DIM_TWO_SRC: ip_set_kopt = 4;
 pub const ip_set_kopt_IPSET_DIM_THREE_SRC: ip_set_kopt = 8;
 pub const ip_set_kopt_IPSET_RETURN_NOMATCH: ip_set_kopt = 128;
-
 pub type ip_set_kopt = ::std::os::raw::c_uint;
-
 pub const IPSET_COUNTER_NONE: _bindgen_ty_5 = 0;
 pub const IPSET_COUNTER_EQ: _bindgen_ty_5 = 1;
 pub const IPSET_COUNTER_NE: _bindgen_ty_5 = 2;
 pub const IPSET_COUNTER_LT: _bindgen_ty_5 = 3;
 pub const IPSET_COUNTER_GT: _bindgen_ty_5 = 4;
-
 pub type _bindgen_ty_5 = ::std::os::raw::c_uint;
-
 #[repr(C)]
 #[derive(Debug, Copy, Clone)]
 pub struct ip_set_counter_match0 {
     pub op: __u8,
     pub value: __u64,
 }
-
 #[test]
 fn bindgen_test_layout_ip_set_counter_match0() {
     const UNINIT: ::std::mem::MaybeUninit<ip_set_counter_match0> =
@@ -940,14 +902,12 @@ fn bindgen_test_layout_ip_set_counter_match0() {
         )
     );
 }
-
 #[repr(C)]
 #[derive(Debug, Copy, Clone)]
 pub struct ip_set_counter_match {
     pub value: __u64,
     pub op: __u8,
 }
-
 #[test]
 fn bindgen_test_layout_ip_set_counter_match() {
     const UNINIT: ::std::mem::MaybeUninit<ip_set_counter_match> = ::std::mem::MaybeUninit::uninit();
@@ -983,14 +943,12 @@ fn bindgen_test_layout_ip_set_counter_match() {
         )
     );
 }
-
 #[repr(C)]
 #[derive(Copy, Clone)]
 pub union ip_set_name_index {
     pub name: [::std::os::raw::c_char; 32usize],
     pub index: ip_set_id_t,
 }
-
 #[test]
 fn bindgen_test_layout_ip_set_name_index() {
     const UNINIT: ::std::mem::MaybeUninit<ip_set_name_index> = ::std::mem::MaybeUninit::uninit();
@@ -1026,7 +984,6 @@ fn bindgen_test_layout_ip_set_name_index() {
         )
     );
 }
-
 #[repr(C)]
 #[derive(Copy, Clone)]
 pub struct ip_set_req_get_set {
@@ -1034,7 +991,6 @@ pub struct ip_set_req_get_set {
     pub version: ::std::os::raw::c_uint,
     pub set: ip_set_name_index,
 }
-
 #[test]
 fn bindgen_test_layout_ip_set_req_get_set() {
     const UNINIT: ::std::mem::MaybeUninit<ip_set_req_get_set> = ::std::mem::MaybeUninit::uninit();
@@ -1080,7 +1036,6 @@ fn bindgen_test_layout_ip_set_req_get_set() {
         )
     );
 }
-
 #[repr(C)]
 #[derive(Copy, Clone)]
 pub struct ip_set_req_get_set_family {
@@ -1089,7 +1044,6 @@ pub struct ip_set_req_get_set_family {
     pub family: ::std::os::raw::c_uint,
     pub set: ip_set_name_index,
 }
-
 #[test]
 fn bindgen_test_layout_ip_set_req_get_set_family() {
     const UNINIT: ::std::mem::MaybeUninit<ip_set_req_get_set_family> =
@@ -1146,14 +1100,12 @@ fn bindgen_test_layout_ip_set_req_get_set_family() {
         )
     );
 }
-
 #[repr(C)]
 #[derive(Debug, Copy, Clone)]
 pub struct ip_set_req_version {
     pub op: ::std::os::raw::c_uint,
     pub version: ::std::os::raw::c_uint,
 }
-
 #[test]
 fn bindgen_test_layout_ip_set_req_version() {
     const UNINIT: ::std::mem::MaybeUninit<ip_set_req_version> = ::std::mem::MaybeUninit::uninit();
@@ -1189,7 +1141,6 @@ fn bindgen_test_layout_ip_set_req_version() {
         )
     );
 }
-
 pub type __u_char = ::std::os::raw::c_uchar;
 pub type __u_short = ::std::os::raw::c_ushort;
 pub type __u_int = ::std::os::raw::c_uint;
@@ -1224,13 +1175,11 @@ pub type __nlink_t = ::std::os::raw::c_ulong;
 pub type __off_t = ::std::os::raw::c_long;
 pub type __off64_t = ::std::os::raw::c_long;
 pub type __pid_t = ::std::os::raw::c_int;
-
 #[repr(C)]
 #[derive(Debug, Copy, Clone)]
 pub struct __fsid_t {
     pub __val: [::std::os::raw::c_int; 2usize],
 }
-
 #[test]
 fn bindgen_test_layout___fsid_t() {
     const UNINIT: ::std::mem::MaybeUninit<__fsid_t> = ::std::mem::MaybeUninit::uninit();
@@ -1256,7 +1205,6 @@ fn bindgen_test_layout___fsid_t() {
         )
     );
 }
-
 pub type __clock_t = ::std::os::raw::c_long;
 pub type __rlim_t = ::std::os::raw::c_ulong;
 pub type __rlim64_t = ::std::os::raw::c_ulong;
@@ -1304,21 +1252,18 @@ pub type intmax_t = __intmax_t;
 pub type uintmax_t = __uintmax_t;
 pub type va_list = __builtin_va_list;
 pub type __gnuc_va_list = __builtin_va_list;
-
 #[repr(C)]
 #[derive(Copy, Clone)]
 pub struct __mbstate_t {
     pub __count: ::std::os::raw::c_int,
     pub __value: __mbstate_t__bindgen_ty_1,
 }
-
 #[repr(C)]
 #[derive(Copy, Clone)]
 pub union __mbstate_t__bindgen_ty_1 {
     pub __wch: ::std::os::raw::c_uint,
     pub __wchb: [::std::os::raw::c_char; 4usize],
 }
-
 #[test]
 fn bindgen_test_layout___mbstate_t__bindgen_ty_1() {
     const UNINIT: ::std::mem::MaybeUninit<__mbstate_t__bindgen_ty_1> =
@@ -1355,7 +1300,6 @@ fn bindgen_test_layout___mbstate_t__bindgen_ty_1() {
         )
     );
 }
-
 #[test]
 fn bindgen_test_layout___mbstate_t() {
     const UNINIT: ::std::mem::MaybeUninit<__mbstate_t> = ::std::mem::MaybeUninit::uninit();
@@ -1391,14 +1335,12 @@ fn bindgen_test_layout___mbstate_t() {
         )
     );
 }
-
 #[repr(C)]
 #[derive(Copy, Clone)]
 pub struct _G_fpos_t {
     pub __pos: __off_t,
     pub __state: __mbstate_t,
 }
-
 #[test]
 fn bindgen_test_layout__G_fpos_t() {
     const UNINIT: ::std::mem::MaybeUninit<_G_fpos_t> = ::std::mem::MaybeUninit::uninit();
@@ -1434,16 +1376,13 @@ fn bindgen_test_layout__G_fpos_t() {
         )
     );
 }
-
 pub type __fpos_t = _G_fpos_t;
-
 #[repr(C)]
 #[derive(Copy, Clone)]
 pub struct _G_fpos64_t {
     pub __pos: __off64_t,
     pub __state: __mbstate_t,
 }
-
 #[test]
 fn bindgen_test_layout__G_fpos64_t() {
     const UNINIT: ::std::mem::MaybeUninit<_G_fpos64_t> = ::std::mem::MaybeUninit::uninit();
@@ -1479,31 +1418,25 @@ fn bindgen_test_layout__G_fpos64_t() {
         )
     );
 }
-
 pub type __fpos64_t = _G_fpos64_t;
 pub type __FILE = _IO_FILE;
 pub type FILE = _IO_FILE;
-
 #[repr(C)]
 #[derive(Debug, Copy, Clone)]
 pub struct _IO_marker {
     _unused: [u8; 0],
 }
-
 #[repr(C)]
 #[derive(Debug, Copy, Clone)]
 pub struct _IO_codecvt {
     _unused: [u8; 0],
 }
-
 #[repr(C)]
 #[derive(Debug, Copy, Clone)]
 pub struct _IO_wide_data {
     _unused: [u8; 0],
 }
-
 pub type _IO_lock_t = ::std::os::raw::c_void;
-
 #[repr(C)]
 #[derive(Debug, Copy, Clone)]
 pub struct _IO_FILE {
@@ -1537,7 +1470,6 @@ pub struct _IO_FILE {
     pub _mode: ::std::os::raw::c_int,
     pub _unused2: [::std::os::raw::c_char; 20usize],
 }
-
 #[test]
 fn bindgen_test_layout__IO_FILE() {
     const UNINIT: ::std::mem::MaybeUninit<_IO_FILE> = ::std::mem::MaybeUninit::uninit();
@@ -1843,33 +1775,26 @@ fn bindgen_test_layout__IO_FILE() {
         )
     );
 }
-
 pub type off_t = __off_t;
 pub type fpos_t = __fpos_t;
-
 extern "C" {
     pub static mut stdin: *mut FILE;
 }
-
 extern "C" {
     pub static mut stdout: *mut FILE;
 }
-
 extern "C" {
     pub static mut stderr: *mut FILE;
 }
-
 extern "C" {
     pub fn remove(__filename: *const ::std::os::raw::c_char) -> ::std::os::raw::c_int;
 }
-
 extern "C" {
     pub fn rename(
         __old: *const ::std::os::raw::c_char,
         __new: *const ::std::os::raw::c_char,
     ) -> ::std::os::raw::c_int;
 }
-
 extern "C" {
     pub fn renameat(
         __oldfd: ::std::os::raw::c_int,
@@ -1878,45 +1803,36 @@ extern "C" {
         __new: *const ::std::os::raw::c_char,
     ) -> ::std::os::raw::c_int;
 }
-
 extern "C" {
     pub fn tmpfile() -> *mut FILE;
 }
-
 extern "C" {
     pub fn tmpnam(__s: *mut ::std::os::raw::c_char) -> *mut ::std::os::raw::c_char;
 }
-
 extern "C" {
     pub fn tmpnam_r(__s: *mut ::std::os::raw::c_char) -> *mut ::std::os::raw::c_char;
 }
-
 extern "C" {
     pub fn tempnam(
         __dir: *const ::std::os::raw::c_char,
         __pfx: *const ::std::os::raw::c_char,
     ) -> *mut ::std::os::raw::c_char;
 }
-
 extern "C" {
     pub fn fclose(__stream: *mut FILE) -> ::std::os::raw::c_int;
 }
-
 extern "C" {
     pub fn fflush(__stream: *mut FILE) -> ::std::os::raw::c_int;
 }
-
 extern "C" {
     pub fn fflush_unlocked(__stream: *mut FILE) -> ::std::os::raw::c_int;
 }
-
 extern "C" {
     pub fn fopen(
         __filename: *const ::std::os::raw::c_char,
         __modes: *const ::std::os::raw::c_char,
     ) -> *mut FILE;
 }
-
 extern "C" {
     pub fn freopen(
         __filename: *const ::std::os::raw::c_char,
@@ -1924,12 +1840,10 @@ extern "C" {
         __stream: *mut FILE,
     ) -> *mut FILE;
 }
-
 extern "C" {
     pub fn fdopen(__fd: ::std::os::raw::c_int, __modes: *const ::std::os::raw::c_char)
         -> *mut FILE;
 }
-
 extern "C" {
     pub fn fmemopen(
         __s: *mut ::std::os::raw::c_void,
@@ -1937,18 +1851,15 @@ extern "C" {
         __modes: *const ::std::os::raw::c_char,
     ) -> *mut FILE;
 }
-
 extern "C" {
     pub fn open_memstream(
         __bufloc: *mut *mut ::std::os::raw::c_char,
         __sizeloc: *mut usize,
     ) -> *mut FILE;
 }
-
 extern "C" {
     pub fn setbuf(__stream: *mut FILE, __buf: *mut ::std::os::raw::c_char);
 }
-
 extern "C" {
     pub fn setvbuf(
         __stream: *mut FILE,
@@ -1957,15 +1868,12 @@ extern "C" {
         __n: usize,
     ) -> ::std::os::raw::c_int;
 }
-
 extern "C" {
     pub fn setbuffer(__stream: *mut FILE, __buf: *mut ::std::os::raw::c_char, __size: usize);
 }
-
 extern "C" {
     pub fn setlinebuf(__stream: *mut FILE);
 }
-
 extern "C" {
     pub fn fprintf(
         __stream: *mut FILE,
@@ -1973,11 +1881,9 @@ extern "C" {
         ...
     ) -> ::std::os::raw::c_int;
 }
-
 extern "C" {
     pub fn printf(__format: *const ::std::os::raw::c_char, ...) -> ::std::os::raw::c_int;
 }
-
 extern "C" {
     pub fn sprintf(
         __s: *mut ::std::os::raw::c_char,
@@ -1985,7 +1891,6 @@ extern "C" {
         ...
     ) -> ::std::os::raw::c_int;
 }
-
 extern "C" {
     pub fn vfprintf(
         __s: *mut FILE,
@@ -1993,14 +1898,12 @@ extern "C" {
         __arg: *mut __va_list_tag,
     ) -> ::std::os::raw::c_int;
 }
-
 extern "C" {
     pub fn vprintf(
         __format: *const ::std::os::raw::c_char,
         __arg: *mut __va_list_tag,
     ) -> ::std::os::raw::c_int;
 }
-
 extern "C" {
     pub fn vsprintf(
         __s: *mut ::std::os::raw::c_char,
@@ -2008,7 +1911,6 @@ extern "C" {
         __arg: *mut __va_list_tag,
     ) -> ::std::os::raw::c_int;
 }
-
 extern "C" {
     pub fn snprintf(
         __s: *mut ::std::os::raw::c_char,
@@ -2017,7 +1919,6 @@ extern "C" {
         ...
     ) -> ::std::os::raw::c_int;
 }
-
 extern "C" {
     pub fn vsnprintf(
         __s: *mut ::std::os::raw::c_char,
@@ -2026,7 +1927,6 @@ extern "C" {
         __arg: *mut __va_list_tag,
     ) -> ::std::os::raw::c_int;
 }
-
 extern "C" {
     pub fn vdprintf(
         __fd: ::std::os::raw::c_int,
@@ -2034,7 +1934,6 @@ extern "C" {
         __arg: *mut __va_list_tag,
     ) -> ::std::os::raw::c_int;
 }
-
 extern "C" {
     pub fn dprintf(
         __fd: ::std::os::raw::c_int,
@@ -2042,7 +1941,6 @@ extern "C" {
         ...
     ) -> ::std::os::raw::c_int;
 }
-
 extern "C" {
     pub fn fscanf(
         __stream: *mut FILE,
@@ -2050,11 +1948,9 @@ extern "C" {
         ...
     ) -> ::std::os::raw::c_int;
 }
-
 extern "C" {
     pub fn scanf(__format: *const ::std::os::raw::c_char, ...) -> ::std::os::raw::c_int;
 }
-
 extern "C" {
     pub fn sscanf(
         __s: *const ::std::os::raw::c_char,
@@ -2062,7 +1958,6 @@ extern "C" {
         ...
     ) -> ::std::os::raw::c_int;
 }
-
 extern "C" {
     #[link_name = "\u{1}__isoc99_fscanf"]
     pub fn fscanf1(
@@ -2071,12 +1966,10 @@ extern "C" {
         ...
     ) -> ::std::os::raw::c_int;
 }
-
 extern "C" {
     #[link_name = "\u{1}__isoc99_scanf"]
     pub fn scanf1(__format: *const ::std::os::raw::c_char, ...) -> ::std::os::raw::c_int;
 }
-
 extern "C" {
     #[link_name = "\u{1}__isoc99_sscanf"]
     pub fn sscanf1(
@@ -2085,7 +1978,6 @@ extern "C" {
         ...
     ) -> ::std::os::raw::c_int;
 }
-
 extern "C" {
     pub fn vfscanf(
         __s: *mut FILE,
@@ -2093,14 +1985,12 @@ extern "C" {
         __arg: *mut __va_list_tag,
     ) -> ::std::os::raw::c_int;
 }
-
 extern "C" {
     pub fn vscanf(
         __format: *const ::std::os::raw::c_char,
         __arg: *mut __va_list_tag,
     ) -> ::std::os::raw::c_int;
 }
-
 extern "C" {
     pub fn vsscanf(
         __s: *const ::std::os::raw::c_char,
@@ -2108,7 +1998,6 @@ extern "C" {
         __arg: *mut __va_list_tag,
     ) -> ::std::os::raw::c_int;
 }
-
 extern "C" {
     #[link_name = "\u{1}__isoc99_vfscanf"]
     pub fn vfscanf1(
@@ -2117,7 +2006,6 @@ extern "C" {
         __arg: *mut __va_list_tag,
     ) -> ::std::os::raw::c_int;
 }
-
 extern "C" {
     #[link_name = "\u{1}__isoc99_vscanf"]
     pub fn vscanf1(
@@ -2125,7 +2013,6 @@ extern "C" {
         __arg: *mut __va_list_tag,
     ) -> ::std::os::raw::c_int;
 }
-
 extern "C" {
     #[link_name = "\u{1}__isoc99_vsscanf"]
     pub fn vsscanf1(
@@ -2134,64 +2021,49 @@ extern "C" {
         __arg: *mut __va_list_tag,
     ) -> ::std::os::raw::c_int;
 }
-
 extern "C" {
     pub fn fgetc(__stream: *mut FILE) -> ::std::os::raw::c_int;
 }
-
 extern "C" {
     pub fn getc(__stream: *mut FILE) -> ::std::os::raw::c_int;
 }
-
 extern "C" {
     pub fn getchar() -> ::std::os::raw::c_int;
 }
-
 extern "C" {
     pub fn getc_unlocked(__stream: *mut FILE) -> ::std::os::raw::c_int;
 }
-
 extern "C" {
     pub fn getchar_unlocked() -> ::std::os::raw::c_int;
 }
-
 extern "C" {
     pub fn fgetc_unlocked(__stream: *mut FILE) -> ::std::os::raw::c_int;
 }
-
 extern "C" {
     pub fn fputc(__c: ::std::os::raw::c_int, __stream: *mut FILE) -> ::std::os::raw::c_int;
 }
-
 extern "C" {
     pub fn putc(__c: ::std::os::raw::c_int, __stream: *mut FILE) -> ::std::os::raw::c_int;
 }
-
 extern "C" {
     pub fn putchar(__c: ::std::os::raw::c_int) -> ::std::os::raw::c_int;
 }
-
 extern "C" {
     pub fn fputc_unlocked(__c: ::std::os::raw::c_int, __stream: *mut FILE)
         -> ::std::os::raw::c_int;
 }
-
 extern "C" {
     pub fn putc_unlocked(__c: ::std::os::raw::c_int, __stream: *mut FILE) -> ::std::os::raw::c_int;
 }
-
 extern "C" {
     pub fn putchar_unlocked(__c: ::std::os::raw::c_int) -> ::std::os::raw::c_int;
 }
-
 extern "C" {
     pub fn getw(__stream: *mut FILE) -> ::std::os::raw::c_int;
 }
-
 extern "C" {
     pub fn putw(__w: ::std::os::raw::c_int, __stream: *mut FILE) -> ::std::os::raw::c_int;
 }
-
 extern "C" {
     pub fn fgets(
         __s: *mut ::std::os::raw::c_char,
@@ -2199,7 +2071,6 @@ extern "C" {
         __stream: *mut FILE,
     ) -> *mut ::std::os::raw::c_char;
 }
-
 extern "C" {
     pub fn __getdelim(
         __lineptr: *mut *mut ::std::os::raw::c_char,
@@ -2208,7 +2079,6 @@ extern "C" {
         __stream: *mut FILE,
     ) -> __ssize_t;
 }
-
 extern "C" {
     pub fn getdelim(
         __lineptr: *mut *mut ::std::os::raw::c_char,
@@ -2217,7 +2087,6 @@ extern "C" {
         __stream: *mut FILE,
     ) -> __ssize_t;
 }
-
 extern "C" {
     pub fn getline(
         __lineptr: *mut *mut ::std::os::raw::c_char,
@@ -2225,19 +2094,15 @@ extern "C" {
         __stream: *mut FILE,
     ) -> __ssize_t;
 }
-
 extern "C" {
     pub fn fputs(__s: *const ::std::os::raw::c_char, __stream: *mut FILE) -> ::std::os::raw::c_int;
 }
-
 extern "C" {
     pub fn puts(__s: *const ::std::os::raw::c_char) -> ::std::os::raw::c_int;
 }
-
 extern "C" {
     pub fn ungetc(__c: ::std::os::raw::c_int, __stream: *mut FILE) -> ::std::os::raw::c_int;
 }
-
 extern "C" {
     pub fn fread(
         __ptr: *mut ::std::os::raw::c_void,
@@ -2246,7 +2111,6 @@ extern "C" {
         __stream: *mut FILE,
     ) -> ::std::os::raw::c_ulong;
 }
-
 extern "C" {
     pub fn fwrite(
         __ptr: *const ::std::os::raw::c_void,
@@ -2255,7 +2119,6 @@ extern "C" {
         __s: *mut FILE,
     ) -> ::std::os::raw::c_ulong;
 }
-
 extern "C" {
     pub fn fread_unlocked(
         __ptr: *mut ::std::os::raw::c_void,
@@ -2264,7 +2127,6 @@ extern "C" {
         __stream: *mut FILE,
     ) -> usize;
 }
-
 extern "C" {
     pub fn fwrite_unlocked(
         __ptr: *const ::std::os::raw::c_void,
@@ -2273,7 +2135,6 @@ extern "C" {
         __stream: *mut FILE,
     ) -> usize;
 }
-
 extern "C" {
     pub fn fseek(
         __stream: *mut FILE,
@@ -2281,15 +2142,12 @@ extern "C" {
         __whence: ::std::os::raw::c_int,
     ) -> ::std::os::raw::c_int;
 }
-
 extern "C" {
     pub fn ftell(__stream: *mut FILE) -> ::std::os::raw::c_long;
 }
-
 extern "C" {
     pub fn rewind(__stream: *mut FILE);
 }
-
 extern "C" {
     pub fn fseeko(
         __stream: *mut FILE,
@@ -2297,144 +2155,111 @@ extern "C" {
         __whence: ::std::os::raw::c_int,
     ) -> ::std::os::raw::c_int;
 }
-
 extern "C" {
     pub fn ftello(__stream: *mut FILE) -> __off_t;
 }
-
 extern "C" {
     pub fn fgetpos(__stream: *mut FILE, __pos: *mut fpos_t) -> ::std::os::raw::c_int;
 }
-
 extern "C" {
     pub fn fsetpos(__stream: *mut FILE, __pos: *const fpos_t) -> ::std::os::raw::c_int;
 }
-
 extern "C" {
     pub fn clearerr(__stream: *mut FILE);
 }
-
 extern "C" {
     pub fn feof(__stream: *mut FILE) -> ::std::os::raw::c_int;
 }
-
 extern "C" {
     pub fn ferror(__stream: *mut FILE) -> ::std::os::raw::c_int;
 }
-
 extern "C" {
     pub fn clearerr_unlocked(__stream: *mut FILE);
 }
-
 extern "C" {
     pub fn feof_unlocked(__stream: *mut FILE) -> ::std::os::raw::c_int;
 }
-
 extern "C" {
     pub fn ferror_unlocked(__stream: *mut FILE) -> ::std::os::raw::c_int;
 }
-
 extern "C" {
     pub fn perror(__s: *const ::std::os::raw::c_char);
 }
-
 extern "C" {
     pub static mut sys_nerr: ::std::os::raw::c_int;
 }
-
 extern "C" {
     pub static sys_errlist: [*const ::std::os::raw::c_char; 0usize];
 }
-
 extern "C" {
     pub fn fileno(__stream: *mut FILE) -> ::std::os::raw::c_int;
 }
-
 extern "C" {
     pub fn fileno_unlocked(__stream: *mut FILE) -> ::std::os::raw::c_int;
 }
-
 extern "C" {
     pub fn popen(
         __command: *const ::std::os::raw::c_char,
         __modes: *const ::std::os::raw::c_char,
     ) -> *mut FILE;
 }
-
 extern "C" {
     pub fn pclose(__stream: *mut FILE) -> ::std::os::raw::c_int;
 }
-
 extern "C" {
     pub fn ctermid(__s: *mut ::std::os::raw::c_char) -> *mut ::std::os::raw::c_char;
 }
-
 extern "C" {
     pub fn flockfile(__stream: *mut FILE);
 }
-
 extern "C" {
     pub fn ftrylockfile(__stream: *mut FILE) -> ::std::os::raw::c_int;
 }
-
 extern "C" {
     pub fn funlockfile(__stream: *mut FILE);
 }
-
 extern "C" {
     pub fn __uflow(arg1: *mut FILE) -> ::std::os::raw::c_int;
 }
-
 extern "C" {
     pub fn __overflow(arg1: *mut FILE, arg2: ::std::os::raw::c_int) -> ::std::os::raw::c_int;
 }
-
 #[repr(C)]
 #[derive(Debug, Copy, Clone)]
 pub struct ipset_session {
     _unused: [u8; 0],
 }
-
 #[repr(C)]
 #[derive(Debug, Copy, Clone)]
 pub struct ipset_data {
     _unused: [u8; 0],
 }
-
 extern "C" {
     pub fn ipset_session_data(session: *const ipset_session) -> *mut ipset_data;
 }
-
 #[repr(C)]
 #[derive(Debug, Copy, Clone)]
 pub struct ipset_handle {
     _unused: [u8; 0],
 }
-
 extern "C" {
     pub fn ipset_session_handle(session: *const ipset_session) -> *mut ipset_handle;
 }
-
 extern "C" {
     pub fn ipset_saved_type(session: *const ipset_session) -> *const ipset_type;
 }
-
 extern "C" {
     pub fn ipset_session_lineno(session: *mut ipset_session, lineno: u32);
 }
-
 extern "C" {
     pub fn ipset_session_printf_private(session: *mut ipset_session)
         -> *mut ::std::os::raw::c_void;
 }
-
 pub const ipset_err_type_IPSET_NO_ERROR: ipset_err_type = 0;
 pub const ipset_err_type_IPSET_WARNING: ipset_err_type = 1;
 pub const ipset_err_type_IPSET_NOTICE: ipset_err_type = 2;
 pub const ipset_err_type_IPSET_ERROR: ipset_err_type = 3;
-
 pub type ipset_err_type = ::std::os::raw::c_uint;
-
 extern "C" {
     pub fn ipset_session_report(
         session: *mut ipset_session,
@@ -2443,24 +2268,19 @@ extern "C" {
         ...
     ) -> ::std::os::raw::c_int;
 }
-
 extern "C" {
     pub fn ipset_session_warning_as_error(session: *mut ipset_session) -> ::std::os::raw::c_int;
 }
-
 extern "C" {
     pub fn ipset_session_report_reset(session: *mut ipset_session);
 }
-
 extern "C" {
     pub fn ipset_session_report_msg(session: *const ipset_session)
         -> *const ::std::os::raw::c_char;
 }
-
 extern "C" {
     pub fn ipset_session_report_type(session: *const ipset_session) -> ipset_err_type;
 }
-
 pub const ipset_envopt_IPSET_ENV_BIT_SORTED: ipset_envopt = 0;
 pub const ipset_envopt_IPSET_ENV_SORTED: ipset_envopt = 1;
 pub const ipset_envopt_IPSET_ENV_BIT_QUIET: ipset_envopt = 1;
@@ -2473,39 +2293,30 @@ pub const ipset_envopt_IPSET_ENV_BIT_LIST_SETNAME: ipset_envopt = 4;
 pub const ipset_envopt_IPSET_ENV_LIST_SETNAME: ipset_envopt = 16;
 pub const ipset_envopt_IPSET_ENV_BIT_LIST_HEADER: ipset_envopt = 5;
 pub const ipset_envopt_IPSET_ENV_LIST_HEADER: ipset_envopt = 32;
-
 pub type ipset_envopt = ::std::os::raw::c_uint;
-
 extern "C" {
     pub fn ipset_envopt_test(session: *mut ipset_session, env: ipset_envopt) -> bool;
 }
-
 extern "C" {
     pub fn ipset_envopt_set(session: *mut ipset_session, env: ipset_envopt);
 }
-
 extern "C" {
     pub fn ipset_envopt_unset(session: *mut ipset_session, env: ipset_envopt);
 }
-
 pub const ipset_output_mode_IPSET_LIST_NONE: ipset_output_mode = 0;
 pub const ipset_output_mode_IPSET_LIST_PLAIN: ipset_output_mode = 1;
 pub const ipset_output_mode_IPSET_LIST_SAVE: ipset_output_mode = 2;
 pub const ipset_output_mode_IPSET_LIST_XML: ipset_output_mode = 3;
-
 pub type ipset_output_mode = ::std::os::raw::c_uint;
-
 extern "C" {
     pub fn ipset_session_output(
         session: *mut ipset_session,
         mode: ipset_output_mode,
     ) -> ::std::os::raw::c_int;
 }
-
 extern "C" {
     pub fn ipset_commit(session: *mut ipset_session) -> ::std::os::raw::c_int;
 }
-
 extern "C" {
     pub fn ipset_cmd(
         session: *mut ipset_session,
@@ -2513,7 +2324,6 @@ extern "C" {
         lineno: u32,
     ) -> ::std::os::raw::c_int;
 }
-
 pub type ipset_print_outfn = ::std::option::Option<
     unsafe extern "C" fn(
         session: *mut ipset_session,
@@ -2522,7 +2332,6 @@ pub type ipset_print_outfn = ::std::option::Option<
         ...
     ) -> ::std::os::raw::c_int,
 >;
-
 extern "C" {
     pub fn ipset_session_print_outfn(
         session: *mut ipset_session,
@@ -2530,12 +2339,9 @@ extern "C" {
         p: *mut ::std::os::raw::c_void,
     ) -> ::std::os::raw::c_int;
 }
-
 pub const ipset_io_type_IPSET_IO_INPUT: ipset_io_type = 0;
 pub const ipset_io_type_IPSET_IO_OUTPUT: ipset_io_type = 1;
-
 pub type ipset_io_type = ::std::os::raw::c_uint;
-
 extern "C" {
     pub fn ipset_session_io_full(
         session: *mut ipset_session,
@@ -2543,7 +2349,6 @@ extern "C" {
         what: ipset_io_type,
     ) -> ::std::os::raw::c_int;
 }
-
 extern "C" {
     pub fn ipset_session_io_normal(
         session: *mut ipset_session,
@@ -2551,29 +2356,24 @@ extern "C" {
         what: ipset_io_type,
     ) -> ::std::os::raw::c_int;
 }
-
 extern "C" {
     pub fn ipset_session_io_stream(session: *mut ipset_session, what: ipset_io_type) -> *mut FILE;
 }
-
 extern "C" {
     pub fn ipset_session_io_close(
         session: *mut ipset_session,
         what: ipset_io_type,
     ) -> ::std::os::raw::c_int;
 }
-
 extern "C" {
     pub fn ipset_session_init(
         outfn: ipset_print_outfn,
         p: *mut ::std::os::raw::c_void,
     ) -> *mut ipset_session;
 }
-
 extern "C" {
     pub fn ipset_session_fini(session: *mut ipset_session) -> ::std::os::raw::c_int;
 }
-
 extern "C" {
     pub fn ipset_debug_msg(
         dir: *const ::std::os::raw::c_char,
@@ -2581,9 +2381,7 @@ extern "C" {
         len: ::std::os::raw::c_int,
     );
 }
-
 pub type wchar_t = ::std::os::raw::c_int;
-
 #[repr(C)]
 #[repr(align(16))]
 #[derive(Debug, Copy, Clone)]
@@ -2592,7 +2390,6 @@ pub struct max_align_t {
     pub __bindgen_padding_0: u64,
     pub __clang_max_align_nonce2: u128,
 }
-
 #[test]
 fn bindgen_test_layout_max_align_t() {
     const UNINIT: ::std::mem::MaybeUninit<max_align_t> = ::std::mem::MaybeUninit::uninit();
@@ -2628,7 +2425,6 @@ fn bindgen_test_layout_max_align_t() {
         )
     );
 }
-
 pub const ipset_keywords_IPSET_ARG_NONE: ipset_keywords = 0;
 pub const ipset_keywords_IPSET_ARG_FAMILY: ipset_keywords = 1;
 pub const ipset_keywords_IPSET_ARG_INET: ipset_keywords = 2;
@@ -2667,24 +2463,19 @@ pub const ipset_keywords_IPSET_ARG_SKBMARK: ipset_keywords = 34;
 pub const ipset_keywords_IPSET_ARG_SKBPRIO: ipset_keywords = 35;
 pub const ipset_keywords_IPSET_ARG_SKBQUEUE: ipset_keywords = 36;
 pub const ipset_keywords_IPSET_ARG_MAX: ipset_keywords = 37;
-
 pub type ipset_keywords = ::std::os::raw::c_uint;
-
 extern "C" {
     pub fn ipset_keyword(i: ipset_keywords) -> *const ipset_arg;
 }
-
 extern "C" {
     pub fn ipset_ignored_optname(opt: ::std::os::raw::c_uint) -> *const ::std::os::raw::c_char;
 }
-
 #[repr(C)]
 #[derive(Debug, Copy, Clone)]
 pub struct iovec {
     pub iov_base: *mut ::std::os::raw::c_void,
     pub iov_len: usize,
 }
-
 #[test]
 fn bindgen_test_layout_iovec() {
     const UNINIT: ::std::mem::MaybeUninit<iovec> = ::std::mem::MaybeUninit::uninit();
@@ -2720,7 +2511,6 @@ fn bindgen_test_layout_iovec() {
         )
     );
 }
-
 pub type u_char = __u_char;
 pub type u_short = __u_short;
 pub type u_int = __u_int;
@@ -2752,13 +2542,11 @@ pub type u_int16_t = __uint16_t;
 pub type u_int32_t = __uint32_t;
 pub type u_int64_t = __uint64_t;
 pub type register_t = ::std::os::raw::c_long;
-
 #[repr(C)]
 #[derive(Debug, Copy, Clone)]
 pub struct __sigset_t {
     pub __val: [::std::os::raw::c_ulong; 16usize],
 }
-
 #[test]
 fn bindgen_test_layout___sigset_t() {
     const UNINIT: ::std::mem::MaybeUninit<__sigset_t> = ::std::mem::MaybeUninit::uninit();
@@ -2784,16 +2572,13 @@ fn bindgen_test_layout___sigset_t() {
         )
     );
 }
-
 pub type sigset_t = __sigset_t;
-
 #[repr(C)]
 #[derive(Debug, Copy, Clone)]
 pub struct timeval {
     pub tv_sec: __time_t,
     pub tv_usec: __suseconds_t,
 }
-
 #[test]
 fn bindgen_test_layout_timeval() {
     const UNINIT: ::std::mem::MaybeUninit<timeval> = ::std::mem::MaybeUninit::uninit();
@@ -2829,14 +2614,12 @@ fn bindgen_test_layout_timeval() {
         )
     );
 }
-
 #[repr(C)]
 #[derive(Debug, Copy, Clone)]
 pub struct timespec {
     pub tv_sec: __time_t,
     pub tv_nsec: __syscall_slong_t,
 }
-
 #[test]
 fn bindgen_test_layout_timespec() {
     const UNINIT: ::std::mem::MaybeUninit<timespec> = ::std::mem::MaybeUninit::uninit();
@@ -2872,16 +2655,13 @@ fn bindgen_test_layout_timespec() {
         )
     );
 }
-
 pub type suseconds_t = __suseconds_t;
 pub type __fd_mask = ::std::os::raw::c_long;
-
 #[repr(C)]
 #[derive(Debug, Copy, Clone)]
 pub struct fd_set {
     pub __fds_bits: [__fd_mask; 16usize],
 }
-
 #[test]
 fn bindgen_test_layout_fd_set() {
     const UNINIT: ::std::mem::MaybeUninit<fd_set> = ::std::mem::MaybeUninit::uninit();
@@ -2907,9 +2687,7 @@ fn bindgen_test_layout_fd_set() {
         )
     );
 }
-
 pub type fd_mask = __fd_mask;
-
 extern "C" {
     pub fn select(
         __nfds: ::std::os::raw::c_int,
@@ -2919,7 +2697,6 @@ extern "C" {
         __timeout: *mut timeval,
     ) -> ::std::os::raw::c_int;
 }
-
 extern "C" {
     pub fn pselect(
         __nfds: ::std::os::raw::c_int,
@@ -2930,19 +2707,16 @@ extern "C" {
         __sigmask: *const __sigset_t,
     ) -> ::std::os::raw::c_int;
 }
-
 pub type blksize_t = __blksize_t;
 pub type blkcnt_t = __blkcnt_t;
 pub type fsblkcnt_t = __fsblkcnt_t;
 pub type fsfilcnt_t = __fsfilcnt_t;
-
 #[repr(C)]
 #[derive(Debug, Copy, Clone)]
 pub struct __pthread_internal_list {
     pub __prev: *mut __pthread_internal_list,
     pub __next: *mut __pthread_internal_list,
 }
-
 #[test]
 fn bindgen_test_layout___pthread_internal_list() {
     const UNINIT: ::std::mem::MaybeUninit<__pthread_internal_list> =
@@ -2979,15 +2753,12 @@ fn bindgen_test_layout___pthread_internal_list() {
         )
     );
 }
-
 pub type __pthread_list_t = __pthread_internal_list;
-
 #[repr(C)]
 #[derive(Debug, Copy, Clone)]
 pub struct __pthread_internal_slist {
     pub __next: *mut __pthread_internal_slist,
 }
-
 #[test]
 fn bindgen_test_layout___pthread_internal_slist() {
     const UNINIT: ::std::mem::MaybeUninit<__pthread_internal_slist> =
@@ -3014,9 +2785,7 @@ fn bindgen_test_layout___pthread_internal_slist() {
         )
     );
 }
-
 pub type __pthread_slist_t = __pthread_internal_slist;
-
 #[repr(C)]
 #[derive(Debug, Copy, Clone)]
 pub struct __pthread_mutex_s {
@@ -3029,7 +2798,6 @@ pub struct __pthread_mutex_s {
     pub __elision: ::std::os::raw::c_short,
     pub __list: __pthread_list_t,
 }
-
 #[test]
 fn bindgen_test_layout___pthread_mutex_s() {
     const UNINIT: ::std::mem::MaybeUninit<__pthread_mutex_s> = ::std::mem::MaybeUninit::uninit();
@@ -3125,7 +2893,6 @@ fn bindgen_test_layout___pthread_mutex_s() {
         )
     );
 }
-
 #[repr(C)]
 #[derive(Debug, Copy, Clone)]
 pub struct __pthread_rwlock_arch_t {
@@ -3142,7 +2909,6 @@ pub struct __pthread_rwlock_arch_t {
     pub __pad2: ::std::os::raw::c_ulong,
     pub __flags: ::std::os::raw::c_uint,
 }
-
 #[test]
 fn bindgen_test_layout___pthread_rwlock_arch_t() {
     const UNINIT: ::std::mem::MaybeUninit<__pthread_rwlock_arch_t> =
@@ -3279,7 +3045,6 @@ fn bindgen_test_layout___pthread_rwlock_arch_t() {
         )
     );
 }
-
 #[repr(C)]
 #[derive(Copy, Clone)]
 pub struct __pthread_cond_s {
@@ -3291,21 +3056,18 @@ pub struct __pthread_cond_s {
     pub __wrefs: ::std::os::raw::c_uint,
     pub __g_signals: [::std::os::raw::c_uint; 2usize],
 }
-
 #[repr(C)]
 #[derive(Copy, Clone)]
 pub union __pthread_cond_s__bindgen_ty_1 {
     pub __wseq: ::std::os::raw::c_ulonglong,
     pub __wseq32: __pthread_cond_s__bindgen_ty_1__bindgen_ty_1,
 }
-
 #[repr(C)]
 #[derive(Debug, Copy, Clone)]
 pub struct __pthread_cond_s__bindgen_ty_1__bindgen_ty_1 {
     pub __low: ::std::os::raw::c_uint,
     pub __high: ::std::os::raw::c_uint,
 }
-
 #[test]
 fn bindgen_test_layout___pthread_cond_s__bindgen_ty_1__bindgen_ty_1() {
     const UNINIT: ::std::mem::MaybeUninit<__pthread_cond_s__bindgen_ty_1__bindgen_ty_1> =
@@ -3348,7 +3110,6 @@ fn bindgen_test_layout___pthread_cond_s__bindgen_ty_1__bindgen_ty_1() {
         )
     );
 }
-
 #[test]
 fn bindgen_test_layout___pthread_cond_s__bindgen_ty_1() {
     const UNINIT: ::std::mem::MaybeUninit<__pthread_cond_s__bindgen_ty_1> =
@@ -3385,21 +3146,18 @@ fn bindgen_test_layout___pthread_cond_s__bindgen_ty_1() {
         )
     );
 }
-
 #[repr(C)]
 #[derive(Copy, Clone)]
 pub union __pthread_cond_s__bindgen_ty_2 {
     pub __g1_start: ::std::os::raw::c_ulonglong,
     pub __g1_start32: __pthread_cond_s__bindgen_ty_2__bindgen_ty_1,
 }
-
 #[repr(C)]
 #[derive(Debug, Copy, Clone)]
 pub struct __pthread_cond_s__bindgen_ty_2__bindgen_ty_1 {
     pub __low: ::std::os::raw::c_uint,
     pub __high: ::std::os::raw::c_uint,
 }
-
 #[test]
 fn bindgen_test_layout___pthread_cond_s__bindgen_ty_2__bindgen_ty_1() {
     const UNINIT: ::std::mem::MaybeUninit<__pthread_cond_s__bindgen_ty_2__bindgen_ty_1> =
@@ -3442,7 +3200,6 @@ fn bindgen_test_layout___pthread_cond_s__bindgen_ty_2__bindgen_ty_1() {
         )
     );
 }
-
 #[test]
 fn bindgen_test_layout___pthread_cond_s__bindgen_ty_2() {
     const UNINIT: ::std::mem::MaybeUninit<__pthread_cond_s__bindgen_ty_2> =
@@ -3479,7 +3236,6 @@ fn bindgen_test_layout___pthread_cond_s__bindgen_ty_2() {
         )
     );
 }
-
 #[test]
 fn bindgen_test_layout___pthread_cond_s() {
     const UNINIT: ::std::mem::MaybeUninit<__pthread_cond_s> = ::std::mem::MaybeUninit::uninit();
@@ -3545,16 +3301,13 @@ fn bindgen_test_layout___pthread_cond_s() {
         )
     );
 }
-
 pub type pthread_t = ::std::os::raw::c_ulong;
-
 #[repr(C)]
 #[derive(Copy, Clone)]
 pub union pthread_mutexattr_t {
     pub __size: [::std::os::raw::c_char; 4usize],
     pub __align: ::std::os::raw::c_int,
 }
-
 #[test]
 fn bindgen_test_layout_pthread_mutexattr_t() {
     const UNINIT: ::std::mem::MaybeUninit<pthread_mutexattr_t> = ::std::mem::MaybeUninit::uninit();
@@ -3590,14 +3343,12 @@ fn bindgen_test_layout_pthread_mutexattr_t() {
         )
     );
 }
-
 #[repr(C)]
 #[derive(Copy, Clone)]
 pub union pthread_condattr_t {
     pub __size: [::std::os::raw::c_char; 4usize],
     pub __align: ::std::os::raw::c_int,
 }
-
 #[test]
 fn bindgen_test_layout_pthread_condattr_t() {
     const UNINIT: ::std::mem::MaybeUninit<pthread_condattr_t> = ::std::mem::MaybeUninit::uninit();
@@ -3633,17 +3384,14 @@ fn bindgen_test_layout_pthread_condattr_t() {
         )
     );
 }
-
 pub type pthread_key_t = ::std::os::raw::c_uint;
 pub type pthread_once_t = ::std::os::raw::c_int;
-
 #[repr(C)]
 #[derive(Copy, Clone)]
 pub union pthread_attr_t {
     pub __size: [::std::os::raw::c_char; 56usize],
     pub __align: ::std::os::raw::c_long,
 }
-
 #[test]
 fn bindgen_test_layout_pthread_attr_t() {
     const UNINIT: ::std::mem::MaybeUninit<pthread_attr_t> = ::std::mem::MaybeUninit::uninit();
@@ -3679,7 +3427,6 @@ fn bindgen_test_layout_pthread_attr_t() {
         )
     );
 }
-
 #[repr(C)]
 #[derive(Copy, Clone)]
 pub union pthread_mutex_t {
@@ -3687,7 +3434,6 @@ pub union pthread_mutex_t {
     pub __size: [::std::os::raw::c_char; 40usize],
     pub __align: ::std::os::raw::c_long,
 }
-
 #[test]
 fn bindgen_test_layout_pthread_mutex_t() {
     const UNINIT: ::std::mem::MaybeUninit<pthread_mutex_t> = ::std::mem::MaybeUninit::uninit();
@@ -3733,7 +3479,6 @@ fn bindgen_test_layout_pthread_mutex_t() {
         )
     );
 }
-
 #[repr(C)]
 #[derive(Copy, Clone)]
 pub union pthread_cond_t {
@@ -3741,7 +3486,6 @@ pub union pthread_cond_t {
     pub __size: [::std::os::raw::c_char; 48usize],
     pub __align: ::std::os::raw::c_longlong,
 }
-
 #[test]
 fn bindgen_test_layout_pthread_cond_t() {
     const UNINIT: ::std::mem::MaybeUninit<pthread_cond_t> = ::std::mem::MaybeUninit::uninit();
@@ -3787,7 +3531,6 @@ fn bindgen_test_layout_pthread_cond_t() {
         )
     );
 }
-
 #[repr(C)]
 #[derive(Copy, Clone)]
 pub union pthread_rwlock_t {
@@ -3795,7 +3538,6 @@ pub union pthread_rwlock_t {
     pub __size: [::std::os::raw::c_char; 56usize],
     pub __align: ::std::os::raw::c_long,
 }
-
 #[test]
 fn bindgen_test_layout_pthread_rwlock_t() {
     const UNINIT: ::std::mem::MaybeUninit<pthread_rwlock_t> = ::std::mem::MaybeUninit::uninit();
@@ -3841,14 +3583,12 @@ fn bindgen_test_layout_pthread_rwlock_t() {
         )
     );
 }
-
 #[repr(C)]
 #[derive(Copy, Clone)]
 pub union pthread_rwlockattr_t {
     pub __size: [::std::os::raw::c_char; 8usize],
     pub __align: ::std::os::raw::c_long,
 }
-
 #[test]
 fn bindgen_test_layout_pthread_rwlockattr_t() {
     const UNINIT: ::std::mem::MaybeUninit<pthread_rwlockattr_t> = ::std::mem::MaybeUninit::uninit();
@@ -3884,16 +3624,13 @@ fn bindgen_test_layout_pthread_rwlockattr_t() {
         )
     );
 }
-
 pub type pthread_spinlock_t = ::std::os::raw::c_int;
-
 #[repr(C)]
 #[derive(Copy, Clone)]
 pub union pthread_barrier_t {
     pub __size: [::std::os::raw::c_char; 32usize],
     pub __align: ::std::os::raw::c_long,
 }
-
 #[test]
 fn bindgen_test_layout_pthread_barrier_t() {
     const UNINIT: ::std::mem::MaybeUninit<pthread_barrier_t> = ::std::mem::MaybeUninit::uninit();
@@ -3929,14 +3666,12 @@ fn bindgen_test_layout_pthread_barrier_t() {
         )
     );
 }
-
 #[repr(C)]
 #[derive(Copy, Clone)]
 pub union pthread_barrierattr_t {
     pub __size: [::std::os::raw::c_char; 4usize],
     pub __align: ::std::os::raw::c_int,
 }
-
 #[test]
 fn bindgen_test_layout_pthread_barrierattr_t() {
     const UNINIT: ::std::mem::MaybeUninit<pthread_barrierattr_t> =
@@ -3973,9 +3708,7 @@ fn bindgen_test_layout_pthread_barrierattr_t() {
         )
     );
 }
-
 pub type socklen_t = __socklen_t;
-
 pub const __socket_type_SOCK_STREAM: __socket_type = 1;
 pub const __socket_type_SOCK_DGRAM: __socket_type = 2;
 pub const __socket_type_SOCK_RAW: __socket_type = 3;
@@ -3985,17 +3718,14 @@ pub const __socket_type_SOCK_DCCP: __socket_type = 6;
 pub const __socket_type_SOCK_PACKET: __socket_type = 10;
 pub const __socket_type_SOCK_CLOEXEC: __socket_type = 524288;
 pub const __socket_type_SOCK_NONBLOCK: __socket_type = 2048;
-
 pub type __socket_type = ::std::os::raw::c_uint;
 pub type sa_family_t = ::std::os::raw::c_ushort;
-
 #[repr(C)]
 #[derive(Debug, Copy, Clone)]
 pub struct sockaddr {
     pub sa_family: sa_family_t,
     pub sa_data: [::std::os::raw::c_char; 14usize],
 }
-
 #[test]
 fn bindgen_test_layout_sockaddr() {
     const UNINIT: ::std::mem::MaybeUninit<sockaddr> = ::std::mem::MaybeUninit::uninit();
@@ -4031,7 +3761,6 @@ fn bindgen_test_layout_sockaddr() {
         )
     );
 }
-
 #[repr(C)]
 #[derive(Debug, Copy, Clone)]
 pub struct sockaddr_storage {
@@ -4039,7 +3768,6 @@ pub struct sockaddr_storage {
     pub __ss_padding: [::std::os::raw::c_char; 118usize],
     pub __ss_align: ::std::os::raw::c_ulong,
 }
-
 #[test]
 fn bindgen_test_layout_sockaddr_storage() {
     const UNINIT: ::std::mem::MaybeUninit<sockaddr_storage> = ::std::mem::MaybeUninit::uninit();
@@ -4085,7 +3813,6 @@ fn bindgen_test_layout_sockaddr_storage() {
         )
     );
 }
-
 pub const MSG_OOB: _bindgen_ty_6 = 1;
 pub const MSG_PEEK: _bindgen_ty_6 = 2;
 pub const MSG_DONTROUTE: _bindgen_ty_6 = 4;
@@ -4107,9 +3834,7 @@ pub const MSG_BATCH: _bindgen_ty_6 = 262144;
 pub const MSG_ZEROCOPY: _bindgen_ty_6 = 67108864;
 pub const MSG_FASTOPEN: _bindgen_ty_6 = 536870912;
 pub const MSG_CMSG_CLOEXEC: _bindgen_ty_6 = 1073741824;
-
 pub type _bindgen_ty_6 = ::std::os::raw::c_uint;
-
 #[repr(C)]
 #[derive(Debug, Copy, Clone)]
 pub struct msghdr {
@@ -4121,7 +3846,6 @@ pub struct msghdr {
     pub msg_controllen: usize,
     pub msg_flags: ::std::os::raw::c_int,
 }
-
 #[test]
 fn bindgen_test_layout_msghdr() {
     const UNINIT: ::std::mem::MaybeUninit<msghdr> = ::std::mem::MaybeUninit::uninit();
@@ -4207,7 +3931,6 @@ fn bindgen_test_layout_msghdr() {
         )
     );
 }
-
 #[repr(C)]
 #[derive(Debug)]
 pub struct cmsghdr {
@@ -4216,7 +3939,6 @@ pub struct cmsghdr {
     pub cmsg_type: ::std::os::raw::c_int,
     pub __cmsg_data: __IncompleteArrayField<::std::os::raw::c_uchar>,
 }
-
 #[test]
 fn bindgen_test_layout_cmsghdr() {
     const UNINIT: ::std::mem::MaybeUninit<cmsghdr> = ::std::mem::MaybeUninit::uninit();
@@ -4272,22 +3994,17 @@ fn bindgen_test_layout_cmsghdr() {
         )
     );
 }
-
 extern "C" {
     pub fn __cmsg_nxthdr(__mhdr: *mut msghdr, __cmsg: *mut cmsghdr) -> *mut cmsghdr;
 }
-
 pub const SCM_RIGHTS: _bindgen_ty_7 = 1;
-
 pub type _bindgen_ty_7 = ::std::os::raw::c_uint;
-
 #[repr(C)]
 #[derive(Debug, Copy, Clone)]
 pub struct linger {
     pub l_onoff: ::std::os::raw::c_int,
     pub l_linger: ::std::os::raw::c_int,
 }
-
 #[test]
 fn bindgen_test_layout_linger() {
     const UNINIT: ::std::mem::MaybeUninit<linger> = ::std::mem::MaybeUninit::uninit();
@@ -4323,14 +4040,12 @@ fn bindgen_test_layout_linger() {
         )
     );
 }
-
 #[repr(C)]
 #[derive(Debug, Copy, Clone)]
 pub struct osockaddr {
     pub sa_family: ::std::os::raw::c_ushort,
     pub sa_data: [::std::os::raw::c_uchar; 14usize],
 }
-
 #[test]
 fn bindgen_test_layout_osockaddr() {
     const UNINIT: ::std::mem::MaybeUninit<osockaddr> = ::std::mem::MaybeUninit::uninit();
@@ -4366,13 +4081,10 @@ fn bindgen_test_layout_osockaddr() {
         )
     );
 }
-
 pub const SHUT_RD: _bindgen_ty_8 = 0;
 pub const SHUT_WR: _bindgen_ty_8 = 1;
 pub const SHUT_RDWR: _bindgen_ty_8 = 2;
-
 pub type _bindgen_ty_8 = ::std::os::raw::c_uint;
-
 extern "C" {
     pub fn socket(
         __domain: ::std::os::raw::c_int,
@@ -4380,7 +4092,6 @@ extern "C" {
         __protocol: ::std::os::raw::c_int,
     ) -> ::std::os::raw::c_int;
 }
-
 extern "C" {
     pub fn socketpair(
         __domain: ::std::os::raw::c_int,
@@ -4389,7 +4100,6 @@ extern "C" {
         __fds: *mut ::std::os::raw::c_int,
     ) -> ::std::os::raw::c_int;
 }
-
 extern "C" {
     pub fn bind(
         __fd: ::std::os::raw::c_int,
@@ -4397,7 +4107,6 @@ extern "C" {
         __len: socklen_t,
     ) -> ::std::os::raw::c_int;
 }
-
 extern "C" {
     pub fn getsockname(
         __fd: ::std::os::raw::c_int,
@@ -4405,7 +4114,6 @@ extern "C" {
         __len: *mut socklen_t,
     ) -> ::std::os::raw::c_int;
 }
-
 extern "C" {
     pub fn connect(
         __fd: ::std::os::raw::c_int,
@@ -4413,7 +4121,6 @@ extern "C" {
         __len: socklen_t,
     ) -> ::std::os::raw::c_int;
 }
-
 extern "C" {
     pub fn getpeername(
         __fd: ::std::os::raw::c_int,
@@ -4421,7 +4128,6 @@ extern "C" {
         __len: *mut socklen_t,
     ) -> ::std::os::raw::c_int;
 }
-
 extern "C" {
     pub fn send(
         __fd: ::std::os::raw::c_int,
@@ -4430,7 +4136,6 @@ extern "C" {
         __flags: ::std::os::raw::c_int,
     ) -> isize;
 }
-
 extern "C" {
     pub fn recv(
         __fd: ::std::os::raw::c_int,
@@ -4439,7 +4144,6 @@ extern "C" {
         __flags: ::std::os::raw::c_int,
     ) -> isize;
 }
-
 extern "C" {
     pub fn sendto(
         __fd: ::std::os::raw::c_int,
@@ -4450,7 +4154,6 @@ extern "C" {
         __addr_len: socklen_t,
     ) -> isize;
 }
-
 extern "C" {
     pub fn recvfrom(
         __fd: ::std::os::raw::c_int,
@@ -4461,7 +4164,6 @@ extern "C" {
         __addr_len: *mut socklen_t,
     ) -> isize;
 }
-
 extern "C" {
     pub fn sendmsg(
         __fd: ::std::os::raw::c_int,
@@ -4469,7 +4171,6 @@ extern "C" {
         __flags: ::std::os::raw::c_int,
     ) -> isize;
 }
-
 extern "C" {
     pub fn recvmsg(
         __fd: ::std::os::raw::c_int,
@@ -4477,7 +4178,6 @@ extern "C" {
         __flags: ::std::os::raw::c_int,
     ) -> isize;
 }
-
 extern "C" {
     pub fn getsockopt(
         __fd: ::std::os::raw::c_int,
@@ -4487,7 +4187,6 @@ extern "C" {
         __optlen: *mut socklen_t,
     ) -> ::std::os::raw::c_int;
 }
-
 extern "C" {
     pub fn setsockopt(
         __fd: ::std::os::raw::c_int,
@@ -4497,12 +4196,10 @@ extern "C" {
         __optlen: socklen_t,
     ) -> ::std::os::raw::c_int;
 }
-
 extern "C" {
     pub fn listen(__fd: ::std::os::raw::c_int, __n: ::std::os::raw::c_int)
         -> ::std::os::raw::c_int;
 }
-
 extern "C" {
     pub fn accept(
         __fd: ::std::os::raw::c_int,
@@ -4510,33 +4207,27 @@ extern "C" {
         __addr_len: *mut socklen_t,
     ) -> ::std::os::raw::c_int;
 }
-
 extern "C" {
     pub fn shutdown(
         __fd: ::std::os::raw::c_int,
         __how: ::std::os::raw::c_int,
     ) -> ::std::os::raw::c_int;
 }
-
 extern "C" {
     pub fn sockatmark(__fd: ::std::os::raw::c_int) -> ::std::os::raw::c_int;
 }
-
 extern "C" {
     pub fn isfdtype(
         __fd: ::std::os::raw::c_int,
         __fdtype: ::std::os::raw::c_int,
     ) -> ::std::os::raw::c_int;
 }
-
 pub type in_addr_t = u32;
-
 #[repr(C)]
 #[derive(Debug, Copy, Clone)]
 pub struct in_addr {
     pub s_addr: in_addr_t,
 }
-
 #[test]
 fn bindgen_test_layout_in_addr() {
     const UNINIT: ::std::mem::MaybeUninit<in_addr> = ::std::mem::MaybeUninit::uninit();
@@ -4562,14 +4253,12 @@ fn bindgen_test_layout_in_addr() {
         )
     );
 }
-
 #[repr(C)]
 #[derive(Debug, Copy, Clone)]
 pub struct ip_opts {
     pub ip_dst: in_addr,
     pub ip_opts: [::std::os::raw::c_char; 40usize],
 }
-
 #[test]
 fn bindgen_test_layout_ip_opts() {
     const UNINIT: ::std::mem::MaybeUninit<ip_opts> = ::std::mem::MaybeUninit::uninit();
@@ -4605,7 +4294,6 @@ fn bindgen_test_layout_ip_opts() {
         )
     );
 }
-
 #[repr(C)]
 #[derive(Debug, Copy, Clone)]
 pub struct ip_mreqn {
@@ -4613,7 +4301,6 @@ pub struct ip_mreqn {
     pub imr_address: in_addr,
     pub imr_ifindex: ::std::os::raw::c_int,
 }
-
 #[test]
 fn bindgen_test_layout_ip_mreqn() {
     const UNINIT: ::std::mem::MaybeUninit<ip_mreqn> = ::std::mem::MaybeUninit::uninit();
@@ -4659,7 +4346,6 @@ fn bindgen_test_layout_ip_mreqn() {
         )
     );
 }
-
 #[repr(C)]
 #[derive(Debug, Copy, Clone)]
 pub struct in_pktinfo {
@@ -4667,7 +4353,6 @@ pub struct in_pktinfo {
     pub ipi_spec_dst: in_addr,
     pub ipi_addr: in_addr,
 }
-
 #[test]
 fn bindgen_test_layout_in_pktinfo() {
     const UNINIT: ::std::mem::MaybeUninit<in_pktinfo> = ::std::mem::MaybeUninit::uninit();
@@ -4713,7 +4398,6 @@ fn bindgen_test_layout_in_pktinfo() {
         )
     );
 }
-
 pub const IPPROTO_IP: _bindgen_ty_9 = 0;
 pub const IPPROTO_ICMP: _bindgen_ty_9 = 1;
 pub const IPPROTO_IGMP: _bindgen_ty_9 = 2;
@@ -4740,9 +4424,7 @@ pub const IPPROTO_UDPLITE: _bindgen_ty_9 = 136;
 pub const IPPROTO_MPLS: _bindgen_ty_9 = 137;
 pub const IPPROTO_RAW: _bindgen_ty_9 = 255;
 pub const IPPROTO_MAX: _bindgen_ty_9 = 256;
-
 pub type _bindgen_ty_9 = ::std::os::raw::c_uint;
-
 pub const IPPROTO_HOPOPTS: _bindgen_ty_10 = 0;
 pub const IPPROTO_ROUTING: _bindgen_ty_10 = 43;
 pub const IPPROTO_FRAGMENT: _bindgen_ty_10 = 44;
@@ -4750,10 +4432,8 @@ pub const IPPROTO_ICMPV6: _bindgen_ty_10 = 58;
 pub const IPPROTO_NONE: _bindgen_ty_10 = 59;
 pub const IPPROTO_DSTOPTS: _bindgen_ty_10 = 60;
 pub const IPPROTO_MH: _bindgen_ty_10 = 135;
-
 pub type _bindgen_ty_10 = ::std::os::raw::c_uint;
 pub type in_port_t = u16;
-
 pub const IPPORT_ECHO: _bindgen_ty_11 = 7;
 pub const IPPORT_DISCARD: _bindgen_ty_11 = 9;
 pub const IPPORT_SYSTAT: _bindgen_ty_11 = 11;
@@ -4780,15 +4460,12 @@ pub const IPPORT_WHOSERVER: _bindgen_ty_11 = 513;
 pub const IPPORT_ROUTESERVER: _bindgen_ty_11 = 520;
 pub const IPPORT_RESERVED: _bindgen_ty_11 = 1024;
 pub const IPPORT_USERRESERVED: _bindgen_ty_11 = 5000;
-
 pub type _bindgen_ty_11 = ::std::os::raw::c_uint;
-
 #[repr(C)]
 #[derive(Copy, Clone)]
 pub struct in6_addr {
     pub __in6_u: in6_addr__bindgen_ty_1,
 }
-
 #[repr(C)]
 #[derive(Copy, Clone)]
 pub union in6_addr__bindgen_ty_1 {
@@ -4796,7 +4473,6 @@ pub union in6_addr__bindgen_ty_1 {
     pub __u6_addr16: [u16; 8usize],
     pub __u6_addr32: [u32; 4usize],
 }
-
 #[test]
 fn bindgen_test_layout_in6_addr__bindgen_ty_1() {
     const UNINIT: ::std::mem::MaybeUninit<in6_addr__bindgen_ty_1> =
@@ -4843,7 +4519,6 @@ fn bindgen_test_layout_in6_addr__bindgen_ty_1() {
         )
     );
 }
-
 #[test]
 fn bindgen_test_layout_in6_addr() {
     const UNINIT: ::std::mem::MaybeUninit<in6_addr> = ::std::mem::MaybeUninit::uninit();
@@ -4869,15 +4544,12 @@ fn bindgen_test_layout_in6_addr() {
         )
     );
 }
-
 extern "C" {
     pub static in6addr_any: in6_addr;
 }
-
 extern "C" {
     pub static in6addr_loopback: in6_addr;
 }
-
 #[repr(C)]
 #[derive(Debug, Copy, Clone)]
 pub struct sockaddr_in {
@@ -4886,7 +4558,6 @@ pub struct sockaddr_in {
     pub sin_addr: in_addr,
     pub sin_zero: [::std::os::raw::c_uchar; 8usize],
 }
-
 #[test]
 fn bindgen_test_layout_sockaddr_in() {
     const UNINIT: ::std::mem::MaybeUninit<sockaddr_in> = ::std::mem::MaybeUninit::uninit();
@@ -4942,7 +4613,6 @@ fn bindgen_test_layout_sockaddr_in() {
         )
     );
 }
-
 #[repr(C)]
 #[derive(Copy, Clone)]
 pub struct sockaddr_in6 {
@@ -4952,7 +4622,6 @@ pub struct sockaddr_in6 {
     pub sin6_addr: in6_addr,
     pub sin6_scope_id: u32,
 }
-
 #[test]
 fn bindgen_test_layout_sockaddr_in6() {
     const UNINIT: ::std::mem::MaybeUninit<sockaddr_in6> = ::std::mem::MaybeUninit::uninit();
@@ -5018,14 +4687,12 @@ fn bindgen_test_layout_sockaddr_in6() {
         )
     );
 }
-
 #[repr(C)]
 #[derive(Debug, Copy, Clone)]
 pub struct ip_mreq {
     pub imr_multiaddr: in_addr,
     pub imr_interface: in_addr,
 }
-
 #[test]
 fn bindgen_test_layout_ip_mreq() {
     const UNINIT: ::std::mem::MaybeUninit<ip_mreq> = ::std::mem::MaybeUninit::uninit();
@@ -5061,7 +4728,6 @@ fn bindgen_test_layout_ip_mreq() {
         )
     );
 }
-
 #[repr(C)]
 #[derive(Debug, Copy, Clone)]
 pub struct ip_mreq_source {
@@ -5069,7 +4735,6 @@ pub struct ip_mreq_source {
     pub imr_interface: in_addr,
     pub imr_sourceaddr: in_addr,
 }
-
 #[test]
 fn bindgen_test_layout_ip_mreq_source() {
     const UNINIT: ::std::mem::MaybeUninit<ip_mreq_source> = ::std::mem::MaybeUninit::uninit();
@@ -5115,14 +4780,12 @@ fn bindgen_test_layout_ip_mreq_source() {
         )
     );
 }
-
 #[repr(C)]
 #[derive(Copy, Clone)]
 pub struct ipv6_mreq {
     pub ipv6mr_multiaddr: in6_addr,
     pub ipv6mr_interface: ::std::os::raw::c_uint,
 }
-
 #[test]
 fn bindgen_test_layout_ipv6_mreq() {
     const UNINIT: ::std::mem::MaybeUninit<ipv6_mreq> = ::std::mem::MaybeUninit::uninit();
@@ -5158,14 +4821,12 @@ fn bindgen_test_layout_ipv6_mreq() {
         )
     );
 }
-
 #[repr(C)]
 #[derive(Debug, Copy, Clone)]
 pub struct group_req {
     pub gr_interface: u32,
     pub gr_group: sockaddr_storage,
 }
-
 #[test]
 fn bindgen_test_layout_group_req() {
     const UNINIT: ::std::mem::MaybeUninit<group_req> = ::std::mem::MaybeUninit::uninit();
@@ -5201,7 +4862,6 @@ fn bindgen_test_layout_group_req() {
         )
     );
 }
-
 #[repr(C)]
 #[derive(Debug, Copy, Clone)]
 pub struct group_source_req {
@@ -5209,7 +4869,6 @@ pub struct group_source_req {
     pub gsr_group: sockaddr_storage,
     pub gsr_source: sockaddr_storage,
 }
-
 #[test]
 fn bindgen_test_layout_group_source_req() {
     const UNINIT: ::std::mem::MaybeUninit<group_source_req> = ::std::mem::MaybeUninit::uninit();
@@ -5255,7 +4914,6 @@ fn bindgen_test_layout_group_source_req() {
         )
     );
 }
-
 #[repr(C)]
 #[derive(Debug, Copy, Clone)]
 pub struct ip_msfilter {
@@ -5265,7 +4923,6 @@ pub struct ip_msfilter {
     pub imsf_numsrc: u32,
     pub imsf_slist: [in_addr; 1usize],
 }
-
 #[test]
 fn bindgen_test_layout_ip_msfilter() {
     const UNINIT: ::std::mem::MaybeUninit<ip_msfilter> = ::std::mem::MaybeUninit::uninit();
@@ -5331,7 +4988,6 @@ fn bindgen_test_layout_ip_msfilter() {
         )
     );
 }
-
 #[repr(C)]
 #[derive(Debug, Copy, Clone)]
 pub struct group_filter {
@@ -5341,7 +4997,6 @@ pub struct group_filter {
     pub gf_numsrc: u32,
     pub gf_slist: [sockaddr_storage; 1usize],
 }
-
 #[test]
 fn bindgen_test_layout_group_filter() {
     const UNINIT: ::std::mem::MaybeUninit<group_filter> = ::std::mem::MaybeUninit::uninit();
@@ -5407,37 +5062,30 @@ fn bindgen_test_layout_group_filter() {
         )
     );
 }
-
 extern "C" {
     pub fn ntohl(__netlong: u32) -> u32;
 }
-
 extern "C" {
     pub fn ntohs(__netshort: u16) -> u16;
 }
-
 extern "C" {
     pub fn htonl(__hostlong: u32) -> u32;
 }
-
 extern "C" {
     pub fn htons(__hostshort: u16) -> u16;
 }
-
 extern "C" {
     pub fn bindresvport(
         __sockfd: ::std::os::raw::c_int,
         __sock_in: *mut sockaddr_in,
     ) -> ::std::os::raw::c_int;
 }
-
 extern "C" {
     pub fn bindresvport6(
         __sockfd: ::std::os::raw::c_int,
         __sock_in: *mut sockaddr_in6,
     ) -> ::std::os::raw::c_int;
 }
-
 #[repr(C)]
 #[derive(Copy, Clone)]
 pub union nf_inet_addr {
@@ -5447,7 +5095,6 @@ pub union nf_inet_addr {
     pub in_: in_addr,
     pub in6: in6_addr,
 }
-
 #[test]
 fn bindgen_test_layout_nf_inet_addr() {
     const UNINIT: ::std::mem::MaybeUninit<nf_inet_addr> = ::std::mem::MaybeUninit::uninit();
@@ -5513,7 +5160,6 @@ fn bindgen_test_layout_nf_inet_addr() {
         )
     );
 }
-
 pub const ipset_opt_IPSET_OPT_NONE: ipset_opt = 0;
 pub const ipset_opt_IPSET_SETNAME: ipset_opt = 1;
 pub const ipset_opt_IPSET_OPT_TYPENAME: ipset_opt = 2;
@@ -5571,9 +5217,7 @@ pub const ipset_opt_IPSET_OPT_REVISION: ipset_opt = 53;
 pub const ipset_opt_IPSET_OPT_REVISION_MIN: ipset_opt = 54;
 pub const ipset_opt_IPSET_OPT_INDEX: ipset_opt = 55;
 pub const ipset_opt_IPSET_OPT_MAX: ipset_opt = 56;
-
 pub type ipset_opt = ::std::os::raw::c_uint;
-
 extern "C" {
     pub fn ipset_strlcpy(
         dst: *mut ::std::os::raw::c_char,
@@ -5581,7 +5225,6 @@ extern "C" {
         len: usize,
     );
 }
-
 extern "C" {
     pub fn ipset_strlcat(
         dst: *mut ::std::os::raw::c_char,
@@ -5589,27 +5232,21 @@ extern "C" {
         len: usize,
     );
 }
-
 extern "C" {
     pub fn ipset_data_flags_test(data: *const ipset_data, flags: u64) -> bool;
 }
-
 extern "C" {
     pub fn ipset_data_flags_set(data: *mut ipset_data, flags: u64);
 }
-
 extern "C" {
     pub fn ipset_data_flags_unset(data: *mut ipset_data, flags: u64);
 }
-
 extern "C" {
     pub fn ipset_data_ignored(data: *mut ipset_data, opt: ipset_opt) -> bool;
 }
-
 extern "C" {
     pub fn ipset_data_test_ignored(data: *mut ipset_data, opt: ipset_opt) -> bool;
 }
-
 extern "C" {
     pub fn ipset_data_set(
         data: *mut ipset_data,
@@ -5617,44 +5254,34 @@ extern "C" {
         value: *const ::std::os::raw::c_void,
     ) -> ::std::os::raw::c_int;
 }
-
 extern "C" {
     pub fn ipset_data_get(data: *const ipset_data, opt: ipset_opt)
         -> *const ::std::os::raw::c_void;
 }
-
 extern "C" {
     pub fn ipset_data_setname(data: *const ipset_data) -> *const ::std::os::raw::c_char;
 }
-
 extern "C" {
     pub fn ipset_data_family(data: *const ipset_data) -> u8;
 }
-
 extern "C" {
     pub fn ipset_data_cidr(data: *const ipset_data) -> u8;
 }
-
 extern "C" {
     pub fn ipset_data_flags(data: *const ipset_data) -> u64;
 }
-
 extern "C" {
     pub fn ipset_data_reset(data: *mut ipset_data);
 }
-
 extern "C" {
     pub fn ipset_data_init() -> *mut ipset_data;
 }
-
 extern "C" {
     pub fn ipset_data_fini(data: *mut ipset_data);
 }
-
 extern "C" {
     pub fn ipset_data_sizeof(opt: ipset_opt, family: u8) -> usize;
 }
-
 pub type ipset_parsefn = ::std::option::Option<
     unsafe extern "C" fn(
         s: *mut ipset_session,
@@ -5662,7 +5289,6 @@ pub type ipset_parsefn = ::std::option::Option<
         str_: *const ::std::os::raw::c_char,
     ) -> ::std::os::raw::c_int,
 >;
-
 extern "C" {
     pub fn ipset_parse_ether(
         session: *mut ipset_session,
@@ -5670,7 +5296,6 @@ extern "C" {
         str_: *const ::std::os::raw::c_char,
     ) -> ::std::os::raw::c_int;
 }
-
 extern "C" {
     pub fn ipset_parse_port(
         session: *mut ipset_session,
@@ -5679,7 +5304,6 @@ extern "C" {
         proto: *const ::std::os::raw::c_char,
     ) -> ::std::os::raw::c_int;
 }
-
 extern "C" {
     pub fn ipset_parse_mark(
         session: *mut ipset_session,
@@ -5687,7 +5311,6 @@ extern "C" {
         str_: *const ::std::os::raw::c_char,
     ) -> ::std::os::raw::c_int;
 }
-
 extern "C" {
     pub fn ipset_parse_tcpudp_port(
         session: *mut ipset_session,
@@ -5696,7 +5319,6 @@ extern "C" {
         proto: *const ::std::os::raw::c_char,
     ) -> ::std::os::raw::c_int;
 }
-
 extern "C" {
     pub fn ipset_parse_tcp_port(
         session: *mut ipset_session,
@@ -5704,7 +5326,6 @@ extern "C" {
         str_: *const ::std::os::raw::c_char,
     ) -> ::std::os::raw::c_int;
 }
-
 extern "C" {
     pub fn ipset_parse_single_tcp_port(
         session: *mut ipset_session,
@@ -5712,7 +5333,6 @@ extern "C" {
         str_: *const ::std::os::raw::c_char,
     ) -> ::std::os::raw::c_int;
 }
-
 extern "C" {
     pub fn ipset_parse_proto(
         session: *mut ipset_session,
@@ -5720,7 +5340,6 @@ extern "C" {
         str_: *const ::std::os::raw::c_char,
     ) -> ::std::os::raw::c_int;
 }
-
 extern "C" {
     pub fn ipset_parse_icmp(
         session: *mut ipset_session,
@@ -5728,7 +5347,6 @@ extern "C" {
         str_: *const ::std::os::raw::c_char,
     ) -> ::std::os::raw::c_int;
 }
-
 extern "C" {
     pub fn ipset_parse_icmpv6(
         session: *mut ipset_session,
@@ -5736,7 +5354,6 @@ extern "C" {
         str_: *const ::std::os::raw::c_char,
     ) -> ::std::os::raw::c_int;
 }
-
 extern "C" {
     pub fn ipset_parse_proto_port(
         session: *mut ipset_session,
@@ -5744,7 +5361,6 @@ extern "C" {
         str_: *const ::std::os::raw::c_char,
     ) -> ::std::os::raw::c_int;
 }
-
 extern "C" {
     pub fn ipset_parse_tcp_udp_port(
         session: *mut ipset_session,
@@ -5752,7 +5368,6 @@ extern "C" {
         str_: *const ::std::os::raw::c_char,
     ) -> ::std::os::raw::c_int;
 }
-
 extern "C" {
     pub fn ipset_parse_family(
         session: *mut ipset_session,
@@ -5760,7 +5375,6 @@ extern "C" {
         str_: *const ::std::os::raw::c_char,
     ) -> ::std::os::raw::c_int;
 }
-
 extern "C" {
     pub fn ipset_parse_ip(
         session: *mut ipset_session,
@@ -5768,7 +5382,6 @@ extern "C" {
         str_: *const ::std::os::raw::c_char,
     ) -> ::std::os::raw::c_int;
 }
-
 extern "C" {
     pub fn ipset_parse_single_ip(
         session: *mut ipset_session,
@@ -5776,7 +5389,6 @@ extern "C" {
         str_: *const ::std::os::raw::c_char,
     ) -> ::std::os::raw::c_int;
 }
-
 extern "C" {
     pub fn ipset_parse_net(
         session: *mut ipset_session,
@@ -5784,7 +5396,6 @@ extern "C" {
         str_: *const ::std::os::raw::c_char,
     ) -> ::std::os::raw::c_int;
 }
-
 extern "C" {
     pub fn ipset_parse_range(
         session: *mut ipset_session,
@@ -5792,7 +5403,6 @@ extern "C" {
         str_: *const ::std::os::raw::c_char,
     ) -> ::std::os::raw::c_int;
 }
-
 extern "C" {
     pub fn ipset_parse_netrange(
         session: *mut ipset_session,
@@ -5800,7 +5410,6 @@ extern "C" {
         str_: *const ::std::os::raw::c_char,
     ) -> ::std::os::raw::c_int;
 }
-
 extern "C" {
     pub fn ipset_parse_iprange(
         session: *mut ipset_session,
@@ -5808,7 +5417,6 @@ extern "C" {
         str_: *const ::std::os::raw::c_char,
     ) -> ::std::os::raw::c_int;
 }
-
 extern "C" {
     pub fn ipset_parse_ipnet(
         session: *mut ipset_session,
@@ -5816,7 +5424,6 @@ extern "C" {
         str_: *const ::std::os::raw::c_char,
     ) -> ::std::os::raw::c_int;
 }
-
 extern "C" {
     pub fn ipset_parse_ip4_single6(
         session: *mut ipset_session,
@@ -5824,7 +5431,6 @@ extern "C" {
         str_: *const ::std::os::raw::c_char,
     ) -> ::std::os::raw::c_int;
 }
-
 extern "C" {
     pub fn ipset_parse_ip4_net6(
         session: *mut ipset_session,
@@ -5832,7 +5438,6 @@ extern "C" {
         str_: *const ::std::os::raw::c_char,
     ) -> ::std::os::raw::c_int;
 }
-
 extern "C" {
     pub fn ipset_parse_name(
         session: *mut ipset_session,
@@ -5840,7 +5445,6 @@ extern "C" {
         str_: *const ::std::os::raw::c_char,
     ) -> ::std::os::raw::c_int;
 }
-
 extern "C" {
     pub fn ipset_parse_before(
         session: *mut ipset_session,
@@ -5848,7 +5452,6 @@ extern "C" {
         str_: *const ::std::os::raw::c_char,
     ) -> ::std::os::raw::c_int;
 }
-
 extern "C" {
     pub fn ipset_parse_after(
         session: *mut ipset_session,
@@ -5856,7 +5459,6 @@ extern "C" {
         str_: *const ::std::os::raw::c_char,
     ) -> ::std::os::raw::c_int;
 }
-
 extern "C" {
     pub fn ipset_parse_setname(
         session: *mut ipset_session,
@@ -5864,7 +5466,6 @@ extern "C" {
         str_: *const ::std::os::raw::c_char,
     ) -> ::std::os::raw::c_int;
 }
-
 extern "C" {
     pub fn ipset_parse_timeout(
         session: *mut ipset_session,
@@ -5872,7 +5473,6 @@ extern "C" {
         str_: *const ::std::os::raw::c_char,
     ) -> ::std::os::raw::c_int;
 }
-
 extern "C" {
     pub fn ipset_parse_uint64(
         session: *mut ipset_session,
@@ -5880,7 +5480,6 @@ extern "C" {
         str_: *const ::std::os::raw::c_char,
     ) -> ::std::os::raw::c_int;
 }
-
 extern "C" {
     pub fn ipset_parse_uint32(
         session: *mut ipset_session,
@@ -5888,7 +5487,6 @@ extern "C" {
         str_: *const ::std::os::raw::c_char,
     ) -> ::std::os::raw::c_int;
 }
-
 extern "C" {
     pub fn ipset_parse_uint16(
         session: *mut ipset_session,
@@ -5896,7 +5494,6 @@ extern "C" {
         str_: *const ::std::os::raw::c_char,
     ) -> ::std::os::raw::c_int;
 }
-
 extern "C" {
     pub fn ipset_parse_uint8(
         session: *mut ipset_session,
@@ -5904,7 +5501,6 @@ extern "C" {
         str_: *const ::std::os::raw::c_char,
     ) -> ::std::os::raw::c_int;
 }
-
 extern "C" {
     pub fn ipset_parse_netmask(
         session: *mut ipset_session,
@@ -5912,7 +5508,6 @@ extern "C" {
         str_: *const ::std::os::raw::c_char,
     ) -> ::std::os::raw::c_int;
 }
-
 extern "C" {
     pub fn ipset_parse_flag(
         session: *mut ipset_session,
@@ -5920,7 +5515,6 @@ extern "C" {
         str_: *const ::std::os::raw::c_char,
     ) -> ::std::os::raw::c_int;
 }
-
 extern "C" {
     pub fn ipset_parse_typename(
         session: *mut ipset_session,
@@ -5928,7 +5522,6 @@ extern "C" {
         str_: *const ::std::os::raw::c_char,
     ) -> ::std::os::raw::c_int;
 }
-
 extern "C" {
     pub fn ipset_parse_iface(
         session: *mut ipset_session,
@@ -5936,7 +5529,6 @@ extern "C" {
         str_: *const ::std::os::raw::c_char,
     ) -> ::std::os::raw::c_int;
 }
-
 extern "C" {
     pub fn ipset_parse_comment(
         session: *mut ipset_session,
@@ -5944,7 +5536,6 @@ extern "C" {
         str_: *const ::std::os::raw::c_char,
     ) -> ::std::os::raw::c_int;
 }
-
 extern "C" {
     pub fn ipset_parse_skbmark(
         session: *mut ipset_session,
@@ -5952,7 +5543,6 @@ extern "C" {
         str_: *const ::std::os::raw::c_char,
     ) -> ::std::os::raw::c_int;
 }
-
 extern "C" {
     pub fn ipset_parse_skbprio(
         session: *mut ipset_session,
@@ -5960,7 +5550,6 @@ extern "C" {
         str_: *const ::std::os::raw::c_char,
     ) -> ::std::os::raw::c_int;
 }
-
 extern "C" {
     pub fn ipset_parse_ignored(
         session: *mut ipset_session,
@@ -5968,7 +5557,6 @@ extern "C" {
         str_: *const ::std::os::raw::c_char,
     ) -> ::std::os::raw::c_int;
 }
-
 extern "C" {
     pub fn ipset_parse_elem(
         session: *mut ipset_session,
@@ -5976,7 +5564,6 @@ extern "C" {
         str_: *const ::std::os::raw::c_char,
     ) -> ::std::os::raw::c_int;
 }
-
 extern "C" {
     pub fn ipset_call_parser(
         session: *mut ipset_session,
@@ -5984,7 +5571,6 @@ extern "C" {
         str_: *const ::std::os::raw::c_char,
     ) -> ::std::os::raw::c_int;
 }
-
 extern "C" {
     pub fn ipset_parse_iptimeout(
         session: *mut ipset_session,
@@ -5992,7 +5578,6 @@ extern "C" {
         str_: *const ::std::os::raw::c_char,
     ) -> ::std::os::raw::c_int;
 }
-
 extern "C" {
     pub fn ipset_parse_name_compat(
         session: *mut ipset_session,
@@ -6000,7 +5585,6 @@ extern "C" {
         str_: *const ::std::os::raw::c_char,
     ) -> ::std::os::raw::c_int;
 }
-
 pub type ipset_printfn = ::std::option::Option<
     unsafe extern "C" fn(
         buf: *mut ::std::os::raw::c_char,
@@ -6010,7 +5594,6 @@ pub type ipset_printfn = ::std::option::Option<
         env: u8,
     ) -> ::std::os::raw::c_int,
 >;
-
 extern "C" {
     pub fn ipset_print_ether(
         buf: *mut ::std::os::raw::c_char,
@@ -6020,7 +5603,6 @@ extern "C" {
         env: u8,
     ) -> ::std::os::raw::c_int;
 }
-
 extern "C" {
     pub fn ipset_print_family(
         buf: *mut ::std::os::raw::c_char,
@@ -6030,7 +5612,6 @@ extern "C" {
         env: u8,
     ) -> ::std::os::raw::c_int;
 }
-
 extern "C" {
     pub fn ipset_print_type(
         buf: *mut ::std::os::raw::c_char,
@@ -6040,7 +5621,6 @@ extern "C" {
         env: u8,
     ) -> ::std::os::raw::c_int;
 }
-
 extern "C" {
     pub fn ipset_print_ip(
         buf: *mut ::std::os::raw::c_char,
@@ -6050,7 +5630,6 @@ extern "C" {
         env: u8,
     ) -> ::std::os::raw::c_int;
 }
-
 extern "C" {
     pub fn ipset_print_ipaddr(
         buf: *mut ::std::os::raw::c_char,
@@ -6060,7 +5639,6 @@ extern "C" {
         env: u8,
     ) -> ::std::os::raw::c_int;
 }
-
 extern "C" {
     pub fn ipset_print_number(
         buf: *mut ::std::os::raw::c_char,
@@ -6070,7 +5648,6 @@ extern "C" {
         env: u8,
     ) -> ::std::os::raw::c_int;
 }
-
 extern "C" {
     pub fn ipset_print_name(
         buf: *mut ::std::os::raw::c_char,
@@ -6080,7 +5657,6 @@ extern "C" {
         env: u8,
     ) -> ::std::os::raw::c_int;
 }
-
 extern "C" {
     pub fn ipset_print_port(
         buf: *mut ::std::os::raw::c_char,
@@ -6090,7 +5666,6 @@ extern "C" {
         env: u8,
     ) -> ::std::os::raw::c_int;
 }
-
 extern "C" {
     pub fn ipset_print_mark(
         buf: *mut ::std::os::raw::c_char,
@@ -6100,7 +5675,6 @@ extern "C" {
         env: u8,
     ) -> ::std::os::raw::c_int;
 }
-
 extern "C" {
     pub fn ipset_print_iface(
         buf: *mut ::std::os::raw::c_char,
@@ -6110,7 +5684,6 @@ extern "C" {
         env: u8,
     ) -> ::std::os::raw::c_int;
 }
-
 extern "C" {
     pub fn ipset_print_comment(
         buf: *mut ::std::os::raw::c_char,
@@ -6120,7 +5693,6 @@ extern "C" {
         env: u8,
     ) -> ::std::os::raw::c_int;
 }
-
 extern "C" {
     pub fn ipset_print_skbmark(
         buf: *mut ::std::os::raw::c_char,
@@ -6130,7 +5702,6 @@ extern "C" {
         env: u8,
     ) -> ::std::os::raw::c_int;
 }
-
 extern "C" {
     pub fn ipset_print_skbprio(
         buf: *mut ::std::os::raw::c_char,
@@ -6140,7 +5711,6 @@ extern "C" {
         env: u8,
     ) -> ::std::os::raw::c_int;
 }
-
 extern "C" {
     pub fn ipset_print_proto(
         buf: *mut ::std::os::raw::c_char,
@@ -6150,7 +5720,6 @@ extern "C" {
         env: u8,
     ) -> ::std::os::raw::c_int;
 }
-
 extern "C" {
     pub fn ipset_print_icmp(
         buf: *mut ::std::os::raw::c_char,
@@ -6160,7 +5729,6 @@ extern "C" {
         env: u8,
     ) -> ::std::os::raw::c_int;
 }
-
 extern "C" {
     pub fn ipset_print_icmpv6(
         buf: *mut ::std::os::raw::c_char,
@@ -6170,7 +5738,6 @@ extern "C" {
         env: u8,
     ) -> ::std::os::raw::c_int;
 }
-
 extern "C" {
     pub fn ipset_print_proto_port(
         buf: *mut ::std::os::raw::c_char,
@@ -6180,7 +5747,6 @@ extern "C" {
         env: u8,
     ) -> ::std::os::raw::c_int;
 }
-
 extern "C" {
     pub fn ipset_print_flag(
         buf: *mut ::std::os::raw::c_char,
@@ -6190,7 +5756,6 @@ extern "C" {
         env: u8,
     ) -> ::std::os::raw::c_int;
 }
-
 extern "C" {
     pub fn ipset_print_elem(
         buf: *mut ::std::os::raw::c_char,
@@ -6200,7 +5765,6 @@ extern "C" {
         env: u8,
     ) -> ::std::os::raw::c_int;
 }
-
 extern "C" {
     pub fn ipset_print_data(
         buf: *mut ::std::os::raw::c_char,
@@ -6210,7 +5774,6 @@ extern "C" {
         env: u8,
     ) -> ::std::os::raw::c_int;
 }
-
 pub const NFPROTO_UNSPEC: _bindgen_ty_12 = 0;
 pub const NFPROTO_IPV4: _bindgen_ty_12 = 2;
 pub const NFPROTO_ARP: _bindgen_ty_12 = 3;
@@ -6218,20 +5781,14 @@ pub const NFPROTO_BRIDGE: _bindgen_ty_12 = 7;
 pub const NFPROTO_IPV6: _bindgen_ty_12 = 10;
 pub const NFPROTO_DECNET: _bindgen_ty_12 = 12;
 pub const NFPROTO_NUMPROTO: _bindgen_ty_12 = 13;
-
 pub type _bindgen_ty_12 = ::std::os::raw::c_uint;
-
 pub const NFPROTO_IPSET_IPV46: _bindgen_ty_13 = 255;
-
 pub type _bindgen_ty_13 = ::std::os::raw::c_uint;
-
 pub const IPSET_NO_ARG: _bindgen_ty_14 = -1;
 pub const IPSET_OPTIONAL_ARG: _bindgen_ty_14 = 0;
 pub const IPSET_MANDATORY_ARG: _bindgen_ty_14 = 1;
 pub const IPSET_MANDATORY_ARG2: _bindgen_ty_14 = 2;
-
 pub type _bindgen_ty_14 = ::std::os::raw::c_int;
-
 #[repr(C)]
 #[derive(Debug, Copy, Clone)]
 pub struct ipset_arg {
@@ -6242,7 +5799,6 @@ pub struct ipset_arg {
     pub print: ipset_printfn,
     pub help: *const ::std::os::raw::c_char,
 }
-
 #[test]
 fn bindgen_test_layout_ipset_arg() {
     const UNINIT: ::std::mem::MaybeUninit<ipset_arg> = ::std::mem::MaybeUninit::uninit();
@@ -6318,13 +5874,10 @@ fn bindgen_test_layout_ipset_arg() {
         )
     );
 }
-
 pub const IPSET_KERNEL_MISMATCH: _bindgen_ty_15 = -1;
 pub const IPSET_KERNEL_CHECK_NEEDED: _bindgen_ty_15 = 0;
 pub const IPSET_KERNEL_OK: _bindgen_ty_15 = 1;
-
 pub type _bindgen_ty_15 = ::std::os::raw::c_int;
-
 #[repr(C)]
 #[derive(Debug, Copy, Clone)]
 pub struct ipset_elem {
@@ -6332,7 +5885,6 @@ pub struct ipset_elem {
     pub print: ipset_printfn,
     pub opt: ipset_opt,
 }
-
 #[test]
 fn bindgen_test_layout_ipset_elem() {
     const UNINIT: ::std::mem::MaybeUninit<ipset_elem> = ::std::mem::MaybeUninit::uninit();
@@ -6378,7 +5930,6 @@ fn bindgen_test_layout_ipset_elem() {
         )
     );
 }
-
 #[repr(C)]
 #[derive(Debug, Copy, Clone)]
 pub struct ipset_optarg {
@@ -6387,7 +5938,6 @@ pub struct ipset_optarg {
     pub full: u64,
     pub help: *const ::std::os::raw::c_char,
 }
-
 #[test]
 fn bindgen_test_layout_ipset_optarg() {
     const UNINIT: ::std::mem::MaybeUninit<ipset_optarg> = ::std::mem::MaybeUninit::uninit();
@@ -6443,7 +5993,6 @@ fn bindgen_test_layout_ipset_optarg() {
         )
     );
 }
-
 #[repr(C)]
 #[derive(Debug)]
 pub struct ipset_type {
@@ -6462,7 +6011,6 @@ pub struct ipset_type {
     pub next: *mut ipset_type,
     pub alias: __IncompleteArrayField<*const ::std::os::raw::c_char>,
 }
-
 #[test]
 fn bindgen_test_layout_ipset_type() {
     const UNINIT: ::std::mem::MaybeUninit<ipset_type> = ::std::mem::MaybeUninit::uninit();
@@ -6618,7 +6166,6 @@ fn bindgen_test_layout_ipset_type() {
         )
     );
 }
-
 extern "C" {
     pub fn ipset_cache_add(
         name: *const ::std::os::raw::c_char,
@@ -6626,67 +6173,53 @@ extern "C" {
         family: u8,
     ) -> ::std::os::raw::c_int;
 }
-
 extern "C" {
     pub fn ipset_cache_del(name: *const ::std::os::raw::c_char) -> ::std::os::raw::c_int;
 }
-
 extern "C" {
     pub fn ipset_cache_rename(
         from: *const ::std::os::raw::c_char,
         to: *const ::std::os::raw::c_char,
     ) -> ::std::os::raw::c_int;
 }
-
 extern "C" {
     pub fn ipset_cache_swap(
         from: *const ::std::os::raw::c_char,
         to: *const ::std::os::raw::c_char,
     ) -> ::std::os::raw::c_int;
 }
-
 extern "C" {
     pub fn ipset_cache_init() -> ::std::os::raw::c_int;
 }
-
 extern "C" {
     pub fn ipset_cache_fini();
 }
-
 extern "C" {
     pub fn ipset_type_get(session: *mut ipset_session, cmd: ipset_cmd) -> *const ipset_type;
 }
-
 extern "C" {
     pub fn ipset_type_check(session: *mut ipset_session) -> *const ipset_type;
 }
-
 extern "C" {
     pub fn ipset_type_higher_rev(type_: *const ipset_type) -> *const ipset_type;
 }
-
 extern "C" {
     pub fn ipset_type_add(type_: *mut ipset_type) -> ::std::os::raw::c_int;
 }
-
 extern "C" {
     pub fn ipset_types() -> *const ipset_type;
 }
-
 extern "C" {
     pub fn ipset_typename_resolve(
         str_: *const ::std::os::raw::c_char,
     ) -> *const ::std::os::raw::c_char;
 }
-
 extern "C" {
     pub fn ipset_match_typename(str_: *const ::std::os::raw::c_char, t: *const ipset_type) -> bool;
 }
-
 extern "C" {
     pub fn ipset_load_types();
 }
-
 #[repr(C)]
 #[derive(Debug, Copy, Clone)]
 pub struct ipset_commands {
@@ -6695,7 +6228,6 @@ pub struct ipset_commands {
     pub name: [*const ::std::os::raw::c_char; 3usize],
     pub help: *const ::std::os::raw::c_char,
 }
-
 #[test]
 fn bindgen_test_layout_ipset_commands() {
     const UNINIT: ::std::mem::MaybeUninit<ipset_commands> = ::std::mem::MaybeUninit::uninit();
@@ -6751,17 +6283,14 @@ fn bindgen_test_layout_ipset_commands() {
         )
     );
 }
-
 extern "C" {
     pub static ipset_commands: [ipset_commands; 0usize];
 }
-
 #[repr(C)]
 #[derive(Debug, Copy, Clone)]
 pub struct ipset {
     _unused: [u8; 0],
 }
-
 #[repr(C)]
 #[derive(Debug, Copy, Clone)]
 pub struct ipset_envopts {
@@ -6786,7 +6315,6 @@ pub struct ipset_envopts {
         ) -> ::std::os::raw::c_int,
     >,
 }
-
 #[test]
 fn bindgen_test_layout_ipset_envopts() {
     const UNINIT: ::std::mem::MaybeUninit<ipset_envopts> = ::std::mem::MaybeUninit::uninit();
@@ -6862,36 +6390,30 @@ fn bindgen_test_layout_ipset_envopts() {
         )
     );
 }
-
 extern "C" {
     pub static ipset_envopts: [ipset_envopts; 0usize];
 }
-
 extern "C" {
     pub fn ipset_match_cmd(
         arg: *const ::std::os::raw::c_char,
         name: *const *const ::std::os::raw::c_char,
     ) -> bool;
 }
-
 extern "C" {
     pub fn ipset_match_option(
         arg: *const ::std::os::raw::c_char,
         name: *const *const ::std::os::raw::c_char,
     ) -> bool;
 }
-
 extern "C" {
     pub fn ipset_match_envopt(
         arg: *const ::std::os::raw::c_char,
         name: *const *const ::std::os::raw::c_char,
     ) -> bool;
 }
-
 extern "C" {
     pub fn ipset_port_usage();
 }
-
 extern "C" {
     pub fn ipset_parse_filename(
         ipset: *mut ipset,
@@ -6899,7 +6421,6 @@ extern "C" {
         str_: *const ::std::os::raw::c_char,
     ) -> ::std::os::raw::c_int;
 }
-
 extern "C" {
     pub fn ipset_parse_output(
         ipset: *mut ipset,
@@ -6907,7 +6428,6 @@ extern "C" {
         str_: *const ::std::os::raw::c_char,
     ) -> ::std::os::raw::c_int;
 }
-
 extern "C" {
     pub fn ipset_envopt_parse(
         ipset: *mut ipset,
@@ -6915,13 +6435,11 @@ extern "C" {
         str_: *const ::std::os::raw::c_char,
     ) -> ::std::os::raw::c_int;
 }
-
 pub const ipset_exittype_IPSET_NO_PROBLEM: ipset_exittype = 0;
 pub const ipset_exittype_IPSET_OTHER_PROBLEM: ipset_exittype = 1;
 pub const ipset_exittype_IPSET_PARAMETER_PROBLEM: ipset_exittype = 2;
 pub const ipset_exittype_IPSET_VERSION_PROBLEM: ipset_exittype = 3;
 pub const ipset_exittype_IPSET_SESSION_PROBLEM: ipset_exittype = 4;
-
 pub type ipset_exittype = ::std::os::raw::c_uint;
 pub type ipset_custom_errorfn = ::std::option::Option<
     unsafe extern "C" fn(
@@ -6938,15 +6456,12 @@ pub type ipset_standard_errorfn = ::std::option::Option<
         p: *mut ::std::os::raw::c_void,
     ) -> ::std::os::raw::c_int,
 >;
-
 extern "C" {
     pub fn ipset_session(ipset: *mut ipset) -> *mut ipset_session;
 }
-
 extern "C" {
     pub fn ipset_is_interactive(ipset: *mut ipset) -> bool;
 }
-
 extern "C" {
     pub fn ipset_custom_printf(
         ipset: *mut ipset,
@@ -6956,7 +6471,6 @@ extern "C" {
         p: *mut ::std::os::raw::c_void,
     ) -> ::std::os::raw::c_int;
 }
-
 extern "C" {
     pub fn ipset_parse_argv(
         ipset: *mut ipset,
@@ -6964,28 +6478,30 @@ extern "C" {
         argv: *mut *mut ::std::os::raw::c_char,
     ) -> ::std::os::raw::c_int;
 }
-
 extern "C" {
     pub fn ipset_parse_line(
         ipset: *mut ipset,
         line: *mut ::std::os::raw::c_char,
     ) -> ::std::os::raw::c_int;
 }
-
 extern "C" {
     pub fn ipset_parse_stream(ipset: *mut ipset, f: *mut FILE) -> ::std::os::raw::c_int;
 }
-
 extern "C" {
     pub fn ipset_init() -> *mut ipset;
 }
-
 extern "C" {
     pub fn ipset_fini(ipset: *mut ipset) -> ::std::os::raw::c_int;
 }
-
+extern "C" {
+    pub fn print_out(
+        session: *mut ipset_session,
+        p: *mut ::std::os::raw::c_void,
+        fmt: *const ::std::os::raw::c_char,
+        ...
+    ) -> ::std::os::raw::c_int;
+}
 pub type __builtin_va_list = [__va_list_tag; 1usize];
-
 #[repr(C)]
 #[derive(Debug, Copy, Clone)]
 pub struct __va_list_tag {
@@ -6994,7 +6510,6 @@ pub struct __va_list_tag {
     pub overflow_arg_area: *mut ::std::os::raw::c_void,
     pub reg_save_area: *mut ::std::os::raw::c_void,
 }
-
 #[test]
 fn bindgen_test_layout___va_list_tag() {
     const UNINIT: ::std::mem::MaybeUninit<__va_list_tag> = ::std::mem::MaybeUninit::uninit();

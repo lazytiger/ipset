@@ -77,8 +77,6 @@
 //!     set.restore("test.ipset".to_string()).unwrap();
 //! }
 //! ```
-#![feature(c_variadic)]
-#![feature(concat_idents)]
 
 pub use session::{CreateBuilder, Session};
 pub use set::IPSet;

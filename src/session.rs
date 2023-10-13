@@ -6,21 +6,13 @@ use crate::{binding, IPSet};
 
 /// output function required by libipset to get list output.
 #[no_mangle]
-pub unsafe extern "C" fn outfn(
-    _session: *mut binding::ipset_session,
-    p: *mut ::std::os::raw::c_void,
-    _fmt: *const ::std::os::raw::c_char,
-    mut args: ...
-) -> ::std::os::raw::c_int {
-    let raw = args.arg::<*const std::ffi::c_char>();
-    let data = CStr::from_ptr(raw);
-    let len = data.to_bytes().len();
-    if len == 0 {
-        return 0;
-    }
+pub unsafe extern "C" fn ipset_out(
+    p: *mut std::os::raw::c_void,
+    data: *const std::os::raw::c_char,
+) {
+    let data = CStr::from_ptr(data);
     let output = (p as *mut Vec<String>).as_mut().unwrap();
     output.push(data.to_string_lossy().to_string());
-    0
 }
 
 /// This is the main entry for all the operation. I just ignore the ipset struct
@@ -178,7 +170,7 @@ impl<T: SetType> Session<T> {
                 self.set.set,
                 None,
                 None,
-                Some(outfn),
+                Some(binding::print_out),
                 &mut self.output as *mut _ as _,
             );
         }
