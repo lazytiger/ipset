@@ -1,7 +1,10 @@
 [package]
-name = "derive"
+name = "ipset_derive"
 version = "0.1.0"
 edition = "2021"
+license = "MIT"
+description = "A deriver for libipset"
+repository = "https://github.com/lazytiger/ipset"
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
