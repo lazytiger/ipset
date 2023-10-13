@@ -7,8 +7,7 @@ use std::net::{AddrParseError, IpAddr, Ipv4Addr, Ipv6Addr};
 use std::num::ParseIntError;
 
 use derive_more::{Display, From, Into};
-
-use derive::SetType;
+use ipset_derive::SetType;
 
 use crate::{binding, Session};
 
