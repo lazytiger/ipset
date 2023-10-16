@@ -89,21 +89,3 @@ mod binding;
 mod session;
 mod set;
 pub mod types;
-
-unsafe fn _ipset_store(filename: String) -> std::ffi::c_int {
-    let filename = std::ffi::CString::new(filename).unwrap();
-    binding::ipset_load_types();
-    let set = binding::ipset_init();
-    let session = binding::ipset_session(set);
-    let ret = binding::ipset_session_io_normal(
-        session,
-        filename.as_ptr(),
-        binding::ipset_io_type_IPSET_IO_INPUT,
-    );
-    if ret < 0 {
-        return ret;
-    }
-
-    let file = binding::ipset_session_io_stream(session, binding::ipset_io_type_IPSET_IO_INPUT);
-    return binding::ipset_parse_stream(set, file);
-}
