@@ -1,6 +1,6 @@
 use std::net::IpAddr;
 
-use ipset::types::{BitmapIp, Error, HashIp, IpDataType};
+use ipset::types::{BitmapIp, EnvOption, Error, HashIp, IpDataType};
 use ipset::{IPSet, Session};
 
 fn test_hash_ip() -> Result<(), Error> {
@@ -9,6 +9,11 @@ fn test_hash_ip() -> Result<(), Error> {
     session.create(|builder| builder.with_ipv6(false)?.build())?;
 
     let ret = session.add(ip, None)?;
+    println!("add {}", ret);
+
+    session.set_option(EnvOption::Exist);
+    let ret = session.add(ip, None)?;
+    session.unset_option(EnvOption::Exist);
     println!("add {}", ret);
 
     let exists = session.test(ip)?;

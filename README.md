@@ -6,6 +6,15 @@
 [![Releases](https://img.shields.io/github/v/release/lazytiger/ipset.svg?include_prereleases)](https://github.com/lazytiger/ipset/releases)
 
 A library wrapper for `libipset`.  
+Support the following options:
+
+* sorted -> ```EnvOption::Sorted```
+* exist -> ```EnvOption::Exist```
+* quiet -> ```EnvOption::Quiet```
+* resolve -> ```EnvOption::Resolve```
+* name -> ```EnvOption::ListSetName```
+* terse -> ```EnvOption::ListHeader```
+
 Support the following commands:
 
 * add

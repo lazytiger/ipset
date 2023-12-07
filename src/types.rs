@@ -683,3 +683,33 @@ mod tests {
         assert_eq!(BitmapIpMac::to_cstring().to_str().unwrap(), "bitmap:ip,mac");
     }
 }
+
+/// Options which ipset supported
+pub enum EnvOption {
+    /// Sorted output. When listing or saving sets, the entries are listed sorted.
+    Sorted,
+    /// Suppress any output to stdout and stderr.  ipset will still exit with error if it cannot continue.
+    Quiet,
+    /// When listing sets, enforce name lookup. The program will try to display the IP entries resolved to host names which requires slow DNS lookups.
+    Resolve,
+    /// Ignore errors when exactly the same set is to be created or already added entry is added or missing entry is deleted
+    Exist,
+    /// List just the names of the existing sets, i.e. suppress listing of set headers and members.
+    ListSetName,
+    /// List the set names and headers, i.e. suppress listing of set members.
+    ListHeader,
+}
+
+impl EnvOption {
+    /// convert to bindings type.
+    pub(crate) fn to_option(self) -> binding::ipset_envopt {
+        match self {
+            EnvOption::Sorted => binding::ipset_envopt_IPSET_ENV_SORTED,
+            EnvOption::Quiet => binding::ipset_envopt_IPSET_ENV_QUIET,
+            EnvOption::Resolve => binding::ipset_envopt_IPSET_ENV_RESOLVE,
+            EnvOption::Exist => binding::ipset_envopt_IPSET_ENV_EXIST,
+            EnvOption::ListSetName => binding::ipset_envopt_IPSET_ENV_LIST_SETNAME,
+            EnvOption::ListHeader => binding::ipset_envopt_IPSET_ENV_LIST_HEADER,
+        }
+    }
+}

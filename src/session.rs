@@ -1,7 +1,7 @@
 use std::ffi::{CStr, CString};
 use std::marker::PhantomData;
 
-use crate::types::{BitmapMethod, Error, Parse, SetData, SetType, ToCString, TypeName};
+use crate::types::{BitmapMethod, EnvOption, Error, Parse, SetData, SetType, ToCString, TypeName};
 use crate::{binding, IPSet};
 
 /// output function required by libipset to get list output.
@@ -39,6 +39,18 @@ impl<T: SetType> Session<T> {
                 output: Default::default(),
                 _phantom: Default::default(),
             }
+        }
+    }
+
+    pub fn set_option(&self, option: EnvOption) {
+        unsafe {
+            binding::ipset_envopt_set(self.set.session, option.to_option());
+        }
+    }
+
+    pub fn unset_option(&self, option: EnvOption) {
+        unsafe {
+            binding::ipset_envopt_unset(self.set.session, option.to_option());
         }
     }
 
@@ -89,27 +101,25 @@ impl<T: SetType> Session<T> {
     }
 
     /// Run all the ip related commands, like add/del/test
-    fn data_cmd(
+    fn data_cmd<F>(
         &mut self,
         data: T::DataType,
         cmd: binding::ipset_cmd,
-        timeout: Option<u32>,
-    ) -> Result<(), Error> {
+        options: F,
+    ) -> Result<(), Error>
+    where
+        F: FnOnce(&Self) -> Result<(), Error>,
+    {
         self.set_data(binding::ipset_opt_IPSET_SETNAME, self.name.as_ptr() as _)?;
         data.set_data(self, None)?;
         self.get_type(cmd)?;
-        if let Some(timeout) = timeout {
-            self.set_data(
-                binding::ipset_opt_IPSET_OPT_TIMEOUT,
-                &timeout as *const _ as _,
-            )?;
-        }
+        options(self)?;
         self.run_cmd(cmd)
     }
 
     /// Test if `ip` is in ipset `name`
     pub fn test(&mut self, data: impl Into<T::DataType>) -> Result<bool, Error> {
-        self.data_cmd(data.into(), binding::ipset_cmd_IPSET_CMD_TEST, None)
+        self.data_cmd(data.into(), binding::ipset_cmd_IPSET_CMD_TEST, |_| Ok(()))
             .map(|_| true)
             .or_else(|err| {
                 if err.cmd_contains(" is NOT in set ") {
@@ -126,20 +136,28 @@ impl<T: SetType> Session<T> {
         data: impl Into<T::DataType>,
         timeout: Option<u32>,
     ) -> Result<bool, Error> {
-        self.data_cmd(data.into(), binding::ipset_cmd_IPSET_CMD_ADD, timeout)
-            .map(|_| true)
-            .or_else(|err| {
-                if err.cmd_contains("Element cannot be added to the set: it's already added") {
-                    Ok(false)
-                } else {
-                    Err(err)
-                }
-            })
+        self.data_cmd(data.into(), binding::ipset_cmd_IPSET_CMD_ADD, |session| {
+            if let Some(timeout) = timeout {
+                session.set_data(
+                    binding::ipset_opt_IPSET_OPT_TIMEOUT,
+                    &timeout as *const _ as _,
+                )?;
+            }
+            Ok(())
+        })
+        .map(|_| true)
+        .or_else(|err| {
+            if err.cmd_contains("Element cannot be added to the set: it's already added") {
+                Ok(false)
+            } else {
+                Err(err)
+            }
+        })
     }
 
     /// Delete `ip` from ipset `name`
     pub fn del(&mut self, ip: impl Into<T::DataType>) -> Result<bool, Error> {
-        self.data_cmd(ip.into(), binding::ipset_cmd_IPSET_CMD_DEL, None)
+        self.data_cmd(ip.into(), binding::ipset_cmd_IPSET_CMD_DEL, |_| Ok(()))
             .map(|_| true)
             .or_else(|err| {
                 if err.cmd_contains("Element cannot be deleted from the set: it's not added") {
