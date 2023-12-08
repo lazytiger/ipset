@@ -46,6 +46,7 @@ impl<T: SetType> SetData<T> for IpDataType {
 
 impl Parse for IpDataType {
     fn parse(&mut self, s: &str) -> Result<(), Error> {
+        let s = s.split(" ").next().ok_or(Error::DataParse(s.to_string()))?;
         let ip: IpAddr = s.parse()?;
         *self = ip.into();
         Ok(())
@@ -461,6 +462,10 @@ pub enum Error {
     AddrParse(AddrParseError),
     ParseInt(ParseIntError),
     Nul(NulError),
+    #[from(ignore)]
+    CAOption(String),
+    #[from(ignore)]
+    DataParse(String),
 }
 
 impl Error {
@@ -563,6 +568,12 @@ pub struct HashNetIface;
 /// The list:set type uses a simple list in which you can store set names.
 #[derive(SetType)]
 pub struct ListSet;
+
+pub trait WithNetmask {}
+
+impl WithNetmask for BitmapMethod {}
+
+impl WithNetmask for HashMethod {}
 
 #[allow(unused_imports)]
 mod tests {
@@ -712,4 +723,26 @@ impl EnvOption {
             EnvOption::ListHeader => binding::ipset_envopt_IPSET_ENV_LIST_HEADER,
         }
     }
+}
+
+/// Options for creation and addition.
+#[derive(Debug)]
+pub enum AddOption {
+    /// The value of the timeout parameter for the create command means the default timeout value
+    /// (in seconds) for new entries. If a set is created with timeout support, then the same
+    /// timeout option can  be  used  to  specify  non-default timeout  values when adding entries.
+    /// Zero timeout value means the entry is added permanent to the set.
+    Timeout(u32),
+    /// bytes counter for the element.
+    Bytes(u64),
+    /// packets counter for the element.
+    Packets(u64),
+    /// skbmark option format: MARK or MARK/MASK, where MARK and  MASK  are  32bit  hex
+    /// numbers  with  0x  prefix. If only mark is specified mask 0xffffffff are used.
+    SkbMark(u32, u32),
+    /// skbprio option has tc class format: MAJOR:MINOR, where major and minor numbers are
+    /// hex without 0x prefix.
+    SkbPrio(u16, u16),
+    /// skbqueue option is just decimal number.
+    SkbQueue(u16),
 }

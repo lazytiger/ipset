@@ -1,7 +1,10 @@
 use std::ffi::{CStr, CString};
 use std::marker::PhantomData;
 
-use crate::types::{BitmapMethod, EnvOption, Error, Parse, SetData, SetType, ToCString, TypeName};
+use crate::types::{
+    AddOption, BitmapMethod, EnvOption, Error, HashMethod, IfaceDataType, IpDataType, NetDataType,
+    Parse, SetData, SetType, ToCString, TypeName, WithNetmask,
+};
 use crate::{binding, IPSet};
 
 /// output function required by libipset to get list output.
@@ -134,14 +137,50 @@ impl<T: SetType> Session<T> {
     pub fn add(
         &mut self,
         data: impl Into<T::DataType>,
-        timeout: Option<u32>,
+        options: Vec<AddOption>,
     ) -> Result<bool, Error> {
         self.data_cmd(data.into(), binding::ipset_cmd_IPSET_CMD_ADD, |session| {
-            if let Some(timeout) = timeout {
-                session.set_data(
-                    binding::ipset_opt_IPSET_OPT_TIMEOUT,
-                    &timeout as *const _ as _,
-                )?;
+            for option in options {
+                match option {
+                    AddOption::Timeout(timeout) => {
+                        session.set_data(
+                            binding::ipset_opt_IPSET_OPT_TIMEOUT,
+                            &timeout as *const _ as _,
+                        )?;
+                    }
+                    AddOption::Bytes(bytes) => {
+                        session.set_data(
+                            binding::ipset_opt_IPSET_OPT_BYTES,
+                            &bytes as *const _ as _,
+                        )?;
+                    }
+                    AddOption::Packets(packets) => {
+                        session.set_data(
+                            binding::ipset_opt_IPSET_OPT_PACKETS,
+                            &packets as *const _ as _,
+                        )?;
+                    }
+                    AddOption::SkbMark(mark, mask) => {
+                        let data = (mark as u64) << 32 | mask as u64;
+                        session.set_data(
+                            binding::ipset_opt_IPSET_OPT_SKBMARK,
+                            &data as *const _ as _,
+                        )?;
+                    }
+                    AddOption::SkbPrio(major, minor) => {
+                        let data = (major as u32) << 16 | minor as u32;
+                        session.set_data(
+                            binding::ipset_opt_IPSET_OPT_SKBPRIO,
+                            &data as *const _ as _,
+                        )?;
+                    }
+                    AddOption::SkbQueue(queue) => {
+                        session.set_data(
+                            binding::ipset_opt_IPSET_OPT_SKBQUEUE,
+                            &queue as *const _ as _,
+                        )?;
+                    }
+                }
             }
             Ok(())
         })
@@ -286,7 +325,7 @@ pub struct CreateBuilder<'a, T: SetType> {
 }
 
 impl<'a, T: SetType> CreateBuilder<'a, T> {
-    /// All  set types supports the optional timeout parameter when creating a set and adding entries.
+    /// All set types supports the optional timeout parameter when creating a set and adding entries.
     /// The value of the timeout parameter for the create command means the default timeout value (in seconds) for new entries.
     /// If a set is created with timeout support, then the same timeout option can  be  used  to  specify  non-default
     /// timeout  values when adding entries. Zero timeout value means the entry is added permanent to the set.
@@ -298,55 +337,22 @@ impl<'a, T: SetType> CreateBuilder<'a, T> {
         Ok(self)
     }
 
-    /// All  set types support the optional counters option when creating a set.
-    ///  If the option is specified then the set is created with packet and byte counters per element support.
+    /// All set types support the optional counters option when creating a set.
+    /// If the option is specified then the set is created with packet and byte counters per element support.
     /// The packet and byte counters are initialized to zero when the elements are (re-)added to the set,
     /// unless the packet and byte counter values are  explicitly specified by the packets and bytes options.
-    pub fn with_counters(self, packets: Option<u64>, bytes: Option<u64>) -> Result<Self, Error> {
+    pub fn with_counters(self) -> Result<Self, Error> {
         self.session
             .set_data(binding::ipset_opt_IPSET_OPT_COUNTERS, &1 as *const _ as _)?;
-        if let Some(packets) = packets {
-            self.session.set_data(
-                binding::ipset_opt_IPSET_OPT_PACKETS,
-                &packets as *const _ as _,
-            )?;
-        }
-        if let Some(bytes) = bytes {
-            self.session
-                .set_data(binding::ipset_opt_IPSET_OPT_BYTES, &bytes as *const _ as _)?;
-        }
         Ok(self)
     }
 
-    /// This parameter is valid for the create command of all hash type sets.  
-    /// It defines the initial hash size for the set, default is 1024.
-    /// The  hash  size  must  be  a power of two, the kernel automatically rounds up non power of two hash sizes to the first correct value.
-    pub fn with_hash_size(self, size: u32) -> Result<Self, Error> {
-        self.session.set_data(
-            binding::ipset_opt_IPSET_OPT_HASHSIZE,
-            &size as *const _ as _,
-        )?;
-        Ok(self)
-    }
-
-    /// This  parameter  is  valid  for  the  create command of all hash type sets.  
-    /// It does define the maximal number of elements which can be stored in the set, default 65536
-    pub fn with_max_elem(self, max: u32) -> Result<Self, Error> {
+    /// All set types support the optional skbinfo extension. This extension allows you to store
+    /// the metainfo (firewall mark, tc class and hardware queue) with every entry and map it to
+    /// packets by usage of SET netfilter target with --map-set option.
+    pub fn with_skbinfo(self) -> Result<Self, Error> {
         self.session
-            .set_data(binding::ipset_opt_IPSET_OPT_MAXELEM, &max as *const _ as _)?;
-        Ok(self)
-    }
-
-    /// This parameter is valid for the create command of all hash type sets except for hash:mac.  
-    /// It defines the protocol family of the IP addresses to be stored in the set. The default is inet, i.e IPv4.
-    pub fn with_ipv6(self, ipv6: bool) -> Result<Self, Error> {
-        let value = if ipv6 {
-            binding::NFPROTO_IPV6
-        } else {
-            binding::NFPROTO_IPV4
-        };
-        self.session
-            .set_data(binding::ipset_opt_IPSET_OPT_FAMILY, &value as *const _ as _)?;
+            .set_data(binding::ipset_opt_IPSET_OPT_SKBINFO, &1 as *const _ as _)?;
         Ok(self)
     }
 
@@ -360,6 +366,87 @@ unsafe impl<T: SetType> Sync for Session<T> {}
 
 unsafe impl<T: SetType> Send for Session<T> {}
 
+impl<'a, T: SetType<Method = HashMethod>> CreateBuilder<'a, T>
+where
+    T::DataType: TypeName,
+{
+    /// This parameter is valid for the create command of all hash type sets.  
+    /// It defines the initial hash size for the set, default is 1024.
+    /// The  hash  size  must  be  a power of two, the kernel automatically rounds up non power of two hash sizes to the first correct value.
+    pub fn with_hash_size(self, size: u32) -> Result<Self, Error> {
+        self.session.set_data(
+            binding::ipset_opt_IPSET_OPT_HASHSIZE,
+            &size as *const _ as _,
+        )?;
+        Ok(self)
+    }
+
+    /// This parameter  is  valid  for  the  create command of all hash type sets.  
+    /// It does define the maximal number of elements which can be stored in the set, default 65536
+    pub fn with_max_elem(self, max: u32) -> Result<Self, Error> {
+        self.session
+            .set_data(binding::ipset_opt_IPSET_OPT_MAXELEM, &max as *const _ as _)?;
+        Ok(self)
+    }
+
+    /// This parameter is valid for the create command of all hash type sets except for hash:mac.  
+    /// It defines the protocol family of the IP addresses to be stored in the set. The default is inet, i.e IPv4.
+    pub fn with_ipv6(self, ipv6: bool) -> Result<Self, Error> {
+        if T::DataType::name() == "mac" {
+            return Err(Error::CAOption(
+                "family is not supported in hash:mac".to_string(),
+            ));
+        }
+        let value = if ipv6 {
+            binding::NFPROTO_IPV6
+        } else {
+            binding::NFPROTO_IPV4
+        };
+        self.session
+            .set_data(binding::ipset_opt_IPSET_OPT_FAMILY, &value as *const _ as _)?;
+        Ok(self)
+    }
+
+    /// The hash set types which can store net type of data (i.e. hash:*net*) support the optional
+    /// nomatch option when adding entries. When matching elements in the  set,
+    /// entries  marked  as nomatch are skipped as if those were not added to the set,
+    /// which makes possible to build up sets with exceptions.
+    pub fn with_nomatch(self) -> Result<Self, Error> {
+        if T::DataType::name().contains("net") {
+            self.session
+                .set_data(binding::ipset_opt_IPSET_OPT_NOMATCH, &1 as *const _ as _)?;
+            Ok(self)
+        } else {
+            Err(Error::CAOption(
+                "nomatch only valid in net data type".to_string(),
+            ))
+        }
+    }
+
+    /// All  hash  set types support the optional forceadd parameter when creating a set.  
+    /// When sets created with this option become full the next addition to the set may
+    /// succeed and evict a random entry from the set.
+    pub fn with_forceadd(self) -> Result<Self, Error> {
+        self.session
+            .set_data(binding::ipset_opt_IPSET_OPT_FORCEADD, &1 as *const _ as _)?;
+        Ok(self)
+    }
+}
+
+impl<'a, T: SetType<Method = HashMethod, DataType = (NetDataType, IfaceDataType)>>
+    CreateBuilder<'a, T>
+{
+    /// This flag is valid when adding elements to a hash:net,iface set. If the flag is set,
+    /// then prefix matching is used when comparing with this element.
+    pub fn with_wildcard(self) -> Result<Self, Error> {
+        self.session.set_data(
+            binding::ipset_opt_IPSET_OPT_IFACE_WILDCARD,
+            &1 as *const _ as _,
+        )?;
+        Ok(self)
+    }
+}
+
 impl<'a, T: SetType<Method = BitmapMethod>> CreateBuilder<'a, T> {
     /// set range option for bitmap method.
     /// from and to must be reference, or the memory maybe destroyed when actually run the command.
@@ -367,5 +454,27 @@ impl<'a, T: SetType<Method = BitmapMethod>> CreateBuilder<'a, T> {
         from.set_data(self.session, Some(true))?;
         to.set_data(self.session, Some(false))?;
         Ok(self)
+    }
+}
+
+impl<'a, T: SetType<DataType = IpDataType>> CreateBuilder<'a, T>
+where
+    T::Method: WithNetmask,
+{
+    /// When the optional netmask parameter specified, network addresses will be stored in the set
+    /// instead of IP host addresses. The cidr prefix value must be  between  1-32.  
+    /// An IP address will be in the set if the network address, which is resulted by masking the
+    /// address with the specified netmask, can be found in the set.
+
+    pub fn with_netmask(self, cidr: u8) -> Result<Self, Error> {
+        if cidr >= 1 && cidr <= 32 {
+            self.session
+                .set_data(binding::ipset_opt_IPSET_OPT_NETMASK, &cidr as *const _ as _)?;
+            Ok(self)
+        } else {
+            Err(Error::CAOption(
+                "netmask cidr should in range [1, 32]".to_string(),
+            ))
+        }
     }
 }

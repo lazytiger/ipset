@@ -1,18 +1,34 @@
 use std::net::IpAddr;
 
-use ipset::types::{BitmapIp, EnvOption, Error, HashIp, IpDataType};
+use ipset::types::{AddOption, BitmapIp, EnvOption, Error, HashIp, IpDataType};
 use ipset::{IPSet, Session};
 
 fn test_hash_ip() -> Result<(), Error> {
     let mut session: Session<HashIp> = Session::new("test".to_string());
     let ip: IpAddr = "192.168.3.1".parse().unwrap();
-    session.create(|builder| builder.with_ipv6(false)?.build())?;
+    session.create(|builder| {
+        builder
+            .with_ipv6(false)?
+            .with_forceadd()?
+            .with_counters()?
+            .with_skbinfo()?
+            .build()
+    })?;
 
-    let ret = session.add(ip, None)?;
+    let ret = session.add(ip, vec![])?;
     println!("add {}", ret);
 
     session.set_option(EnvOption::Exist);
-    let ret = session.add(ip, None)?;
+    let ret = session.add(
+        ip,
+        vec![
+            AddOption::Bytes(10),
+            AddOption::Packets(20),
+            AddOption::SkbMark(1, u32::MAX),
+            AddOption::SkbPrio(10, 1),
+            AddOption::SkbQueue(3),
+        ],
+    )?;
     session.unset_option(EnvOption::Exist);
     println!("add {}", ret);
 
