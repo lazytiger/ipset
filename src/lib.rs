@@ -41,7 +41,7 @@
 //!    let ip: IpAddr = "192.168.3.1".parse().unwrap();
 //!    session.create(|builder| builder.with_ipv6(false)?.build())?;
 //!
-//!    let ret = session.add(ip, None)?;
+//!    let ret = session.add(ip, vec![])?;
 //!    println!("add {}", ret);
 //!
 //!    let exists = session.test(ip)?;
