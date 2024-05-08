@@ -1,6 +1,6 @@
 [package]
 name = "ipset"
-version = "0.7.0"
+version = "0.7.1"
 edition = "2021"
 license = "MIT"
 description = "A wrapper for libipset"
@@ -14,3 +14,4 @@ ipset_derive = "0.1"
 
 [build-dependencies]
 cc = "1.0"
+bindgen = "0.69"
