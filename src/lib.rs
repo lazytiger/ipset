@@ -81,10 +81,6 @@
 pub use session::{CreateBuilder, Session};
 pub use set::IPSet;
 
-#[allow(non_camel_case_types)]
-#[allow(unused)]
-#[allow(non_upper_case_globals)]
-#[allow(non_snake_case)]
 mod binding;
 mod session;
 mod set;
