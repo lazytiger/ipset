@@ -12,8 +12,8 @@ fn main() {
         .header("wrapper.h")
         .generate()
         .expect("Unable to generate bindings");
-    let src_dir = PathBuf::from(env::var_os("CARGO_MANIFEST_DIR").unwrap());
+    let out_dir = PathBuf::from(env::var_os("OUT_DIR").unwrap());
     bindings
-        .write_to_file(src_dir.join("src/binding.rs"))
+        .write_to_file(out_dir.join("binding.rs"))
         .expect("Unable to write bindings.rs");
 }
