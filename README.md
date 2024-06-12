@@ -58,7 +58,7 @@ fn main() -> Result<(), Error> {
     let ip: IpAddr = "192.168.3.1".parse().unwrap();
     session.create(|builder| builder.with_ipv6(false)?.build())?;
 
-    let ret = session.add(ip, None)?;
+    let ret = session.add(ip, &[])?;
     println!("add {}", ret);
 
     let exists = session.test(ip)?;
@@ -69,7 +69,7 @@ fn main() -> Result<(), Error> {
         println!("list {}", ip);
     }
 
-    let ret = session.save("test.ipset")?;
+    let ret = session.save("test.ipset".into())?;
     println!("save {}", ret);
 
     let ret = session.del(ip)?;
