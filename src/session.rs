@@ -137,11 +137,11 @@ impl<T: SetType> Session<T> {
     pub fn add(
         &mut self,
         data: impl Into<T::DataType>,
-        options: Vec<AddOption>,
+        options: &[AddOption],
     ) -> Result<bool, Error> {
         self.data_cmd(data.into(), binding::ipset_cmd_IPSET_CMD_ADD, |session| {
             for option in options {
-                match option {
+                match *option {
                     AddOption::Timeout(timeout) => {
                         session.set_data(
                             binding::ipset_opt_IPSET_OPT_TIMEOUT,

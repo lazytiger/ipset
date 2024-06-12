@@ -15,13 +15,13 @@ fn test_hash_ip() -> Result<(), Error> {
             .build()
     })?;
 
-    let ret = session.add(ip, vec![])?;
+    let ret = session.add(ip, &[])?;
     println!("add {}", ret);
 
     session.set_option(EnvOption::Exist);
     let ret = session.add(
         ip,
-        vec![
+        &[
             AddOption::Bytes(10),
             AddOption::Packets(20),
             AddOption::SkbMark(1, u32::MAX),
