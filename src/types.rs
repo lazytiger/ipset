@@ -22,9 +22,37 @@ pub struct HashMethod;
 
 /// ip data type
 /// Ip wrapper including ipv4 and ipv6
+#[derive(Copy, Clone)]
 pub enum IpDataType {
     IPv4(libc::in_addr),
     IPv6(libc::in6_addr),
+}
+
+impl IpDataType {
+    pub fn to_ip_addr(&self) -> IpAddr {
+        match self {
+            IpDataType::IPv4(addr) => {
+                let octets = addr.s_addr.to_ne_bytes();
+                IpAddr::V4(Ipv4Addr::new(octets[0], octets[1], octets[2], octets[3]))
+            }
+            IpDataType::IPv6(addr) => {
+                let segments = [
+                    u16::from_be_bytes([addr.s6_addr[0], addr.s6_addr[1]]),
+                    u16::from_be_bytes([addr.s6_addr[2], addr.s6_addr[3]]),
+                    u16::from_be_bytes([addr.s6_addr[4], addr.s6_addr[5]]),
+                    u16::from_be_bytes([addr.s6_addr[6], addr.s6_addr[7]]),
+                    u16::from_be_bytes([addr.s6_addr[8], addr.s6_addr[9]]),
+                    u16::from_be_bytes([addr.s6_addr[10], addr.s6_addr[11]]),
+                    u16::from_be_bytes([addr.s6_addr[12], addr.s6_addr[13]]),
+                    u16::from_be_bytes([addr.s6_addr[14], addr.s6_addr[15]]),
+                ];
+                IpAddr::V6(Ipv6Addr::new(
+                    segments[0], segments[1], segments[2], segments[3],
+                    segments[4], segments[5], segments[6], segments[7],
+                ))
+            }
+        }
+    }
 }
 
 impl<T: SetType> SetData<T> for IpDataType {
