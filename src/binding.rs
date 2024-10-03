@@ -30,10 +30,11 @@ impl<T> ::std::fmt::Debug for __IncompleteArrayField<T> {
         fmt.write_str("__IncompleteArrayField")
     }
 }
+pub const __bool_true_false_are_defined: u32 = 1;
 pub const true_: u32 = 1;
 pub const false_: u32 = 0;
-pub const __bool_true_false_are_defined: u32 = 1;
 pub const __BITS_PER_LONG: u32 = 64;
+pub const __BITS_PER_LONG_LONG: u32 = 64;
 pub const __FD_SETSIZE: u32 = 1024;
 pub const IPSET_PROTOCOL: u32 = 7;
 pub const IPSET_PROTOCOL_MIN: u32 = 6;
@@ -48,7 +49,7 @@ pub const IP_SET_OP_VERSION: u32 = 256;
 pub const _STDINT_H: u32 = 1;
 pub const _FEATURES_H: u32 = 1;
 pub const _DEFAULT_SOURCE: u32 = 1;
-pub const __GLIBC_USE_ISOC2X: u32 = 0;
+pub const __GLIBC_USE_ISOC23: u32 = 0;
 pub const __USE_ISOC11: u32 = 1;
 pub const __USE_ISOC99: u32 = 1;
 pub const __USE_ISOC95: u32 = 1;
@@ -62,42 +63,49 @@ pub const __USE_POSIX199506: u32 = 1;
 pub const __USE_XOPEN2K: u32 = 1;
 pub const __USE_XOPEN2K8: u32 = 1;
 pub const _ATFILE_SOURCE: u32 = 1;
+pub const __WORDSIZE: u32 = 64;
+pub const __WORDSIZE_TIME64_COMPAT32: u32 = 1;
+pub const __SYSCALL_WORDSIZE: u32 = 64;
+pub const __TIMESIZE: u32 = 64;
+pub const __USE_TIME_BITS64: u32 = 1;
 pub const __USE_MISC: u32 = 1;
 pub const __USE_ATFILE: u32 = 1;
 pub const __USE_FORTIFY_LEVEL: u32 = 0;
 pub const __GLIBC_USE_DEPRECATED_GETS: u32 = 0;
 pub const __GLIBC_USE_DEPRECATED_SCANF: u32 = 0;
+pub const __GLIBC_USE_C23_STRTOL: u32 = 0;
 pub const _STDC_PREDEF_H: u32 = 1;
 pub const __STDC_IEC_559__: u32 = 1;
+pub const __STDC_IEC_60559_BFP__: u32 = 201404;
 pub const __STDC_IEC_559_COMPLEX__: u32 = 1;
+pub const __STDC_IEC_60559_COMPLEX__: u32 = 201404;
 pub const __STDC_ISO_10646__: u32 = 201706;
 pub const __GNU_LIBRARY__: u32 = 6;
 pub const __GLIBC__: u32 = 2;
-pub const __GLIBC_MINOR__: u32 = 31;
+pub const __GLIBC_MINOR__: u32 = 40;
 pub const _SYS_CDEFS_H: u32 = 1;
 pub const __glibc_c99_flexarr_available: u32 = 1;
-pub const __WORDSIZE: u32 = 64;
-pub const __WORDSIZE_TIME64_COMPAT32: u32 = 1;
-pub const __SYSCALL_WORDSIZE: u32 = 64;
-pub const __LONG_DOUBLE_USES_FLOAT128: u32 = 0;
+pub const __LDOUBLE_REDIRECTS_TO_FLOAT128_ABI: u32 = 0;
 pub const __HAVE_GENERIC_SELECTION: u32 = 1;
 pub const __GLIBC_USE_LIB_EXT2: u32 = 0;
 pub const __GLIBC_USE_IEC_60559_BFP_EXT: u32 = 0;
-pub const __GLIBC_USE_IEC_60559_BFP_EXT_C2X: u32 = 0;
+pub const __GLIBC_USE_IEC_60559_BFP_EXT_C23: u32 = 0;
+pub const __GLIBC_USE_IEC_60559_EXT: u32 = 0;
 pub const __GLIBC_USE_IEC_60559_FUNCS_EXT: u32 = 0;
-pub const __GLIBC_USE_IEC_60559_FUNCS_EXT_C2X: u32 = 0;
+pub const __GLIBC_USE_IEC_60559_FUNCS_EXT_C23: u32 = 0;
 pub const __GLIBC_USE_IEC_60559_TYPES_EXT: u32 = 0;
 pub const _BITS_TYPES_H: u32 = 1;
-pub const __TIMESIZE: u32 = 64;
 pub const _BITS_TYPESIZES_H: u32 = 1;
 pub const __OFF_T_MATCHES_OFF64_T: u32 = 1;
 pub const __INO_T_MATCHES_INO64_T: u32 = 1;
 pub const __RLIM_T_MATCHES_RLIM64_T: u32 = 1;
 pub const __STATFS_MATCHES_STATFS64: u32 = 1;
+pub const __KERNEL_OLD_TIMEVAL_MATCHES_TIMEVAL64: u32 = 1;
 pub const _BITS_TIME64_H: u32 = 1;
 pub const _BITS_WCHAR_H: u32 = 1;
 pub const _BITS_STDINT_INTN_H: u32 = 1;
 pub const _BITS_STDINT_UINTN_H: u32 = 1;
+pub const _BITS_STDINT_LEAST_H: u32 = 1;
 pub const INT8_MIN: i32 = -128;
 pub const INT16_MIN: i32 = -32768;
 pub const INT32_MIN: i32 = -2147483648;
@@ -136,7 +144,6 @@ pub const SIZE_MAX: i32 = -1;
 pub const WINT_MIN: u32 = 0;
 pub const WINT_MAX: u32 = 4294967295;
 pub const _STDIO_H: u32 = 1;
-pub const __GNUC_VA_LIST: u32 = 1;
 pub const _____fpos_t_defined: u32 = 1;
 pub const ____mbstate_t_defined: u32 = 1;
 pub const _____fpos64_t_defined: u32 = 1;
@@ -146,6 +153,7 @@ pub const __struct_FILE_defined: u32 = 1;
 pub const _IO_EOF_SEEN: u32 = 16;
 pub const _IO_ERR_SEEN: u32 = 32;
 pub const _IO_USER_LOCK: u32 = 32768;
+pub const __cookie_io_functions_t_defined: u32 = 1;
 pub const _IOFBF: u32 = 0;
 pub const _IOLBF: u32 = 1;
 pub const _IONBF: u32 = 2;
@@ -155,12 +163,28 @@ pub const SEEK_SET: u32 = 0;
 pub const SEEK_CUR: u32 = 1;
 pub const SEEK_END: u32 = 2;
 pub const P_tmpdir: &[u8; 5] = b"/tmp\0";
-pub const _BITS_STDIO_LIM_H: u32 = 1;
 pub const L_tmpnam: u32 = 20;
 pub const TMP_MAX: u32 = 238328;
+pub const _BITS_STDIO_LIM_H: u32 = 1;
 pub const FILENAME_MAX: u32 = 4096;
 pub const L_ctermid: u32 = 9;
 pub const FOPEN_MAX: u32 = 16;
+pub const __HAVE_FLOAT128: u32 = 0;
+pub const __HAVE_DISTINCT_FLOAT128: u32 = 0;
+pub const __HAVE_FLOAT64X: u32 = 1;
+pub const __HAVE_FLOAT64X_LONG_DOUBLE: u32 = 1;
+pub const __HAVE_FLOAT16: u32 = 0;
+pub const __HAVE_FLOAT32: u32 = 1;
+pub const __HAVE_FLOAT64: u32 = 1;
+pub const __HAVE_FLOAT32X: u32 = 1;
+pub const __HAVE_FLOAT128X: u32 = 0;
+pub const __HAVE_DISTINCT_FLOAT16: u32 = 0;
+pub const __HAVE_DISTINCT_FLOAT32: u32 = 0;
+pub const __HAVE_DISTINCT_FLOAT64: u32 = 0;
+pub const __HAVE_DISTINCT_FLOAT32X: u32 = 0;
+pub const __HAVE_DISTINCT_FLOAT64X: u32 = 0;
+pub const __HAVE_DISTINCT_FLOAT128X: u32 = 0;
+pub const __HAVE_FLOATN_NOT_TYPEDEF: u32 = 0;
 pub const IPSET_ERRORBUFLEN: u32 = 1024;
 pub const IPSET_OUTBUFLEN: u32 = 8192;
 pub const _NETINET_IN_H: u32 = 1;
@@ -187,7 +211,6 @@ pub const BYTE_ORDER: u32 = 1234;
 pub const _BITS_BYTESWAP_H: u32 = 1;
 pub const _BITS_UINTN_IDENTITY_H: u32 = 1;
 pub const _SYS_SELECT_H: u32 = 1;
-pub const __FD_ZERO_STOS: &[u8; 6] = b"stosq\0";
 pub const __sigset_t_defined: u32 = 1;
 pub const __timeval_defined: u32 = 1;
 pub const _STRUCT_TIMESPEC: u32 = 1;
@@ -255,7 +278,8 @@ pub const PF_KCM: u32 = 41;
 pub const PF_QIPCRTR: u32 = 42;
 pub const PF_SMC: u32 = 43;
 pub const PF_XDP: u32 = 44;
-pub const PF_MAX: u32 = 45;
+pub const PF_MCTP: u32 = 45;
+pub const PF_MAX: u32 = 46;
 pub const AF_UNSPEC: u32 = 0;
 pub const AF_LOCAL: u32 = 1;
 pub const AF_UNIX: u32 = 1;
@@ -304,7 +328,8 @@ pub const AF_KCM: u32 = 41;
 pub const AF_QIPCRTR: u32 = 42;
 pub const AF_SMC: u32 = 43;
 pub const AF_XDP: u32 = 44;
-pub const AF_MAX: u32 = 45;
+pub const AF_MCTP: u32 = 45;
+pub const AF_MAX: u32 = 46;
 pub const SOL_RAW: u32 = 255;
 pub const SOL_DECNET: u32 = 261;
 pub const SOL_X25: u32 = 262;
@@ -329,6 +354,10 @@ pub const SOL_NFC: u32 = 280;
 pub const SOL_KCM: u32 = 281;
 pub const SOL_TLS: u32 = 282;
 pub const SOL_XDP: u32 = 283;
+pub const SOL_MPTCP: u32 = 284;
+pub const SOL_MCTP: u32 = 285;
+pub const SOL_SMC: u32 = 286;
+pub const SOL_VSOCK: u32 = 287;
 pub const SOMAXCONN: u32 = 4096;
 pub const _BITS_SOCKADDR_H: u32 = 1;
 pub const _SS_SIZE: u32 = 128;
@@ -412,6 +441,15 @@ pub const SO_TIMESTAMPING_NEW: u32 = 65;
 pub const SO_RCVTIMEO_NEW: u32 = 66;
 pub const SO_SNDTIMEO_NEW: u32 = 67;
 pub const SO_DETACH_REUSEPORT_BPF: u32 = 68;
+pub const SO_PREFER_BUSY_POLL: u32 = 69;
+pub const SO_BUSY_POLL_BUDGET: u32 = 70;
+pub const SO_NETNS_COOKIE: u32 = 71;
+pub const SO_BUF_LOCK: u32 = 72;
+pub const SO_RESERVE_MEM: u32 = 73;
+pub const SO_TXREHASH: u32 = 74;
+pub const SO_RCVMARK: u32 = 75;
+pub const SO_PASSPIDFD: u32 = 76;
+pub const SO_PEERPIDFD: u32 = 77;
 pub const SO_TIMESTAMP: u32 = 29;
 pub const SO_TIMESTAMPNS: u32 = 35;
 pub const SO_TIMESTAMPING: u32 = 37;
@@ -470,12 +508,15 @@ pub const IP_NODEFRAG: u32 = 22;
 pub const IP_CHECKSUM: u32 = 23;
 pub const IP_BIND_ADDRESS_NO_PORT: u32 = 24;
 pub const IP_RECVFRAGSIZE: u32 = 25;
+pub const IP_RECVERR_RFC4884: u32 = 26;
 pub const IP_PMTUDISC_DONT: u32 = 0;
 pub const IP_PMTUDISC_WANT: u32 = 1;
 pub const IP_PMTUDISC_DO: u32 = 2;
 pub const IP_PMTUDISC_PROBE: u32 = 3;
 pub const IP_PMTUDISC_INTERFACE: u32 = 4;
 pub const IP_PMTUDISC_OMIT: u32 = 5;
+pub const IP_LOCAL_PORT_RANGE: u32 = 51;
+pub const IP_PROTOCOL: u32 = 52;
 pub const SOL_IP: u32 = 0;
 pub const IP_DEFAULT_MULTICAST_TTL: u32 = 1;
 pub const IP_DEFAULT_MULTICAST_LOOP: u32 = 1;
@@ -505,6 +546,7 @@ pub const IPV6_JOIN_ANYCAST: u32 = 27;
 pub const IPV6_LEAVE_ANYCAST: u32 = 28;
 pub const IPV6_MULTICAST_ALL: u32 = 29;
 pub const IPV6_ROUTER_ALERT_ISOLATE: u32 = 30;
+pub const IPV6_RECVERR_RFC4884: u32 = 31;
 pub const IPV6_IPSEC_POLICY: u32 = 34;
 pub const IPV6_XFRM_POLICY: u32 = 35;
 pub const IPV6_HDRINCL: u32 = 36;
@@ -665,6 +707,7 @@ fn bindgen_test_layout___kernel_fsid_t() {
 }
 pub type __kernel_off_t = __kernel_long_t;
 pub type __kernel_loff_t = ::std::os::raw::c_longlong;
+pub type __kernel_old_time_t = __kernel_long_t;
 pub type __kernel_time_t = __kernel_long_t;
 pub type __kernel_time64_t = ::std::os::raw::c_longlong;
 pub type __kernel_clock_t = __kernel_long_t;
@@ -673,6 +716,8 @@ pub type __kernel_clockid_t = ::std::os::raw::c_int;
 pub type __kernel_caddr_t = *mut ::std::os::raw::c_char;
 pub type __kernel_uid16_t = ::std::os::raw::c_ushort;
 pub type __kernel_gid16_t = ::std::os::raw::c_ushort;
+pub type __s128 = i128;
+pub type __u128 = u128;
 pub type __le16 = __u16;
 pub type __be16 = __u16;
 pub type __le32 = __u32;
@@ -735,12 +780,13 @@ pub const IPSET_ATTR_CADT_FLAGS: _bindgen_ty_2 = 8;
 pub const IPSET_ATTR_CADT_LINENO: _bindgen_ty_2 = 9;
 pub const IPSET_ATTR_MARK: _bindgen_ty_2 = 10;
 pub const IPSET_ATTR_MARKMASK: _bindgen_ty_2 = 11;
+pub const IPSET_ATTR_BITMASK: _bindgen_ty_2 = 12;
 pub const IPSET_ATTR_CADT_MAX: _bindgen_ty_2 = 16;
-pub const IPSET_ATTR_GC: _bindgen_ty_2 = 17;
+pub const IPSET_ATTR_INITVAL: _bindgen_ty_2 = 17;
 pub const IPSET_ATTR_HASHSIZE: _bindgen_ty_2 = 18;
 pub const IPSET_ATTR_MAXELEM: _bindgen_ty_2 = 19;
 pub const IPSET_ATTR_NETMASK: _bindgen_ty_2 = 20;
-pub const IPSET_ATTR_PROBES: _bindgen_ty_2 = 21;
+pub const IPSET_ATTR_BUCKETSIZE: _bindgen_ty_2 = 21;
 pub const IPSET_ATTR_RESIZE: _bindgen_ty_2 = 22;
 pub const IPSET_ATTR_SIZE: _bindgen_ty_2 = 23;
 pub const IPSET_ATTR_ELEMENTS: _bindgen_ty_2 = 24;
@@ -787,6 +833,7 @@ pub const ipset_errno_IPSET_ERR_COUNTER: ipset_errno = 4111;
 pub const ipset_errno_IPSET_ERR_COMMENT: ipset_errno = 4112;
 pub const ipset_errno_IPSET_ERR_INVALID_MARKMASK: ipset_errno = 4113;
 pub const ipset_errno_IPSET_ERR_SKBINFO: ipset_errno = 4114;
+pub const ipset_errno_IPSET_ERR_BITMASK_NETMASK_EXCL: ipset_errno = 4115;
 pub const ipset_errno_IPSET_ERR_TYPE_SPECIFIC: ipset_errno = 4352;
 pub type ipset_errno = ::std::os::raw::c_uint;
 pub const ipset_cmd_flags_IPSET_FLAG_BIT_EXIST: ipset_cmd_flags = 0;
@@ -831,6 +878,8 @@ pub const ipset_cadt_flags_IPSET_FLAG_CADT_MAX: ipset_cadt_flags = 15;
 pub type ipset_cadt_flags = ::std::os::raw::c_uint;
 pub const ipset_create_flags_IPSET_CREATE_FLAG_BIT_FORCEADD: ipset_create_flags = 0;
 pub const ipset_create_flags_IPSET_CREATE_FLAG_FORCEADD: ipset_create_flags = 1;
+pub const ipset_create_flags_IPSET_CREATE_FLAG_BIT_BUCKETSIZE: ipset_create_flags = 1;
+pub const ipset_create_flags_IPSET_CREATE_FLAG_BUCKETSIZE: ipset_create_flags = 2;
 pub const ipset_create_flags_IPSET_CREATE_FLAG_BIT_MAX: ipset_create_flags = 7;
 pub type ipset_create_flags = ::std::os::raw::c_uint;
 pub const ipset_adt_IPSET_ADD: ipset_adt = 0;
@@ -1212,6 +1261,7 @@ pub type __id_t = ::std::os::raw::c_uint;
 pub type __time_t = ::std::os::raw::c_long;
 pub type __useconds_t = ::std::os::raw::c_uint;
 pub type __suseconds_t = ::std::os::raw::c_long;
+pub type __suseconds64_t = ::std::os::raw::c_long;
 pub type __daddr_t = ::std::os::raw::c_int;
 pub type __key_t = ::std::os::raw::c_int;
 pub type __clockid_t = ::std::os::raw::c_int;
@@ -1250,7 +1300,6 @@ pub type uint_fast32_t = ::std::os::raw::c_ulong;
 pub type uint_fast64_t = ::std::os::raw::c_ulong;
 pub type intmax_t = __intmax_t;
 pub type uintmax_t = __uintmax_t;
-pub type va_list = __builtin_va_list;
 pub type __gnuc_va_list = __builtin_va_list;
 #[repr(C)]
 #[derive(Copy, Clone)]
@@ -1466,7 +1515,7 @@ pub struct _IO_FILE {
     pub _wide_data: *mut _IO_wide_data,
     pub _freeres_list: *mut _IO_FILE,
     pub _freeres_buf: *mut ::std::os::raw::c_void,
-    pub __pad5: usize,
+    pub _prevchain: *mut *mut _IO_FILE,
     pub _mode: ::std::os::raw::c_int,
     pub _unused2: [::std::os::raw::c_char; 20usize],
 }
@@ -1745,13 +1794,13 @@ fn bindgen_test_layout__IO_FILE() {
         )
     );
     assert_eq!(
-        unsafe { ::std::ptr::addr_of!((*ptr).__pad5) as usize - ptr as usize },
+        unsafe { ::std::ptr::addr_of!((*ptr)._prevchain) as usize - ptr as usize },
         184usize,
         concat!(
             "Offset of field: ",
             stringify!(_IO_FILE),
             "::",
-            stringify!(__pad5)
+            stringify!(_prevchain)
         )
     );
     assert_eq!(
@@ -1775,6 +1824,96 @@ fn bindgen_test_layout__IO_FILE() {
         )
     );
 }
+pub type cookie_read_function_t = ::std::option::Option<
+    unsafe extern "C" fn(
+        __cookie: *mut ::std::os::raw::c_void,
+        __buf: *mut ::std::os::raw::c_char,
+        __nbytes: usize,
+    ) -> __ssize_t,
+>;
+pub type cookie_write_function_t = ::std::option::Option<
+    unsafe extern "C" fn(
+        __cookie: *mut ::std::os::raw::c_void,
+        __buf: *const ::std::os::raw::c_char,
+        __nbytes: usize,
+    ) -> __ssize_t,
+>;
+pub type cookie_seek_function_t = ::std::option::Option<
+    unsafe extern "C" fn(
+        __cookie: *mut ::std::os::raw::c_void,
+        __pos: *mut __off64_t,
+        __w: ::std::os::raw::c_int,
+    ) -> ::std::os::raw::c_int,
+>;
+pub type cookie_close_function_t = ::std::option::Option<
+    unsafe extern "C" fn(__cookie: *mut ::std::os::raw::c_void) -> ::std::os::raw::c_int,
+>;
+#[repr(C)]
+#[derive(Debug, Copy, Clone)]
+pub struct _IO_cookie_io_functions_t {
+    pub read: cookie_read_function_t,
+    pub write: cookie_write_function_t,
+    pub seek: cookie_seek_function_t,
+    pub close: cookie_close_function_t,
+}
+#[test]
+fn bindgen_test_layout__IO_cookie_io_functions_t() {
+    const UNINIT: ::std::mem::MaybeUninit<_IO_cookie_io_functions_t> =
+        ::std::mem::MaybeUninit::uninit();
+    let ptr = UNINIT.as_ptr();
+    assert_eq!(
+        ::std::mem::size_of::<_IO_cookie_io_functions_t>(),
+        32usize,
+        concat!("Size of: ", stringify!(_IO_cookie_io_functions_t))
+    );
+    assert_eq!(
+        ::std::mem::align_of::<_IO_cookie_io_functions_t>(),
+        8usize,
+        concat!("Alignment of ", stringify!(_IO_cookie_io_functions_t))
+    );
+    assert_eq!(
+        unsafe { ::std::ptr::addr_of!((*ptr).read) as usize - ptr as usize },
+        0usize,
+        concat!(
+            "Offset of field: ",
+            stringify!(_IO_cookie_io_functions_t),
+            "::",
+            stringify!(read)
+        )
+    );
+    assert_eq!(
+        unsafe { ::std::ptr::addr_of!((*ptr).write) as usize - ptr as usize },
+        8usize,
+        concat!(
+            "Offset of field: ",
+            stringify!(_IO_cookie_io_functions_t),
+            "::",
+            stringify!(write)
+        )
+    );
+    assert_eq!(
+        unsafe { ::std::ptr::addr_of!((*ptr).seek) as usize - ptr as usize },
+        16usize,
+        concat!(
+            "Offset of field: ",
+            stringify!(_IO_cookie_io_functions_t),
+            "::",
+            stringify!(seek)
+        )
+    );
+    assert_eq!(
+        unsafe { ::std::ptr::addr_of!((*ptr).close) as usize - ptr as usize },
+        24usize,
+        concat!(
+            "Offset of field: ",
+            stringify!(_IO_cookie_io_functions_t),
+            "::",
+            stringify!(close)
+        )
+    );
+}
+pub type cookie_io_functions_t = _IO_cookie_io_functions_t;
+pub type va_list = __gnuc_va_list;
 pub type off_t = __off_t;
 pub type fpos_t = __fpos_t;
 extern "C" {
@@ -1804,10 +1943,13 @@ extern "C" {
     ) -> ::std::os::raw::c_int;
 }
 extern "C" {
+    pub fn fclose(__stream: *mut FILE) -> ::std::os::raw::c_int;
+}
+extern "C" {
     pub fn tmpfile() -> *mut FILE;
 }
 extern "C" {
-    pub fn tmpnam(__s: *mut ::std::os::raw::c_char) -> *mut ::std::os::raw::c_char;
+    pub fn tmpnam(arg1: *mut ::std::os::raw::c_char) -> *mut ::std::os::raw::c_char;
 }
 extern "C" {
     pub fn tmpnam_r(__s: *mut ::std::os::raw::c_char) -> *mut ::std::os::raw::c_char;
@@ -1817,9 +1959,6 @@ extern "C" {
         __dir: *const ::std::os::raw::c_char,
         __pfx: *const ::std::os::raw::c_char,
     ) -> *mut ::std::os::raw::c_char;
-}
-extern "C" {
-    pub fn fclose(__stream: *mut FILE) -> ::std::os::raw::c_int;
 }
 extern "C" {
     pub fn fflush(__stream: *mut FILE) -> ::std::os::raw::c_int;
@@ -1843,6 +1982,13 @@ extern "C" {
 extern "C" {
     pub fn fdopen(__fd: ::std::os::raw::c_int, __modes: *const ::std::os::raw::c_char)
         -> *mut FILE;
+}
+extern "C" {
+    pub fn fopencookie(
+        __magic_cookie: *mut ::std::os::raw::c_void,
+        __modes: *const ::std::os::raw::c_char,
+        __io_funcs: cookie_io_functions_t,
+    ) -> *mut FILE;
 }
 extern "C" {
     pub fn fmemopen(
@@ -1928,6 +2074,27 @@ extern "C" {
     ) -> ::std::os::raw::c_int;
 }
 extern "C" {
+    pub fn vasprintf(
+        __ptr: *mut *mut ::std::os::raw::c_char,
+        __f: *const ::std::os::raw::c_char,
+        __arg: *mut __va_list_tag,
+    ) -> ::std::os::raw::c_int;
+}
+extern "C" {
+    pub fn __asprintf(
+        __ptr: *mut *mut ::std::os::raw::c_char,
+        __fmt: *const ::std::os::raw::c_char,
+        ...
+    ) -> ::std::os::raw::c_int;
+}
+extern "C" {
+    pub fn asprintf(
+        __ptr: *mut *mut ::std::os::raw::c_char,
+        __fmt: *const ::std::os::raw::c_char,
+        ...
+    ) -> ::std::os::raw::c_int;
+}
+extern "C" {
     pub fn vdprintf(
         __fd: ::std::os::raw::c_int,
         __fmt: *const ::std::os::raw::c_char,
@@ -1958,6 +2125,10 @@ extern "C" {
         ...
     ) -> ::std::os::raw::c_int;
 }
+pub type _Float32 = f32;
+pub type _Float64 = f64;
+pub type _Float32x = f64;
+pub type _Float64x = u128;
 extern "C" {
     #[link_name = "\u{1}__isoc99_fscanf"]
     pub fn fscanf1(
@@ -2186,25 +2357,19 @@ extern "C" {
     pub fn perror(__s: *const ::std::os::raw::c_char);
 }
 extern "C" {
-    pub static mut sys_nerr: ::std::os::raw::c_int;
-}
-extern "C" {
-    pub static sys_errlist: [*const ::std::os::raw::c_char; 0usize];
-}
-extern "C" {
     pub fn fileno(__stream: *mut FILE) -> ::std::os::raw::c_int;
 }
 extern "C" {
     pub fn fileno_unlocked(__stream: *mut FILE) -> ::std::os::raw::c_int;
 }
 extern "C" {
+    pub fn pclose(__stream: *mut FILE) -> ::std::os::raw::c_int;
+}
+extern "C" {
     pub fn popen(
         __command: *const ::std::os::raw::c_char,
         __modes: *const ::std::os::raw::c_char,
     ) -> *mut FILE;
-}
-extern "C" {
-    pub fn pclose(__stream: *mut FILE) -> ::std::os::raw::c_int;
 }
 extern "C" {
     pub fn ctermid(__s: *mut ::std::os::raw::c_char) -> *mut ::std::os::raw::c_char;
@@ -2293,6 +2458,8 @@ pub const ipset_envopt_IPSET_ENV_BIT_LIST_SETNAME: ipset_envopt = 4;
 pub const ipset_envopt_IPSET_ENV_LIST_SETNAME: ipset_envopt = 16;
 pub const ipset_envopt_IPSET_ENV_BIT_LIST_HEADER: ipset_envopt = 5;
 pub const ipset_envopt_IPSET_ENV_LIST_HEADER: ipset_envopt = 32;
+pub const ipset_envopt_IPSET_ENV_BIT_QUOTED: ipset_envopt = 6;
+pub const ipset_envopt_IPSET_ENV_QUOTED: ipset_envopt = 64;
 pub type ipset_envopt = ::std::os::raw::c_uint;
 extern "C" {
     pub fn ipset_envopt_test(session: *mut ipset_session, env: ipset_envopt) -> bool;
@@ -2307,6 +2474,7 @@ pub const ipset_output_mode_IPSET_LIST_NONE: ipset_output_mode = 0;
 pub const ipset_output_mode_IPSET_LIST_PLAIN: ipset_output_mode = 1;
 pub const ipset_output_mode_IPSET_LIST_SAVE: ipset_output_mode = 2;
 pub const ipset_output_mode_IPSET_LIST_XML: ipset_output_mode = 3;
+pub const ipset_output_mode_IPSET_LIST_JSON: ipset_output_mode = 4;
 pub type ipset_output_mode = ::std::os::raw::c_uint;
 extern "C" {
     pub fn ipset_session_output(
@@ -2462,7 +2630,10 @@ pub const ipset_keywords_IPSET_ARG_SKBINFO: ipset_keywords = 33;
 pub const ipset_keywords_IPSET_ARG_SKBMARK: ipset_keywords = 34;
 pub const ipset_keywords_IPSET_ARG_SKBPRIO: ipset_keywords = 35;
 pub const ipset_keywords_IPSET_ARG_SKBQUEUE: ipset_keywords = 36;
-pub const ipset_keywords_IPSET_ARG_MAX: ipset_keywords = 37;
+pub const ipset_keywords_IPSET_ARG_BUCKETSIZE: ipset_keywords = 37;
+pub const ipset_keywords_IPSET_ARG_INITVAL: ipset_keywords = 38;
+pub const ipset_keywords_IPSET_ARG_BITMASK: ipset_keywords = 39;
+pub const ipset_keywords_IPSET_ARG_MAX: ipset_keywords = 40;
 pub type ipset_keywords = ::std::os::raw::c_uint;
 extern "C" {
     pub fn ipset_keyword(i: ipset_keywords) -> *const ipset_arg;
@@ -2711,6 +2882,93 @@ pub type blksize_t = __blksize_t;
 pub type blkcnt_t = __blkcnt_t;
 pub type fsblkcnt_t = __fsblkcnt_t;
 pub type fsfilcnt_t = __fsfilcnt_t;
+#[repr(C)]
+#[derive(Copy, Clone)]
+pub union __atomic_wide_counter {
+    pub __value64: ::std::os::raw::c_ulonglong,
+    pub __value32: __atomic_wide_counter__bindgen_ty_1,
+}
+#[repr(C)]
+#[derive(Debug, Copy, Clone)]
+pub struct __atomic_wide_counter__bindgen_ty_1 {
+    pub __low: ::std::os::raw::c_uint,
+    pub __high: ::std::os::raw::c_uint,
+}
+#[test]
+fn bindgen_test_layout___atomic_wide_counter__bindgen_ty_1() {
+    const UNINIT: ::std::mem::MaybeUninit<__atomic_wide_counter__bindgen_ty_1> =
+        ::std::mem::MaybeUninit::uninit();
+    let ptr = UNINIT.as_ptr();
+    assert_eq!(
+        ::std::mem::size_of::<__atomic_wide_counter__bindgen_ty_1>(),
+        8usize,
+        concat!("Size of: ", stringify!(__atomic_wide_counter__bindgen_ty_1))
+    );
+    assert_eq!(
+        ::std::mem::align_of::<__atomic_wide_counter__bindgen_ty_1>(),
+        4usize,
+        concat!(
+            "Alignment of ",
+            stringify!(__atomic_wide_counter__bindgen_ty_1)
+        )
+    );
+    assert_eq!(
+        unsafe { ::std::ptr::addr_of!((*ptr).__low) as usize - ptr as usize },
+        0usize,
+        concat!(
+            "Offset of field: ",
+            stringify!(__atomic_wide_counter__bindgen_ty_1),
+            "::",
+            stringify!(__low)
+        )
+    );
+    assert_eq!(
+        unsafe { ::std::ptr::addr_of!((*ptr).__high) as usize - ptr as usize },
+        4usize,
+        concat!(
+            "Offset of field: ",
+            stringify!(__atomic_wide_counter__bindgen_ty_1),
+            "::",
+            stringify!(__high)
+        )
+    );
+}
+#[test]
+fn bindgen_test_layout___atomic_wide_counter() {
+    const UNINIT: ::std::mem::MaybeUninit<__atomic_wide_counter> =
+        ::std::mem::MaybeUninit::uninit();
+    let ptr = UNINIT.as_ptr();
+    assert_eq!(
+        ::std::mem::size_of::<__atomic_wide_counter>(),
+        8usize,
+        concat!("Size of: ", stringify!(__atomic_wide_counter))
+    );
+    assert_eq!(
+        ::std::mem::align_of::<__atomic_wide_counter>(),
+        8usize,
+        concat!("Alignment of ", stringify!(__atomic_wide_counter))
+    );
+    assert_eq!(
+        unsafe { ::std::ptr::addr_of!((*ptr).__value64) as usize - ptr as usize },
+        0usize,
+        concat!(
+            "Offset of field: ",
+            stringify!(__atomic_wide_counter),
+            "::",
+            stringify!(__value64)
+        )
+    );
+    assert_eq!(
+        unsafe { ::std::ptr::addr_of!((*ptr).__value32) as usize - ptr as usize },
+        0usize,
+        concat!(
+            "Offset of field: ",
+            stringify!(__atomic_wide_counter),
+            "::",
+            stringify!(__value32)
+        )
+    );
+}
 #[repr(C)]
 #[derive(Debug, Copy, Clone)]
 pub struct __pthread_internal_list {
@@ -3048,193 +3306,13 @@ fn bindgen_test_layout___pthread_rwlock_arch_t() {
 #[repr(C)]
 #[derive(Copy, Clone)]
 pub struct __pthread_cond_s {
-    pub __bindgen_anon_1: __pthread_cond_s__bindgen_ty_1,
-    pub __bindgen_anon_2: __pthread_cond_s__bindgen_ty_2,
+    pub __wseq: __atomic_wide_counter,
+    pub __g1_start: __atomic_wide_counter,
     pub __g_refs: [::std::os::raw::c_uint; 2usize],
     pub __g_size: [::std::os::raw::c_uint; 2usize],
     pub __g1_orig_size: ::std::os::raw::c_uint,
     pub __wrefs: ::std::os::raw::c_uint,
     pub __g_signals: [::std::os::raw::c_uint; 2usize],
-}
-#[repr(C)]
-#[derive(Copy, Clone)]
-pub union __pthread_cond_s__bindgen_ty_1 {
-    pub __wseq: ::std::os::raw::c_ulonglong,
-    pub __wseq32: __pthread_cond_s__bindgen_ty_1__bindgen_ty_1,
-}
-#[repr(C)]
-#[derive(Debug, Copy, Clone)]
-pub struct __pthread_cond_s__bindgen_ty_1__bindgen_ty_1 {
-    pub __low: ::std::os::raw::c_uint,
-    pub __high: ::std::os::raw::c_uint,
-}
-#[test]
-fn bindgen_test_layout___pthread_cond_s__bindgen_ty_1__bindgen_ty_1() {
-    const UNINIT: ::std::mem::MaybeUninit<__pthread_cond_s__bindgen_ty_1__bindgen_ty_1> =
-        ::std::mem::MaybeUninit::uninit();
-    let ptr = UNINIT.as_ptr();
-    assert_eq!(
-        ::std::mem::size_of::<__pthread_cond_s__bindgen_ty_1__bindgen_ty_1>(),
-        8usize,
-        concat!(
-            "Size of: ",
-            stringify!(__pthread_cond_s__bindgen_ty_1__bindgen_ty_1)
-        )
-    );
-    assert_eq!(
-        ::std::mem::align_of::<__pthread_cond_s__bindgen_ty_1__bindgen_ty_1>(),
-        4usize,
-        concat!(
-            "Alignment of ",
-            stringify!(__pthread_cond_s__bindgen_ty_1__bindgen_ty_1)
-        )
-    );
-    assert_eq!(
-        unsafe { ::std::ptr::addr_of!((*ptr).__low) as usize - ptr as usize },
-        0usize,
-        concat!(
-            "Offset of field: ",
-            stringify!(__pthread_cond_s__bindgen_ty_1__bindgen_ty_1),
-            "::",
-            stringify!(__low)
-        )
-    );
-    assert_eq!(
-        unsafe { ::std::ptr::addr_of!((*ptr).__high) as usize - ptr as usize },
-        4usize,
-        concat!(
-            "Offset of field: ",
-            stringify!(__pthread_cond_s__bindgen_ty_1__bindgen_ty_1),
-            "::",
-            stringify!(__high)
-        )
-    );
-}
-#[test]
-fn bindgen_test_layout___pthread_cond_s__bindgen_ty_1() {
-    const UNINIT: ::std::mem::MaybeUninit<__pthread_cond_s__bindgen_ty_1> =
-        ::std::mem::MaybeUninit::uninit();
-    let ptr = UNINIT.as_ptr();
-    assert_eq!(
-        ::std::mem::size_of::<__pthread_cond_s__bindgen_ty_1>(),
-        8usize,
-        concat!("Size of: ", stringify!(__pthread_cond_s__bindgen_ty_1))
-    );
-    assert_eq!(
-        ::std::mem::align_of::<__pthread_cond_s__bindgen_ty_1>(),
-        8usize,
-        concat!("Alignment of ", stringify!(__pthread_cond_s__bindgen_ty_1))
-    );
-    assert_eq!(
-        unsafe { ::std::ptr::addr_of!((*ptr).__wseq) as usize - ptr as usize },
-        0usize,
-        concat!(
-            "Offset of field: ",
-            stringify!(__pthread_cond_s__bindgen_ty_1),
-            "::",
-            stringify!(__wseq)
-        )
-    );
-    assert_eq!(
-        unsafe { ::std::ptr::addr_of!((*ptr).__wseq32) as usize - ptr as usize },
-        0usize,
-        concat!(
-            "Offset of field: ",
-            stringify!(__pthread_cond_s__bindgen_ty_1),
-            "::",
-            stringify!(__wseq32)
-        )
-    );
-}
-#[repr(C)]
-#[derive(Copy, Clone)]
-pub union __pthread_cond_s__bindgen_ty_2 {
-    pub __g1_start: ::std::os::raw::c_ulonglong,
-    pub __g1_start32: __pthread_cond_s__bindgen_ty_2__bindgen_ty_1,
-}
-#[repr(C)]
-#[derive(Debug, Copy, Clone)]
-pub struct __pthread_cond_s__bindgen_ty_2__bindgen_ty_1 {
-    pub __low: ::std::os::raw::c_uint,
-    pub __high: ::std::os::raw::c_uint,
-}
-#[test]
-fn bindgen_test_layout___pthread_cond_s__bindgen_ty_2__bindgen_ty_1() {
-    const UNINIT: ::std::mem::MaybeUninit<__pthread_cond_s__bindgen_ty_2__bindgen_ty_1> =
-        ::std::mem::MaybeUninit::uninit();
-    let ptr = UNINIT.as_ptr();
-    assert_eq!(
-        ::std::mem::size_of::<__pthread_cond_s__bindgen_ty_2__bindgen_ty_1>(),
-        8usize,
-        concat!(
-            "Size of: ",
-            stringify!(__pthread_cond_s__bindgen_ty_2__bindgen_ty_1)
-        )
-    );
-    assert_eq!(
-        ::std::mem::align_of::<__pthread_cond_s__bindgen_ty_2__bindgen_ty_1>(),
-        4usize,
-        concat!(
-            "Alignment of ",
-            stringify!(__pthread_cond_s__bindgen_ty_2__bindgen_ty_1)
-        )
-    );
-    assert_eq!(
-        unsafe { ::std::ptr::addr_of!((*ptr).__low) as usize - ptr as usize },
-        0usize,
-        concat!(
-            "Offset of field: ",
-            stringify!(__pthread_cond_s__bindgen_ty_2__bindgen_ty_1),
-            "::",
-            stringify!(__low)
-        )
-    );
-    assert_eq!(
-        unsafe { ::std::ptr::addr_of!((*ptr).__high) as usize - ptr as usize },
-        4usize,
-        concat!(
-            "Offset of field: ",
-            stringify!(__pthread_cond_s__bindgen_ty_2__bindgen_ty_1),
-            "::",
-            stringify!(__high)
-        )
-    );
-}
-#[test]
-fn bindgen_test_layout___pthread_cond_s__bindgen_ty_2() {
-    const UNINIT: ::std::mem::MaybeUninit<__pthread_cond_s__bindgen_ty_2> =
-        ::std::mem::MaybeUninit::uninit();
-    let ptr = UNINIT.as_ptr();
-    assert_eq!(
-        ::std::mem::size_of::<__pthread_cond_s__bindgen_ty_2>(),
-        8usize,
-        concat!("Size of: ", stringify!(__pthread_cond_s__bindgen_ty_2))
-    );
-    assert_eq!(
-        ::std::mem::align_of::<__pthread_cond_s__bindgen_ty_2>(),
-        8usize,
-        concat!("Alignment of ", stringify!(__pthread_cond_s__bindgen_ty_2))
-    );
-    assert_eq!(
-        unsafe { ::std::ptr::addr_of!((*ptr).__g1_start) as usize - ptr as usize },
-        0usize,
-        concat!(
-            "Offset of field: ",
-            stringify!(__pthread_cond_s__bindgen_ty_2),
-            "::",
-            stringify!(__g1_start)
-        )
-    );
-    assert_eq!(
-        unsafe { ::std::ptr::addr_of!((*ptr).__g1_start32) as usize - ptr as usize },
-        0usize,
-        concat!(
-            "Offset of field: ",
-            stringify!(__pthread_cond_s__bindgen_ty_2),
-            "::",
-            stringify!(__g1_start32)
-        )
-    );
 }
 #[test]
 fn bindgen_test_layout___pthread_cond_s() {
@@ -3249,6 +3327,26 @@ fn bindgen_test_layout___pthread_cond_s() {
         ::std::mem::align_of::<__pthread_cond_s>(),
         8usize,
         concat!("Alignment of ", stringify!(__pthread_cond_s))
+    );
+    assert_eq!(
+        unsafe { ::std::ptr::addr_of!((*ptr).__wseq) as usize - ptr as usize },
+        0usize,
+        concat!(
+            "Offset of field: ",
+            stringify!(__pthread_cond_s),
+            "::",
+            stringify!(__wseq)
+        )
+    );
+    assert_eq!(
+        unsafe { ::std::ptr::addr_of!((*ptr).__g1_start) as usize - ptr as usize },
+        8usize,
+        concat!(
+            "Offset of field: ",
+            stringify!(__pthread_cond_s),
+            "::",
+            stringify!(__g1_start)
+        )
     );
     assert_eq!(
         unsafe { ::std::ptr::addr_of!((*ptr).__g_refs) as usize - ptr as usize },
@@ -3298,6 +3396,38 @@ fn bindgen_test_layout___pthread_cond_s() {
             stringify!(__pthread_cond_s),
             "::",
             stringify!(__g_signals)
+        )
+    );
+}
+pub type __tss_t = ::std::os::raw::c_uint;
+pub type __thrd_t = ::std::os::raw::c_ulong;
+#[repr(C)]
+#[derive(Debug, Copy, Clone)]
+pub struct __once_flag {
+    pub __data: ::std::os::raw::c_int,
+}
+#[test]
+fn bindgen_test_layout___once_flag() {
+    const UNINIT: ::std::mem::MaybeUninit<__once_flag> = ::std::mem::MaybeUninit::uninit();
+    let ptr = UNINIT.as_ptr();
+    assert_eq!(
+        ::std::mem::size_of::<__once_flag>(),
+        4usize,
+        concat!("Size of: ", stringify!(__once_flag))
+    );
+    assert_eq!(
+        ::std::mem::align_of::<__once_flag>(),
+        4usize,
+        concat!("Alignment of ", stringify!(__once_flag))
+    );
+    assert_eq!(
+        unsafe { ::std::ptr::addr_of!((*ptr).__data) as usize - ptr as usize },
+        0usize,
+        concat!(
+            "Offset of field: ",
+            stringify!(__once_flag),
+            "::",
+            stringify!(__data)
         )
     );
 }
@@ -4296,58 +4426,6 @@ fn bindgen_test_layout_ip_opts() {
 }
 #[repr(C)]
 #[derive(Debug, Copy, Clone)]
-pub struct ip_mreqn {
-    pub imr_multiaddr: in_addr,
-    pub imr_address: in_addr,
-    pub imr_ifindex: ::std::os::raw::c_int,
-}
-#[test]
-fn bindgen_test_layout_ip_mreqn() {
-    const UNINIT: ::std::mem::MaybeUninit<ip_mreqn> = ::std::mem::MaybeUninit::uninit();
-    let ptr = UNINIT.as_ptr();
-    assert_eq!(
-        ::std::mem::size_of::<ip_mreqn>(),
-        12usize,
-        concat!("Size of: ", stringify!(ip_mreqn))
-    );
-    assert_eq!(
-        ::std::mem::align_of::<ip_mreqn>(),
-        4usize,
-        concat!("Alignment of ", stringify!(ip_mreqn))
-    );
-    assert_eq!(
-        unsafe { ::std::ptr::addr_of!((*ptr).imr_multiaddr) as usize - ptr as usize },
-        0usize,
-        concat!(
-            "Offset of field: ",
-            stringify!(ip_mreqn),
-            "::",
-            stringify!(imr_multiaddr)
-        )
-    );
-    assert_eq!(
-        unsafe { ::std::ptr::addr_of!((*ptr).imr_address) as usize - ptr as usize },
-        4usize,
-        concat!(
-            "Offset of field: ",
-            stringify!(ip_mreqn),
-            "::",
-            stringify!(imr_address)
-        )
-    );
-    assert_eq!(
-        unsafe { ::std::ptr::addr_of!((*ptr).imr_ifindex) as usize - ptr as usize },
-        8usize,
-        concat!(
-            "Offset of field: ",
-            stringify!(ip_mreqn),
-            "::",
-            stringify!(imr_ifindex)
-        )
-    );
-}
-#[repr(C)]
-#[derive(Debug, Copy, Clone)]
 pub struct in_pktinfo {
     pub ipi_ifindex: ::std::os::raw::c_int,
     pub ipi_spec_dst: in_addr,
@@ -4419,11 +4497,14 @@ pub const IPPROTO_BEETPH: _bindgen_ty_9 = 94;
 pub const IPPROTO_ENCAP: _bindgen_ty_9 = 98;
 pub const IPPROTO_PIM: _bindgen_ty_9 = 103;
 pub const IPPROTO_COMP: _bindgen_ty_9 = 108;
+pub const IPPROTO_L2TP: _bindgen_ty_9 = 115;
 pub const IPPROTO_SCTP: _bindgen_ty_9 = 132;
 pub const IPPROTO_UDPLITE: _bindgen_ty_9 = 136;
 pub const IPPROTO_MPLS: _bindgen_ty_9 = 137;
+pub const IPPROTO_ETHERNET: _bindgen_ty_9 = 143;
 pub const IPPROTO_RAW: _bindgen_ty_9 = 255;
-pub const IPPROTO_MAX: _bindgen_ty_9 = 256;
+pub const IPPROTO_MPTCP: _bindgen_ty_9 = 262;
+pub const IPPROTO_MAX: _bindgen_ty_9 = 263;
 pub type _bindgen_ty_9 = ::std::os::raw::c_uint;
 pub const IPPROTO_HOPOPTS: _bindgen_ty_10 = 0;
 pub const IPPROTO_ROUTING: _bindgen_ty_10 = 43;
@@ -4725,6 +4806,58 @@ fn bindgen_test_layout_ip_mreq() {
             stringify!(ip_mreq),
             "::",
             stringify!(imr_interface)
+        )
+    );
+}
+#[repr(C)]
+#[derive(Debug, Copy, Clone)]
+pub struct ip_mreqn {
+    pub imr_multiaddr: in_addr,
+    pub imr_address: in_addr,
+    pub imr_ifindex: ::std::os::raw::c_int,
+}
+#[test]
+fn bindgen_test_layout_ip_mreqn() {
+    const UNINIT: ::std::mem::MaybeUninit<ip_mreqn> = ::std::mem::MaybeUninit::uninit();
+    let ptr = UNINIT.as_ptr();
+    assert_eq!(
+        ::std::mem::size_of::<ip_mreqn>(),
+        12usize,
+        concat!("Size of: ", stringify!(ip_mreqn))
+    );
+    assert_eq!(
+        ::std::mem::align_of::<ip_mreqn>(),
+        4usize,
+        concat!("Alignment of ", stringify!(ip_mreqn))
+    );
+    assert_eq!(
+        unsafe { ::std::ptr::addr_of!((*ptr).imr_multiaddr) as usize - ptr as usize },
+        0usize,
+        concat!(
+            "Offset of field: ",
+            stringify!(ip_mreqn),
+            "::",
+            stringify!(imr_multiaddr)
+        )
+    );
+    assert_eq!(
+        unsafe { ::std::ptr::addr_of!((*ptr).imr_address) as usize - ptr as usize },
+        4usize,
+        concat!(
+            "Offset of field: ",
+            stringify!(ip_mreqn),
+            "::",
+            stringify!(imr_address)
+        )
+    );
+    assert_eq!(
+        unsafe { ::std::ptr::addr_of!((*ptr).imr_ifindex) as usize - ptr as usize },
+        8usize,
+        concat!(
+            "Offset of field: ",
+            stringify!(ip_mreqn),
+            "::",
+            stringify!(imr_ifindex)
         )
     );
 }
@@ -5182,41 +5315,44 @@ pub const ipset_opt_IPSET_OPT_PROBES: ipset_opt = 16;
 pub const ipset_opt_IPSET_OPT_RESIZE: ipset_opt = 17;
 pub const ipset_opt_IPSET_OPT_SIZE: ipset_opt = 18;
 pub const ipset_opt_IPSET_OPT_FORCEADD: ipset_opt = 19;
-pub const ipset_opt_IPSET_OPT_ELEMENTS: ipset_opt = 20;
-pub const ipset_opt_IPSET_OPT_REFERENCES: ipset_opt = 21;
-pub const ipset_opt_IPSET_OPT_MEMSIZE: ipset_opt = 22;
-pub const ipset_opt_IPSET_OPT_ETHER: ipset_opt = 23;
-pub const ipset_opt_IPSET_OPT_NAME: ipset_opt = 24;
-pub const ipset_opt_IPSET_OPT_NAMEREF: ipset_opt = 25;
-pub const ipset_opt_IPSET_OPT_IP2: ipset_opt = 26;
-pub const ipset_opt_IPSET_OPT_CIDR2: ipset_opt = 27;
-pub const ipset_opt_IPSET_OPT_IP2_TO: ipset_opt = 28;
-pub const ipset_opt_IPSET_OPT_PROTO: ipset_opt = 29;
-pub const ipset_opt_IPSET_OPT_IFACE: ipset_opt = 30;
-pub const ipset_opt_IPSET_OPT_SETNAME2: ipset_opt = 31;
-pub const ipset_opt_IPSET_OPT_EXIST: ipset_opt = 32;
-pub const ipset_opt_IPSET_OPT_BEFORE: ipset_opt = 33;
-pub const ipset_opt_IPSET_OPT_PHYSDEV: ipset_opt = 34;
-pub const ipset_opt_IPSET_OPT_NOMATCH: ipset_opt = 35;
-pub const ipset_opt_IPSET_OPT_COUNTERS: ipset_opt = 36;
-pub const ipset_opt_IPSET_OPT_PACKETS: ipset_opt = 37;
-pub const ipset_opt_IPSET_OPT_BYTES: ipset_opt = 38;
-pub const ipset_opt_IPSET_OPT_CREATE_COMMENT: ipset_opt = 39;
-pub const ipset_opt_IPSET_OPT_ADT_COMMENT: ipset_opt = 40;
-pub const ipset_opt_IPSET_OPT_SKBINFO: ipset_opt = 41;
-pub const ipset_opt_IPSET_OPT_SKBMARK: ipset_opt = 42;
-pub const ipset_opt_IPSET_OPT_SKBPRIO: ipset_opt = 43;
-pub const ipset_opt_IPSET_OPT_SKBQUEUE: ipset_opt = 44;
-pub const ipset_opt_IPSET_OPT_IFACE_WILDCARD: ipset_opt = 45;
-pub const ipset_opt_IPSET_OPT_FLAGS: ipset_opt = 48;
-pub const ipset_opt_IPSET_OPT_CADT_FLAGS: ipset_opt = 49;
-pub const ipset_opt_IPSET_OPT_ELEM: ipset_opt = 50;
-pub const ipset_opt_IPSET_OPT_TYPE: ipset_opt = 51;
-pub const ipset_opt_IPSET_OPT_LINENO: ipset_opt = 52;
-pub const ipset_opt_IPSET_OPT_REVISION: ipset_opt = 53;
-pub const ipset_opt_IPSET_OPT_REVISION_MIN: ipset_opt = 54;
-pub const ipset_opt_IPSET_OPT_INDEX: ipset_opt = 55;
-pub const ipset_opt_IPSET_OPT_MAX: ipset_opt = 56;
+pub const ipset_opt_IPSET_OPT_BITMASK: ipset_opt = 20;
+pub const ipset_opt_IPSET_OPT_ELEMENTS: ipset_opt = 21;
+pub const ipset_opt_IPSET_OPT_REFERENCES: ipset_opt = 22;
+pub const ipset_opt_IPSET_OPT_MEMSIZE: ipset_opt = 23;
+pub const ipset_opt_IPSET_OPT_ETHER: ipset_opt = 24;
+pub const ipset_opt_IPSET_OPT_NAME: ipset_opt = 25;
+pub const ipset_opt_IPSET_OPT_NAMEREF: ipset_opt = 26;
+pub const ipset_opt_IPSET_OPT_IP2: ipset_opt = 27;
+pub const ipset_opt_IPSET_OPT_CIDR2: ipset_opt = 28;
+pub const ipset_opt_IPSET_OPT_IP2_TO: ipset_opt = 29;
+pub const ipset_opt_IPSET_OPT_PROTO: ipset_opt = 30;
+pub const ipset_opt_IPSET_OPT_IFACE: ipset_opt = 31;
+pub const ipset_opt_IPSET_OPT_SETNAME2: ipset_opt = 32;
+pub const ipset_opt_IPSET_OPT_EXIST: ipset_opt = 33;
+pub const ipset_opt_IPSET_OPT_BEFORE: ipset_opt = 34;
+pub const ipset_opt_IPSET_OPT_PHYSDEV: ipset_opt = 35;
+pub const ipset_opt_IPSET_OPT_NOMATCH: ipset_opt = 36;
+pub const ipset_opt_IPSET_OPT_COUNTERS: ipset_opt = 37;
+pub const ipset_opt_IPSET_OPT_PACKETS: ipset_opt = 38;
+pub const ipset_opt_IPSET_OPT_BYTES: ipset_opt = 39;
+pub const ipset_opt_IPSET_OPT_CREATE_COMMENT: ipset_opt = 40;
+pub const ipset_opt_IPSET_OPT_ADT_COMMENT: ipset_opt = 41;
+pub const ipset_opt_IPSET_OPT_SKBINFO: ipset_opt = 42;
+pub const ipset_opt_IPSET_OPT_SKBMARK: ipset_opt = 43;
+pub const ipset_opt_IPSET_OPT_SKBPRIO: ipset_opt = 44;
+pub const ipset_opt_IPSET_OPT_SKBQUEUE: ipset_opt = 45;
+pub const ipset_opt_IPSET_OPT_IFACE_WILDCARD: ipset_opt = 46;
+pub const ipset_opt_IPSET_OPT_BUCKETSIZE: ipset_opt = 47;
+pub const ipset_opt_IPSET_OPT_INITVAL: ipset_opt = 48;
+pub const ipset_opt_IPSET_OPT_FLAGS: ipset_opt = 49;
+pub const ipset_opt_IPSET_OPT_CADT_FLAGS: ipset_opt = 50;
+pub const ipset_opt_IPSET_OPT_ELEM: ipset_opt = 51;
+pub const ipset_opt_IPSET_OPT_TYPE: ipset_opt = 52;
+pub const ipset_opt_IPSET_OPT_LINENO: ipset_opt = 53;
+pub const ipset_opt_IPSET_OPT_REVISION: ipset_opt = 54;
+pub const ipset_opt_IPSET_OPT_REVISION_MIN: ipset_opt = 55;
+pub const ipset_opt_IPSET_OPT_INDEX: ipset_opt = 56;
+pub const ipset_opt_IPSET_OPT_MAX: ipset_opt = 57;
 pub type ipset_opt = ::std::os::raw::c_uint;
 extern "C" {
     pub fn ipset_strlcpy(
@@ -5509,6 +5645,13 @@ extern "C" {
     ) -> ::std::os::raw::c_int;
 }
 extern "C" {
+    pub fn ipset_parse_bitmask(
+        session: *mut ipset_session,
+        opt: ipset_opt,
+        str_: *const ::std::os::raw::c_char,
+    ) -> ::std::os::raw::c_int;
+}
+extern "C" {
     pub fn ipset_parse_flag(
         session: *mut ipset_session,
         opt: ipset_opt,
@@ -5641,6 +5784,15 @@ extern "C" {
 }
 extern "C" {
     pub fn ipset_print_number(
+        buf: *mut ::std::os::raw::c_char,
+        len: ::std::os::raw::c_uint,
+        data: *const ipset_data,
+        opt: ipset_opt,
+        env: u8,
+    ) -> ::std::os::raw::c_int;
+}
+extern "C" {
+    pub fn ipset_print_hexnumber(
         buf: *mut ::std::os::raw::c_char,
         len: ::std::os::raw::c_uint,
         data: *const ipset_data,
