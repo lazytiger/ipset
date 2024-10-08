@@ -1,3 +1,4 @@
+use std::fs;
 use std::net::IpAddr;
 
 use ipset::types::{AddOption, BitmapIp, EnvOption, Error, HashIp, IpDataType};
@@ -5,6 +6,8 @@ use ipset::{IPSet, Session};
 
 fn test_hash_ip() -> Result<(), Error> {
     let mut session: Session<HashIp> = Session::new("test".to_string());
+    let _ = session.destroy();
+
     let ip: IpAddr = "192.168.3.1".parse()?;
     session.create(|builder| {
         builder
@@ -12,6 +15,7 @@ fn test_hash_ip() -> Result<(), Error> {
             .with_forceadd()?
             .with_counters()?
             .with_skbinfo()?
+            .with_comment()?
             .build()
     })?;
 
@@ -27,6 +31,7 @@ fn test_hash_ip() -> Result<(), Error> {
             AddOption::SkbMark(1, u32::MAX),
             AddOption::SkbPrio(10, 1),
             AddOption::SkbQueue(3),
+            AddOption::Comment("hello".to_string()),
         ],
     )?;
     session.unset_option(EnvOption::Exist);
@@ -57,8 +62,9 @@ fn test_hash_ip() -> Result<(), Error> {
 
 fn test_bitmap_ip() -> Result<(), Error> {
     let mut session: Session<BitmapIp> = Session::new("test".into());
-    let from: IpAddr = "192.168.3.1".parse().unwrap();
-    let to: IpAddr = "192.168.3.255".parse().unwrap();
+    let _ = session.destroy();
+    let from: IpAddr = "192.168.3.1".parse()?;
+    let to: IpAddr = "192.168.3.255".parse()?;
     let from: IpDataType = from.into();
     let to: IpDataType = to.into();
     session.create(|builder| builder.with_range(&from, &to)?.build())?;
@@ -68,14 +74,19 @@ fn test_bitmap_ip() -> Result<(), Error> {
 
 fn main() {
     if let Err(err) = test_hash_ip() {
-        println!("test failed:{:?}", err);
+        println!("test hash ip failed:{:?}", err);
     }
 
     if let Err(err) = test_bitmap_ip() {
-        println!("test failed:{:?}", err);
+        println!("test bitmap failed:{:?}", err);
     }
 
-    let set = IPSet::new();
-    set.restore("test.ipset".to_string()).unwrap();
-    println!("restore");
+    if fs::metadata("test.ipset").is_ok() {
+        let set = IPSet::new();
+        set.restore("test.ipset".to_string()).unwrap();
+        println!("restore ok");
+        fs::remove_file("test.ipset").unwrap();
+    } else {
+        println!("test.ipset not found");
+    }
 }

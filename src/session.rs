@@ -179,6 +179,8 @@ impl<T: SetType> Session<T> {
                         )?;
                     }
                     AddOption::Comment(comment) => {
+                        let mut comment = comment.clone();
+                        comment.push('\0');
                         session.set_data(
                             binding::ipset_opt_IPSET_OPT_ADT_COMMENT,
                             comment.as_ptr() as _,
@@ -419,6 +421,14 @@ impl<'a, T: SetType> CreateBuilder<'a, T> {
     pub fn with_skbinfo(self) -> Result<Self, Error> {
         self.session
             .set_data(binding::ipset_opt_IPSET_OPT_SKBINFO, &1 as *const _ as _)?;
+        Ok(self)
+    }
+
+    pub fn with_comment(self) -> Result<Self, Error> {
+        self.session.set_data(
+            binding::ipset_opt_IPSET_OPT_CREATE_COMMENT,
+            &1 as *const _ as _,
+        )?;
         Ok(self)
     }
 
