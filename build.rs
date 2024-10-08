@@ -1,5 +1,4 @@
 use std::env;
-use std::path::PathBuf;
 
 fn main() {
     println!("cargo:rustc-link-lib=ipset");
@@ -12,8 +11,9 @@ fn main() {
         .header("wrapper.h")
         .generate()
         .expect("Unable to generate bindings");
-    let src_dir = PathBuf::from(env::var_os("CARGO_MANIFEST_DIR").unwrap());
+    let mut out_file = env::var("OUT_DIR").unwrap();
+    out_file.push_str("/binding.rs");
     bindings
-        .write_to_file(src_dir.join("src/binding.rs"))
-        .expect("Unable to write bindings.rs");
+        .write_to_file(out_file)
+        .expect("Unable to write binding.rs");
 }

@@ -2,7 +2,7 @@
 
 use std::error::Error as StdError;
 use std::ffi::{CString, NulError};
-use std::fmt::{Display, Formatter};
+use std::fmt::Formatter;
 use std::net::{AddrParseError, IpAddr, Ipv4Addr, Ipv6Addr};
 use std::num::ParseIntError;
 
@@ -481,13 +481,13 @@ where
 #[derive(Debug, From, Display)]
 pub enum Error {
     #[from(ignore)]
-    #[display(fmt = "DataSet:['{}', {}", _0, _1)]
+    #[display("DataSet:['{}', {}", _0, _1)]
     DataSet(String, bool),
     #[from(ignore)]
-    #[display(fmt = "Cmd:['{}', {}", _0, _1)]
+    #[display("Cmd:['{}', {}", _0, _1)]
     Cmd(String, bool),
     #[from(ignore)]
-    #[display(fmt = "TypeGet:['{}', {}", _0, _1)]
+    #[display("TypeGet:['{}', {}", _0, _1)]
     TypeGet(String, bool),
     #[from(ignore)]
     InvalidOutput(String),
