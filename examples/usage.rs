@@ -5,7 +5,7 @@ use ipset::{IPSet, Session};
 
 fn test_hash_ip() -> Result<(), Error> {
     let mut session: Session<HashIp> = Session::new("test".to_string());
-    let ip: IpAddr = "192.168.3.1".parse().unwrap();
+    let ip: IpAddr = "192.168.3.1".parse()?;
     session.create(|builder| {
         builder
             .with_ipv6(false)?
@@ -36,8 +36,8 @@ fn test_hash_ip() -> Result<(), Error> {
     println!("test {}", exists);
 
     let ips = session.list()?;
-    for ip in ips {
-        println!("list {}", ip);
+    for (ip, options) in ips {
+        println!("list {}, {:?}", ip, options);
     }
 
     let ret = session.save("test.ipset".to_string())?;

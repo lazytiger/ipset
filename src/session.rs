@@ -141,34 +141,32 @@ impl<T: SetType> Session<T> {
     ) -> Result<bool, Error> {
         self.data_cmd(data.into(), binding::ipset_cmd_IPSET_CMD_ADD, |session| {
             for option in options {
-                match *option {
+                match option {
                     AddOption::Timeout(timeout) => {
                         session.set_data(
                             binding::ipset_opt_IPSET_OPT_TIMEOUT,
-                            &timeout as *const _ as _,
+                            timeout as *const _ as _,
                         )?;
                     }
                     AddOption::Bytes(bytes) => {
-                        session.set_data(
-                            binding::ipset_opt_IPSET_OPT_BYTES,
-                            &bytes as *const _ as _,
-                        )?;
+                        session
+                            .set_data(binding::ipset_opt_IPSET_OPT_BYTES, bytes as *const _ as _)?;
                     }
                     AddOption::Packets(packets) => {
                         session.set_data(
                             binding::ipset_opt_IPSET_OPT_PACKETS,
-                            &packets as *const _ as _,
+                            packets as *const _ as _,
                         )?;
                     }
                     AddOption::SkbMark(mark, mask) => {
-                        let data = (mark as u64) << 32 | mask as u64;
+                        let data = (*mark as u64) << 32 | *mask as u64;
                         session.set_data(
                             binding::ipset_opt_IPSET_OPT_SKBMARK,
                             &data as *const _ as _,
                         )?;
                     }
                     AddOption::SkbPrio(major, minor) => {
-                        let data = (major as u32) << 16 | minor as u32;
+                        let data = (*major as u32) << 16 | *minor as u32;
                         session.set_data(
                             binding::ipset_opt_IPSET_OPT_SKBPRIO,
                             &data as *const _ as _,
@@ -177,8 +175,18 @@ impl<T: SetType> Session<T> {
                     AddOption::SkbQueue(queue) => {
                         session.set_data(
                             binding::ipset_opt_IPSET_OPT_SKBQUEUE,
-                            &queue as *const _ as _,
+                            queue as *const _ as _,
                         )?;
+                    }
+                    AddOption::Comment(comment) => {
+                        session.set_data(
+                            binding::ipset_opt_IPSET_OPT_ADT_COMMENT,
+                            comment.as_ptr() as _,
+                        )?;
+                    }
+                    AddOption::Nomatch => {
+                        session
+                            .set_data(binding::ipset_opt_IPSET_OPT_NOMATCH, &1 as *const _ as _)?;
                     }
                 }
             }
@@ -221,7 +229,7 @@ impl<T: SetType> Session<T> {
     }
 
     /// List all the ips in ipset `name`
-    pub fn list(&mut self) -> Result<Vec<T::DataType>, Error> {
+    pub fn list(&mut self) -> Result<Vec<(T::DataType, Vec<AddOption>)>, Error> {
         unsafe {
             binding::ipset_custom_printf(
                 self.set.set,
@@ -237,11 +245,69 @@ impl<T: SetType> Session<T> {
                 .split("\n")
                 .skip(8)
                 .filter_map(|line| {
+                    let fields: Vec<_> = line.split_ascii_whitespace().collect();
                     let mut data = T::DataType::default();
-                    if data.parse(line).is_err() {
+                    if fields.len() == 0 || data.parse(fields[0]).is_err() {
                         None
                     } else {
-                        Some(data)
+                        let mut i = 1;
+                        let mut options = vec![];
+                        while i < fields.len() {
+                            match fields[i] {
+                                "timeout" => {
+                                    options
+                                        .push(AddOption::Timeout(fields[i + 1].parse().unwrap()));
+                                }
+                                "packets" => {
+                                    options
+                                        .push(AddOption::Packets(fields[i + 1].parse().unwrap()));
+                                }
+                                "bytes" => {
+                                    options.push(AddOption::Bytes(fields[i + 1].parse().unwrap()));
+                                }
+                                "comment" => {
+                                    options.push(AddOption::Comment(fields[i + 1].to_string()));
+                                }
+                                "skbmark" => {
+                                    let values: Vec<_> = fields[i + 1].split('/').collect();
+                                    let v0 = u32::from_str_radix(
+                                        values[0].strip_prefix("0x").unwrap(),
+                                        16,
+                                    )
+                                    .unwrap();
+                                    let v1 = if values.len() > 1 {
+                                        u32::from_str_radix(
+                                            values[1].strip_prefix("0x").unwrap(),
+                                            16,
+                                        )
+                                        .unwrap()
+                                    } else {
+                                        u32::MAX
+                                    };
+                                    options.push(AddOption::SkbMark(v0, v1));
+                                }
+                                "skbprio" => {
+                                    let values: Vec<_> = fields[i + 1].split(':').collect();
+                                    let v0 = u16::from_str_radix(values[0], 16).unwrap();
+                                    let v1 = u16::from_str_radix(values[1], 16).unwrap();
+                                    options.push(AddOption::SkbPrio(v0, v1));
+                                }
+                                "skbqueue" => {
+                                    options
+                                        .push(AddOption::SkbQueue(fields[i + 1].parse().unwrap()));
+                                }
+                                "nomatch" => {
+                                    options.push(AddOption::Nomatch);
+                                    i += 1;
+                                    continue;
+                                }
+                                _ => {
+                                    unreachable!("{} not supported", fields[i]);
+                                }
+                            }
+                            i += 2
+                        }
+                        Some((data, options))
                     }
                 })
                 .collect();

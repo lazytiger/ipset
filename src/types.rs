@@ -47,8 +47,14 @@ impl IpDataType {
                     u16::from_be_bytes([addr.s6_addr[14], addr.s6_addr[15]]),
                 ];
                 IpAddr::V6(Ipv6Addr::new(
-                    segments[0], segments[1], segments[2], segments[3],
-                    segments[4], segments[5], segments[6], segments[7],
+                    segments[0],
+                    segments[1],
+                    segments[2],
+                    segments[3],
+                    segments[4],
+                    segments[5],
+                    segments[6],
+                    segments[7],
                 ))
             }
         }
@@ -773,4 +779,18 @@ pub enum AddOption {
     SkbPrio(u16, u16),
     /// skbqueue option is just decimal number.
     SkbQueue(u16),
+    /// All set types support the optional comment extension.  Enabling this extension on an ipset
+    /// enables you to annotate an ipset entry  with  an  arbitrary  string. This  string is
+    /// completely ignored by both the kernel and ipset itself and is purely for providing a
+    /// convenient means to document the reason for an entry's existence. Comments must not contain
+    /// any quotation marks and the usual escape character (\) has no meaning
+    Comment(String),
+    /// The  hash  set  types which can store net type of data (i.e. hash:*net*) support the
+    /// optional nomatch option when adding entries. When matching elements in the set, entries
+    /// marked as nomatch are skipped as if those were not added to the set, which makes possible
+    /// to build up sets with exceptions.  See  the  example  at hash type hash:net below.
+    /// When  elements  are  tested  by ipset, the nomatch flags are taken into account.
+    /// If one wants to test the existence of an element marked with nomatch in a set,
+    /// then the flag must be specified too.
+    Nomatch,
 }

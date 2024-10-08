@@ -2,3 +2,4 @@
 /Cargo.lock
 /.idea/
 /derive/target/
+/src/binding.rs
