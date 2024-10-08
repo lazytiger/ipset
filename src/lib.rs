@@ -38,7 +38,7 @@
 //!
 //!fn test() -> Result<(), Error> {
 //!    let mut session: Session<HashIp> = Session::<HashIp>::new("test".to_string());
-//!    let ip: IpAddr = "192.168.3.1".parse().unwrap();
+//!    let ip: IpAddr = "192.168.3.1".parse()?;
 //!    session.create(|builder| builder.with_ipv6(false)?.build())?;
 //!
 //!    let ret = session.add(ip, &[])?;
@@ -48,11 +48,11 @@
 //!    println!("test {}", exists);
 //!
 //!    let ips = session.list()?;
-//!    for ip in ips {
-//!        println!("list {}", ip);
+//!    for (ip, options) in ips {
+//!        println!("list {}, {:?}", ip, options);
 //!    }
 //!
-//!    let ret = session.save("test.ipset".into()).unwrap();
+//!    let ret = session.save("test.ipset".into())?;
 //!    println!("save {}", ret);
 //!
 //!    let ret = session.del(ip)?;
