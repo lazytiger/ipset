@@ -32,9 +32,8 @@
 //! ```rust,no_run
 //!use std::net::IpAddr;
 //!
-//!use ipset::types::{Error, HashIp};
-//!use ipset::Session;
-//!use ipset::IPSet;
+//!use ipset::types::{AddOption, BitmapIp, EnvOption, Error, HashIp, IpDataType, ListResult};
+//!use ipset::{IPSet, Session};
 //!
 //!fn test() -> Result<(), Error> {
 //!    let mut session: Session<HashIp> = Session::<HashIp>::new("test".to_string());
@@ -48,8 +47,26 @@
 //!    println!("test {}", exists);
 //!
 //!    let ips = session.list()?;
-//!    for (ip, options) in ips {
-//!        println!("list {}, {:?}", ip, options);
+//!    match ips {
+//!         ListResult::Normal(ret) => {
+//!             println!("name:{}, type:{}, revision:{}, size_in_memory:{}, references:{}, entry_size:{}, header:{:?}",
+//!                 ret.name, ret.typ, ret.revision, ret.size_in_memory, ret.references, ret.entry_size, ret.header)
+//!         }
+//!         ListResult::Terse(names) => {
+//!             println!("{:?}", names);
+//!         }
+//!   }
+//!    session.set_option(EnvOption::ListSetName);
+//!    let ips = session.list()?;
+//!    session.unset_option(EnvOption::ListSetName);
+//!    match ips {
+//!         ListResult::Normal(ret) => {
+//!             println!("name:{}, type:{}, revision:{}, size_in_memory:{}, references:{}, entry_size:{}, header:{:?}",
+//!                 ret.name, ret.typ, ret.revision, ret.size_in_memory, ret.references, ret.entry_size, ret.header)
+//!         }
+//!         ListResult::Terse(names) => {
+//!             println!("{:?}", names);
+//!         }
 //!    }
 //!
 //!    let ret = session.save("test.ipset".into())?;
