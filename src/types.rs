@@ -794,3 +794,179 @@ pub enum AddOption {
     /// then the flag must be specified too.
     Nomatch,
 }
+
+pub struct NormalListResult<T: SetType> {
+    pub name: String,
+    pub typ: String,
+    pub revision: u32,
+    pub header: ListHeader,
+    pub size_in_memory: u32,
+    pub references: u32,
+    pub entry_size: u32,
+    pub items: Option<Vec<(T::DataType, Option<Vec<AddOption>>)>>,
+}
+
+impl<T: SetType> Default for NormalListResult<T> {
+    fn default() -> Self {
+        Self {
+            name: "".to_string(),
+            typ: "".to_string(),
+            revision: 0,
+            header: Default::default(),
+            size_in_memory: 0,
+            references: 0,
+            entry_size: 0,
+            items: None,
+        }
+    }
+}
+
+pub enum ListResult<T: SetType> {
+    Normal(NormalListResult<T>),
+    Terse(Vec<String>),
+}
+
+impl<T: SetType> NormalListResult<T> {
+    pub(crate) fn update_from_str(&mut self, line: &str) -> Result<(), Error> {
+        if self.items.is_none() {
+            let fields: Vec<_> = line.splitn(2, ":").collect();
+            match fields[0] {
+                "Name" => {
+                    self.name = fields[1].trim().to_string();
+                }
+                "Type" => {
+                    self.typ = fields[1].trim().to_string();
+                }
+                "Revision" => {
+                    self.revision = fields[1].trim().parse()?;
+                }
+                "Header" => {
+                    self.header = ListHeader::from_str(fields[1].trim());
+                }
+                "Size in memory" => {
+                    self.size_in_memory = fields[1].trim().parse()?;
+                }
+                "References" => {
+                    self.references = fields[1].trim().parse()?;
+                }
+                "Number of entries" => {
+                    self.entry_size = fields[1].trim().parse()?;
+                }
+                "Members" => {
+                    self.items = Some(Vec::new());
+                }
+                _ => {
+                    unreachable!("unexpected {}", fields[0])
+                }
+            }
+        } else {
+            let fields: Vec<_> = line.split_ascii_whitespace().collect();
+            let mut data = T::DataType::default();
+            let mut add_options = None;
+            if fields.len() == 0 || data.parse(fields[0]).is_err() {
+                return Err(Error::InvalidOutput(String::from(line)));
+            } else if fields.len() > 1 {
+                let mut i = 1;
+                let mut options = vec![];
+                while i < fields.len() {
+                    match fields[i] {
+                        "timeout" => {
+                            options.push(AddOption::Timeout(fields[i + 1].parse()?));
+                        }
+                        "packets" => {
+                            options.push(AddOption::Packets(fields[i + 1].parse()?));
+                        }
+                        "bytes" => {
+                            options.push(AddOption::Bytes(fields[i + 1].parse()?));
+                        }
+                        "comment" => {
+                            options.push(AddOption::Comment(fields[i + 1].to_string()));
+                        }
+                        "skbmark" => {
+                            let values: Vec<_> = fields[i + 1].split('/').collect();
+                            let v0 =
+                                u32::from_str_radix(values[0].strip_prefix("0x").unwrap(), 16)?;
+                            let v1 = if values.len() > 1 {
+                                u32::from_str_radix(values[1].strip_prefix("0x").unwrap(), 16)?
+                            } else {
+                                u32::MAX
+                            };
+                            options.push(AddOption::SkbMark(v0, v1));
+                        }
+                        "skbprio" => {
+                            let values: Vec<_> = fields[i + 1].split(':').collect();
+                            let v0 = u16::from_str_radix(values[0], 16)?;
+                            let v1 = u16::from_str_radix(values[1], 16)?;
+                            options.push(AddOption::SkbPrio(v0, v1));
+                        }
+                        "skbqueue" => {
+                            options.push(AddOption::SkbQueue(fields[i + 1].parse()?));
+                        }
+                        "nomatch" => {
+                            options.push(AddOption::Nomatch);
+                            i += 1;
+                            continue;
+                        }
+                        _ => {
+                            unreachable!("{} not supported", fields[i]);
+                        }
+                    }
+                    i += 2
+                }
+                add_options = Some(options);
+            }
+            self.items.as_mut().unwrap().push((data, add_options));
+        }
+        Ok(())
+    }
+}
+
+#[derive(Default, Debug)]
+pub struct ListHeader {
+    ipv6: bool,
+    hash_size: u32,
+    max_elem: u32,
+    counters: bool,
+    comment: bool,
+    skbinfo: bool,
+}
+
+impl ListHeader {
+    pub fn from_str(s: &str) -> Self {
+        let s: Vec<_> = s.split_whitespace().collect();
+        let mut header = ListHeader::default();
+        let mut i = 0;
+        while i < s.len() {
+            match s[i] {
+                "family" => {
+                    header.ipv6 = s[i + 1] == "inet6";
+                    i += 2;
+                }
+                "hashsize" => {
+                    header.hash_size = s[i + 1].parse().unwrap();
+                    i += 2;
+                }
+                "maxelem" => {
+                    header.max_elem = s[i + 1].parse().unwrap();
+                    i += 2;
+                }
+                "counters" => {
+                    header.counters = true;
+                    i += 1;
+                }
+                "comment" => {
+                    header.comment = true;
+                    i += 1;
+                }
+                "skbinfo" => {
+                    header.skbinfo = true;
+                    i += 1;
+                }
+                _ => {
+                    unreachable!("{} not supported", s[i]);
+                }
+            }
+        }
+        header
+    }
+}

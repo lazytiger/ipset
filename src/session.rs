@@ -1,9 +1,9 @@
-use std::ffi::{CStr, CString};
+use std::ffi::CString;
 use std::marker::PhantomData;
 
 use crate::types::{
-    AddOption, BitmapMethod, EnvOption, Error, HashMethod, IfaceDataType, IpDataType, NetDataType,
-    Parse, SetData, SetType, ToCString, TypeName, WithNetmask,
+    AddOption, BitmapMethod, EnvOption, Error, HashMethod, IfaceDataType, IpDataType, ListResult,
+    NetDataType, NormalListResult, SetData, SetType, ToCString, TypeName, WithNetmask,
 };
 use crate::{binding, IPSet};
 
@@ -12,10 +12,12 @@ use crate::{binding, IPSet};
 pub unsafe extern "C" fn ipset_out(
     p: *mut std::os::raw::c_void,
     data: *const std::os::raw::c_char,
+    len: i32,
+    cap: i32,
 ) {
-    let data = CStr::from_ptr(data);
+    let data = String::from_raw_parts(data as _, len as _, cap as _);
     let output = (p as *mut Vec<String>).as_mut().unwrap();
-    output.push(data.to_string_lossy().to_string());
+    output.push(data);
 }
 
 /// This is the main entry for all the operation. I just ignore the ipset struct
@@ -27,6 +29,7 @@ pub struct Session<T: SetType> {
     set: IPSet,
     output: Vec<String>,
     _phantom: PhantomData<T>,
+    list_name: bool,
 }
 
 impl<T: SetType> Session<T> {
@@ -41,17 +44,24 @@ impl<T: SetType> Session<T> {
                 name: CString::new(name).unwrap(),
                 output: Default::default(),
                 _phantom: Default::default(),
+                list_name: false,
             }
         }
     }
 
-    pub fn set_option(&self, option: EnvOption) {
+    pub fn set_option(&mut self, option: EnvOption) {
+        if matches!(option, EnvOption::ListSetName) {
+            self.list_name = true;
+        }
         unsafe {
             binding::ipset_envopt_set(self.set.session, option.to_option());
         }
     }
 
-    pub fn unset_option(&self, option: EnvOption) {
+    pub fn unset_option(&mut self, option: EnvOption) {
+        if matches!(option, EnvOption::ListSetName) {
+            self.list_name = false;
+        }
         unsafe {
             binding::ipset_envopt_unset(self.set.session, option.to_option());
         }
@@ -230,8 +240,30 @@ impl<T: SetType> Session<T> {
         })
     }
 
+    /// Test if the set already exists.
+    pub fn exists(&mut self) -> Result<bool, Error> {
+        let mut unset = false;
+        if !self.list_name {
+            self.set_option(EnvOption::ListSetName);
+            unset = true;
+        }
+        let ret = self.list();
+        if unset {
+            self.unset_option(EnvOption::ListSetName);
+        }
+        match ret? {
+            ListResult::Normal(_) => {
+                unreachable!("normal should not return")
+            }
+            ListResult::Terse(names) => {
+                let name = self.name.to_string_lossy().to_string();
+                Ok(names.contains(&name))
+            }
+        }
+    }
+
     /// List all the ips in ipset `name`
-    pub fn list(&mut self) -> Result<Vec<(T::DataType, Vec<AddOption>)>, Error> {
+    pub fn list(&mut self) -> Result<ListResult<T>, Error> {
         unsafe {
             binding::ipset_custom_printf(
                 self.set.set,
@@ -242,86 +274,32 @@ impl<T: SetType> Session<T> {
             );
         }
         self.name_cmd(binding::ipset_cmd_IPSET_CMD_LIST)?;
-        let ret = if let Some(line) = self.output.get(0) {
-            let ips: Vec<_> = line
-                .split("\n")
-                .skip(8)
-                .filter_map(|line| {
-                    let fields: Vec<_> = line.split_ascii_whitespace().collect();
-                    let mut data = T::DataType::default();
-                    if fields.len() == 0 || data.parse(fields[0]).is_err() {
-                        None
-                    } else {
-                        let mut i = 1;
-                        let mut options = vec![];
-                        while i < fields.len() {
-                            match fields[i] {
-                                "timeout" => {
-                                    options
-                                        .push(AddOption::Timeout(fields[i + 1].parse().unwrap()));
-                                }
-                                "packets" => {
-                                    options
-                                        .push(AddOption::Packets(fields[i + 1].parse().unwrap()));
-                                }
-                                "bytes" => {
-                                    options.push(AddOption::Bytes(fields[i + 1].parse().unwrap()));
-                                }
-                                "comment" => {
-                                    options.push(AddOption::Comment(fields[i + 1].to_string()));
-                                }
-                                "skbmark" => {
-                                    let values: Vec<_> = fields[i + 1].split('/').collect();
-                                    let v0 = u32::from_str_radix(
-                                        values[0].strip_prefix("0x").unwrap(),
-                                        16,
-                                    )
-                                    .unwrap();
-                                    let v1 = if values.len() > 1 {
-                                        u32::from_str_radix(
-                                            values[1].strip_prefix("0x").unwrap(),
-                                            16,
-                                        )
-                                        .unwrap()
-                                    } else {
-                                        u32::MAX
-                                    };
-                                    options.push(AddOption::SkbMark(v0, v1));
-                                }
-                                "skbprio" => {
-                                    let values: Vec<_> = fields[i + 1].split(':').collect();
-                                    let v0 = u16::from_str_radix(values[0], 16).unwrap();
-                                    let v1 = u16::from_str_radix(values[1], 16).unwrap();
-                                    options.push(AddOption::SkbPrio(v0, v1));
-                                }
-                                "skbqueue" => {
-                                    options
-                                        .push(AddOption::SkbQueue(fields[i + 1].parse().unwrap()));
-                                }
-                                "nomatch" => {
-                                    options.push(AddOption::Nomatch);
-                                    i += 1;
-                                    continue;
-                                }
-                                _ => {
-                                    unreachable!("{} not supported", fields[i]);
-                                }
-                            }
-                            i += 2
-                        }
-                        Some((data, options))
+        let ret = if self.list_name {
+            let mut names = vec![];
+            for line in &self.output {
+                line.split("\n").for_each(|s| {
+                    if !s.is_empty() {
+                        names.push(s.to_string())
                     }
                 })
-                .collect();
-            Ok(ips)
+            }
+            ListResult::Terse(names)
         } else {
-            Ok(vec![])
+            let mut result = NormalListResult::default();
+            for line in &self.output {
+                for s in line.split("\n") {
+                    if !s.is_empty() {
+                        result.update_from_str(s)?;
+                    }
+                }
+            }
+            ListResult::Normal(result)
         };
         unsafe {
             binding::ipset_custom_printf(self.set.set, None, None, None, std::ptr::null_mut());
             self.output.clear();
         }
-        ret
+        Ok(ret)
     }
 
     /// Clear all the content in ipset `name`

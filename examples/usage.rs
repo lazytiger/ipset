@@ -1,12 +1,15 @@
 use std::fs;
 use std::net::IpAddr;
 
-use ipset::types::{AddOption, BitmapIp, EnvOption, Error, HashIp, IpDataType};
+use ipset::types::{AddOption, BitmapIp, EnvOption, Error, HashIp, IpDataType, ListResult};
 use ipset::{IPSet, Session};
 
 fn test_hash_ip() -> Result<(), Error> {
     let mut session: Session<HashIp> = Session::new("test".to_string());
-    let _ = session.destroy();
+    if session.exists()? {
+        println!("already exists destroy now");
+        session.destroy()?;
+    }
 
     let ip: IpAddr = "192.168.3.1".parse()?;
     session.create(|builder| {
@@ -41,8 +44,26 @@ fn test_hash_ip() -> Result<(), Error> {
     println!("test {}", exists);
 
     let ips = session.list()?;
-    for (ip, options) in ips {
-        println!("list {}, {:?}", ip, options);
+    match ips {
+        ListResult::Normal(ret) => {
+            println!("name:{}, type:{}, revision:{}, size_in_memory:{}, references:{}, entry_size:{}, header:{:?}",
+                     ret.name, ret.typ, ret.revision, ret.size_in_memory, ret.references, ret.entry_size, ret.header)
+        }
+        ListResult::Terse(names) => {
+            println!("{:?}", names);
+        }
+    }
+    session.set_option(EnvOption::ListSetName);
+    let ips = session.list()?;
+    session.unset_option(EnvOption::ListSetName);
+    match ips {
+        ListResult::Normal(ret) => {
+            println!("name:{}, type:{}, revision:{}, size_in_memory:{}, references:{}, entry_size:{}, header:{:?}",
+                     ret.name, ret.typ, ret.revision, ret.size_in_memory, ret.references, ret.entry_size, ret.header)
+        }
+        ListResult::Terse(names) => {
+            println!("{:?}", names);
+        }
     }
 
     let ret = session.save("test.ipset".to_string())?;
