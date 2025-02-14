@@ -877,7 +877,7 @@ impl<T: SetType> NormalListResult<T> {
                             options.push(AddOption::Packets(fields[i + 1].parse()?));
                         }
                         "bytes" => {
-                            options.push(AddOption::Bytes(fields[i + 1].parse()?));
+                            options.push(AddOption::Bytes(fields[i + 1].trim().replace("\0", "").parse()?));
                         }
                         "comment" => {
                             options.push(AddOption::Comment(fields[i + 1].to_string()));
@@ -925,10 +925,12 @@ impl<T: SetType> NormalListResult<T> {
 pub struct ListHeader {
     ipv6: bool,
     hash_size: u32,
+    bucket_size: Option<u32>,
     max_elem: u32,
     counters: bool,
     comment: bool,
     skbinfo: bool,
+    initval: Option<u32>
 }
 
 impl ListHeader {
@@ -946,6 +948,10 @@ impl ListHeader {
                     header.hash_size = s[i + 1].parse().unwrap();
                     i += 2;
                 }
+                "bucketsize" => {
+                    header.bucket_size = Some(s[i + 1].parse().unwrap());
+                    i += 2;
+                },
                 "maxelem" => {
                     header.max_elem = s[i + 1].parse().unwrap();
                     i += 2;
@@ -962,6 +968,13 @@ impl ListHeader {
                     header.skbinfo = true;
                     i += 1;
                 }
+                "initval" => {
+                    if let Some(initval) = s[i + 1].strip_prefix("0x") {
+                        header.initval = Some(u32::from_str_radix(initval, 16).unwrap());
+                    }
+                    i += 2;
+                }
+
                 _ => {
                     unreachable!("{} not supported", s[i]);
                 }
