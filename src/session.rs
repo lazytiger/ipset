@@ -124,8 +124,8 @@ impl<T: SetType> Session<T> {
         F: FnOnce(&Self) -> Result<(), Error>,
     {
         self.set_data(binding::ipset_opt_IPSET_SETNAME, self.name.as_ptr() as _)?;
-        data.set_data(self, None)?;
         self.get_type(cmd)?;
+        data.set_data(self, None)?;
         options(self)?;
         self.run_cmd(cmd)
     }
