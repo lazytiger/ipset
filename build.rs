@@ -9,6 +9,8 @@ fn main() {
 
     let bindings = bindgen::Builder::default()
         .header("wrapper.h")
+        .use_core()
+        .ctypes_prefix("libc")
         .generate()
         .expect("Unable to generate bindings");
     let mut out_file = env::var("OUT_DIR").unwrap();
