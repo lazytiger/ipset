@@ -23,12 +23,12 @@ int print_out(struct ipset_session *session, void *p, const char *fmt, ...) {
             free(data);
             return n;
         }
-        else if (n <= length) {
+        else if (n < length) {
             ipset_out(p, data, n, length);
             running = 0;
             length = n;
         } else {
-            length = n;
+            length = n + 1;
             free(data);
         }
     } while (running);
