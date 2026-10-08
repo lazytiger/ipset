@@ -181,7 +181,10 @@ impl Parse for NetDataType {
         if let Some(cidr) = ss.next() {
             self.cidr = cidr.parse()?;
         } else {
-            self.cidr = 32;
+            self.cidr = match self.ip {
+                IpDataType::IPv4(_) => 32,
+                IpDataType::IPv6(_) => 128,
+            }
         }
         Ok(())
     }
