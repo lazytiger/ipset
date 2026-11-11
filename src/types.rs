@@ -669,6 +669,20 @@ mod tests {
     }
 
     #[test]
+    fn test_net_defaults_cidr_for_address_family() {
+        let mut net = NetDataType::default();
+
+        net.parse("192.0.2.1").unwrap();
+        assert_eq!(net.cidr(), 32);
+
+        net.parse("2001:db8::1").unwrap();
+        assert_eq!(net.cidr(), 128);
+
+        net.parse("2001:db8::1/64").unwrap();
+        assert_eq!(net.cidr(), 64);
+    }
+
+    #[test]
     fn test_mac() {
         let mut mac: MacDataType = [124u8, 24u8, 32u8, 129u8, 84u8, 223u8].into();
         assert_eq!("7c:18:20:81:54:df", format!("{}", mac));
