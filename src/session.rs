@@ -537,6 +537,11 @@ where
 
 #[cfg(test)]
 mod tests {
+    use std::ffi::CString;
+    use std::os::raw::{c_char, c_void};
+
+    use crate::binding;
+
     use super::trim_list_terminator;
 
     #[test]
@@ -544,5 +549,24 @@ mod tests {
         assert_eq!(trim_list_terminator("91.99.252.18\0"), "91.99.252.18");
         assert_eq!(trim_list_terminator("test-set\0\0"), "test-set");
         assert_eq!(trim_list_terminator("plain-entry"), "plain-entry");
+    }
+
+    #[test]
+    fn print_out_handles_vsnprintf_boundary_without_nul() {
+        let input = CString::new("a".repeat(1024)).unwrap();
+        let format = CString::new("%s").unwrap();
+        let mut output = Vec::<String>::new();
+
+        let written = unsafe {
+            binding::print_out(
+                std::ptr::null_mut(),
+                &mut output as *mut _ as *mut c_void,
+                format.as_ptr() as *const c_char,
+                input.as_ptr(),
+            )
+        };
+
+        assert_eq!(written, 1024);
+        assert_eq!(output, vec!["a".repeat(1024)]);
     }
 }
