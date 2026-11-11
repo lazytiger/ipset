@@ -392,6 +392,14 @@ impl_name!(PortDataType, "port");
 impl_name!(IfaceDataType, "iface");
 impl_name!(MarkDataType, "mark");
 impl_name!(SetDataType, "set");
+
+// Special case for single-element tuple
+impl<A: TypeName> TypeName for (A,) {
+    fn name() -> String {
+        A::name()
+    }
+}
+
 impl_name!(A, B);
 impl_name!(A, B, C);
 
@@ -408,6 +416,13 @@ macro_rules! impl_set_data {
             }
         }
     };
+}
+
+// Special case for single-element tuple
+impl<T: SetType, A: SetData<T>> SetData<T> for (A,) {
+    fn set_data(&self, session: &Session<T>, from: Option<bool>) -> Result<(), Error> {
+        self.0.set_data(session, from)
+    }
 }
 
 impl_set_data!(A, B);
@@ -432,6 +447,13 @@ macro_rules! impl_parse {
             }
         }
     };
+}
+
+// Special case for single-element tuple
+impl<A: Parse> Parse for (A,) {
+    fn parse(&mut self, s: &str) -> Result<(), Error> {
+        self.0.parse(s)
+    }
 }
 
 impl_parse!(A, B);
@@ -614,13 +636,13 @@ mod tests {
     use std::net::IpAddr;
 
     use crate::types::{
+        AddOption, IfaceDataType, IpDataType, MacDataType, MarkDataType, NetDataType,
+        NormalListResult, Parse, PortDataType, SetDataType, ToCString, TypeName,
+    };
+    use crate::types::{
         BitmapIp, BitmapIpMac, BitmapPort, HashIp, HashIpMac, HashIpMark, HashIpPort, HashIpPortIp,
         HashIpPortNet, HashMac, HashNet, HashNetIface, HashNetNet, HashNetPort, HashNetPortNet,
         ListSet,
-    };
-    use crate::types::{
-        IfaceDataType, IpDataType, MacDataType, MarkDataType, NetDataType, Parse, PortDataType,
-        SetDataType, ToCString,
     };
 
     #[test]
@@ -694,6 +716,55 @@ mod tests {
         assert_eq!("192.168.3.1", format!("{}", data.0));
         assert_eq!("8080", format!("{}", data.1));
         assert_eq!("192.168.3.2", format!("{}", data.2));
+    }
+
+    #[test]
+    fn test_single_element_tuple() {
+        assert_eq!(<(IpDataType,) as TypeName>::name(), "ip");
+
+        let mut data = (IpDataType::default(),);
+        data.parse("192.168.3.1").unwrap();
+        assert_eq!("192.168.3.1", format!("{}", data.0));
+    }
+
+    #[test]
+    fn test_list_parser_handles_header_and_quoted_comment() {
+        let mut result = NormalListResult::<HashIp>::default();
+        for line in [
+            "Name: test",
+            "Type: hash:ip",
+            "Revision: 7",
+            "Header: family inet hashsize 1024 bucketsize 2048 maxelem 65536 timeout 3600 initval 0x1234 counters comment skbinfo",
+            "Size in memory: 512",
+            "References: 0",
+            "Number of entries: 1",
+            "Members:",
+            r#"192.0.2.1 timeout 60 packets 2 bytes 128 comment "a multi word comment" skbmark 0x1/0xffffffff skbprio 1:2 skbqueue 3"#,
+        ] {
+            result.update_from_str(line).unwrap();
+        }
+
+        assert_eq!(result.header.hash_size, 1024);
+        assert_eq!(result.header.bucket_size, Some(2048));
+        assert_eq!(result.header.max_elem, 65_536);
+        assert_eq!(result.header.timeout, Some(3600));
+        assert_eq!(result.header.initval, Some(0x1234));
+        assert!(result.header.counters);
+        assert!(result.header.comment);
+        assert!(result.header.skbinfo);
+
+        let (ip, options) = &result.items.as_ref().unwrap()[0];
+        assert_eq!("192.0.2.1", format!("{}", ip));
+        let options = options.as_ref().unwrap();
+        assert!(matches!(options[0], AddOption::Timeout(60)));
+        assert!(matches!(options[1], AddOption::Packets(2)));
+        assert!(matches!(options[2], AddOption::Bytes(128)));
+        assert!(
+            matches!(&options[3], AddOption::Comment(comment) if comment == "a multi word comment")
+        );
+        assert!(matches!(options[4], AddOption::SkbMark(1, u32::MAX)));
+        assert!(matches!(options[5], AddOption::SkbPrio(1, 2)));
+        assert!(matches!(options[6], AddOption::SkbQueue(3)));
     }
 
     #[test]
@@ -877,10 +948,28 @@ impl<T: SetType> NormalListResult<T> {
                             options.push(AddOption::Packets(fields[i + 1].parse()?));
                         }
                         "bytes" => {
-                            options.push(AddOption::Bytes(fields[i + 1].trim().replace("\0", "").parse()?));
+                            options.push(AddOption::Bytes(fields[i + 1].parse()?));
                         }
                         "comment" => {
-                            options.push(AddOption::Comment(fields[i + 1].to_string()));
+                            // Collect all tokens between quotes
+                            let mut comment = String::new();
+                            let mut j = i + 1;
+                            while j < fields.len() {
+                                if !comment.is_empty() {
+                                    comment.push(' ');
+                                }
+                                comment.push_str(fields[j]);
+                                // Check if this token ends with a quote
+                                if fields[j].ends_with('"') {
+                                    break;
+                                }
+                                j += 1;
+                            }
+                            // Remove quotes
+                            comment = comment.trim_matches('"').to_string();
+                            options.push(AddOption::Comment(comment));
+                            i = j + 1; // Move past the last token of comment
+                            continue;
                         }
                         "skbmark" => {
                             let values: Vec<_> = fields[i + 1].split('/').collect();
@@ -927,10 +1016,11 @@ pub struct ListHeader {
     hash_size: u32,
     bucket_size: Option<u32>,
     max_elem: u32,
+    timeout: Option<u32>,
     counters: bool,
     comment: bool,
     skbinfo: bool,
-    initval: Option<u32>
+    initval: Option<u32>,
 }
 
 impl ListHeader {
@@ -951,9 +1041,13 @@ impl ListHeader {
                 "bucketsize" => {
                     header.bucket_size = Some(s[i + 1].parse().unwrap());
                     i += 2;
-                },
+                }
                 "maxelem" => {
                     header.max_elem = s[i + 1].parse().unwrap();
+                    i += 2;
+                }
+                "timeout" => {
+                    header.timeout = Some(s[i + 1].parse().unwrap());
                     i += 2;
                 }
                 "counters" => {

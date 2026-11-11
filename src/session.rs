@@ -20,6 +20,10 @@ pub unsafe extern "C" fn ipset_out(
     output.push(data);
 }
 
+fn trim_list_terminator(line: &str) -> &str {
+    line.trim_end_matches('\0')
+}
+
 /// This is the main entry for all the operation. I just ignore the ipset struct
 /// because all the operation are performed by session. The `output` field is used
 /// for collecting data for commands like `list`. It is a field for safety.
@@ -242,23 +246,17 @@ impl<T: SetType> Session<T> {
 
     /// Test if the set already exists.
     pub fn exists(&mut self) -> Result<bool, Error> {
-        let mut unset = false;
-        if !self.list_name {
-            self.set_option(EnvOption::ListSetName);
-            unset = true;
-        }
-        let ret = self.list();
-        if unset {
-            self.unset_option(EnvOption::ListSetName);
-        }
-        match ret? {
-            ListResult::Normal(_) => {
+        let name = self.name.to_string_lossy().into_owned();
+        let mut probe = Self::new(name.clone());
+        probe.set_option(EnvOption::ListSetName);
+        let ret = probe.list();
+        match ret {
+            Ok(ListResult::Normal(_)) => {
                 unreachable!("normal should not return")
             }
-            ListResult::Terse(names) => {
-                let name = self.name.to_string_lossy().to_string();
-                Ok(names.contains(&name))
-            }
+            Ok(ListResult::Terse(names)) => Ok(names.contains(&name)),
+            Err(Error::Cmd(msg, true)) if msg.contains("does not exist") => Ok(false),
+            Err(e) => Err(e),
         }
     }
 
@@ -273,33 +271,37 @@ impl<T: SetType> Session<T> {
                 &mut self.output as *mut _ as _,
             );
         }
-        self.name_cmd(binding::ipset_cmd_IPSET_CMD_LIST)?;
-        let ret = if self.list_name {
-            let mut names = vec![];
-            for line in &self.output {
-                line.split("\n").for_each(|s| {
-                    if !s.is_empty() {
-                        names.push(s.to_string())
-                    }
-                })
-            }
-            ListResult::Terse(names)
-        } else {
-            let mut result = NormalListResult::default();
-            for line in &self.output {
-                for s in line.split("\n") {
-                    if !s.is_empty() {
-                        result.update_from_str(s)?;
+        let ret = (|| {
+            self.name_cmd(binding::ipset_cmd_IPSET_CMD_LIST)?;
+            if self.list_name {
+                let mut names = vec![];
+                for line in &self.output {
+                    line.split("\n").for_each(|s| {
+                        let s = trim_list_terminator(s);
+                        if !s.is_empty() {
+                            names.push(s.to_string())
+                        }
+                    })
+                }
+                Ok(ListResult::Terse(names))
+            } else {
+                let mut result = NormalListResult::default();
+                for line in &self.output {
+                    for s in line.split("\n") {
+                        let s = trim_list_terminator(s);
+                        if !s.is_empty() {
+                            result.update_from_str(s)?;
+                        }
                     }
                 }
+                Ok(ListResult::Normal(result))
             }
-            ListResult::Normal(result)
-        };
+        })();
         unsafe {
             binding::ipset_custom_printf(self.set.set, None, None, None, std::ptr::null_mut());
             self.output.clear();
         }
-        Ok(ret)
+        ret
     }
 
     /// Clear all the content in ipset `name`
@@ -530,5 +532,17 @@ where
                 "netmask cidr should in range [1, 32]".to_string(),
             ))
         }
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::trim_list_terminator;
+
+    #[test]
+    fn list_lines_are_stripped_of_null_terminators() {
+        assert_eq!(trim_list_terminator("91.99.252.18\0"), "91.99.252.18");
+        assert_eq!(trim_list_terminator("test-set\0\0"), "test-set");
+        assert_eq!(trim_list_terminator("plain-entry"), "plain-entry");
     }
 }
