@@ -283,35 +283,37 @@ impl<T: SetType> Session<T> {
                 &mut self.output as *mut _ as _,
             );
         }
-        self.name_cmd(binding::ipset_cmd_IPSET_CMD_LIST)?;
-        let ret = if self.list_name {
-            let mut names = vec![];
-            for line in &self.output {
-                line.split("\n").for_each(|s| {
-                    let s = trim_list_terminator(s);
-                    if !s.is_empty() {
-                        names.push(s.to_string())
-                    }
-                })
-            }
-            ListResult::Terse(names)
-        } else {
-            let mut result = NormalListResult::default();
-            for line in &self.output {
-                for s in line.split("\n") {
-                    let s = trim_list_terminator(s);
-                    if !s.is_empty() {
-                        result.update_from_str(s)?;
+        let ret = (|| {
+            self.name_cmd(binding::ipset_cmd_IPSET_CMD_LIST)?;
+            if self.list_name {
+                let mut names = vec![];
+                for line in &self.output {
+                    line.split("\n").for_each(|s| {
+                        let s = trim_list_terminator(s);
+                        if !s.is_empty() {
+                            names.push(s.to_string())
+                        }
+                    })
+                }
+                Ok(ListResult::Terse(names))
+            } else {
+                let mut result = NormalListResult::default();
+                for line in &self.output {
+                    for s in line.split("\n") {
+                        let s = trim_list_terminator(s);
+                        if !s.is_empty() {
+                            result.update_from_str(s)?;
+                        }
                     }
                 }
+                Ok(ListResult::Normal(result))
             }
-            ListResult::Normal(result)
-        };
+        })();
         unsafe {
             binding::ipset_custom_printf(self.set.set, None, None, None, std::ptr::null_mut());
             self.output.clear();
         }
-        Ok(ret)
+        ret
     }
 
     /// Clear all the content in ipset `name`
