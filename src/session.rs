@@ -246,27 +246,15 @@ impl<T: SetType> Session<T> {
 
     /// Test if the set already exists.
     pub fn exists(&mut self) -> Result<bool, Error> {
-        let mut unset = false;
-        if !self.list_name {
-            self.set_option(EnvOption::ListSetName);
-            unset = true;
-        }
-        let ret = self.list();
-        if unset {
-            self.unset_option(EnvOption::ListSetName);
-        }
-        // Reset session data after list to avoid interfering with subsequent operations
-        unsafe {
-            binding::ipset_data_reset(self.data);
-        }
+        let name = self.name.to_string_lossy().into_owned();
+        let mut probe = Self::new(name.clone());
+        probe.set_option(EnvOption::ListSetName);
+        let ret = probe.list();
         match ret {
             Ok(ListResult::Normal(_)) => {
                 unreachable!("normal should not return")
             }
-            Ok(ListResult::Terse(names)) => {
-                let name = self.name.to_string_lossy().to_string();
-                Ok(names.contains(&name))
-            }
+            Ok(ListResult::Terse(names)) => Ok(names.contains(&name)),
             Err(Error::Cmd(msg, true)) if msg.contains("does not exist") => Ok(false),
             Err(e) => Err(e),
         }
