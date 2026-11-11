@@ -181,7 +181,10 @@ impl Parse for NetDataType {
         if let Some(cidr) = ss.next() {
             self.cidr = cidr.parse()?;
         } else {
-            self.cidr = 32;
+            self.cidr = match self.ip {
+                IpDataType::IPv4(_) => 32,
+                IpDataType::IPv6(_) => 128,
+            }
         }
         Ok(())
     }
@@ -663,6 +666,20 @@ mod tests {
         assert_eq!("127.0.0.1/8", format!("{}", net));
         net.parse("192.168.3.1/24").unwrap();
         assert_eq!("192.168.3.1/24", format!("{}", net));
+    }
+
+    #[test]
+    fn test_net_defaults_cidr_for_address_family() {
+        let mut net = NetDataType::default();
+
+        net.parse("192.0.2.1").unwrap();
+        assert_eq!(net.cidr(), 32);
+
+        net.parse("2001:db8::1").unwrap();
+        assert_eq!(net.cidr(), 128);
+
+        net.parse("2001:db8::1/64").unwrap();
+        assert_eq!(net.cidr(), 64);
     }
 
     #[test]
